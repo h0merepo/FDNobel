@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Bubble from '../components/Bubble'
 import PanCanvas from '../components/PanCanvas'
 import Scrubber from '../components/Scrubber'
-import { LAUREATES, MILESTONES, PALETTE, fieldColor } from '../data/content'
+import { LAUREATES, MILESTONES, kindColor } from '../data/content'
 import { ghostCircles } from '../lib/layout'
 import { DECADES, END_YEAR, PX_PER_YEAR, START_YEAR, WORLD, layoutByYear, yearToX } from '../lib/timeline'
 
@@ -19,7 +19,7 @@ export default function Milestones({ selection, onSelect }) {
       label: m.title,
       year: m.year,
       r: MILESTONE_RADIUS[m.weight] ?? 108,
-      color: PALETTE.sand,
+      color: kindColor('milestone'),
     }))
     const people = LAUREATES.map((l) => ({
       id: l.id,
@@ -28,7 +28,7 @@ export default function Milestones({ selection, onSelect }) {
       meta: String(l.year),
       year: l.year,
       r: 66,
-      color: fieldColor(l.field),
+      color: kindColor('person'),
     }))
     return layoutByYear([...milestones, ...people], { seed: 9 })
   }, [])

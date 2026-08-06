@@ -1,5 +1,5 @@
 import { useMemo, useRef, useEffect } from 'react'
-import { ARTIFACTS, LAUREATES, MILESTONES, PALETTE, THEMES, fieldColor, findLaureate } from '../data/content'
+import { ARTIFACTS, LAUREATES, MILESTONES, THEMES, kindColor } from '../data/content'
 
 const INDEX = [
   ...THEMES.map((t) => ({
@@ -7,28 +7,28 @@ const INDEX = [
     id: t.id,
     label: t.label,
     hay: `${t.label} ${t.blurb}`.toLowerCase(),
-    color: fieldColor(findLaureate(t.laureates[0])?.field) ?? PALETTE.blue,
+    color: kindColor('theme'),
   })),
   ...LAUREATES.map((l) => ({
     kind: 'person',
     id: l.id,
     label: l.name,
     hay: `${l.name} ${l.country} ${l.year} ${l.blurb}`.toLowerCase(),
-    color: fieldColor(l.field),
+    color: kindColor('person'),
   })),
   ...MILESTONES.map((m) => ({
     kind: 'milestone',
     id: m.id,
     label: `${m.title} · ${m.year}`,
     hay: `${m.title} ${m.year} ${m.blurb}`.toLowerCase(),
-    color: PALETTE.sand,
+    color: kindColor('milestone'),
   })),
   ...ARTIFACTS.map((a) => ({
     kind: 'artifact',
     id: a.id,
     label: a.label,
     hay: `${a.label} ${a.blurb}`.toLowerCase(),
-    color: PALETTE.ink,
+    color: kindColor('artifact'),
   })),
 ]
 

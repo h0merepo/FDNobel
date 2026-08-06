@@ -441,6 +441,10 @@ button {
 .web-node {
   padding: 0.65em;
   overflow: hidden;
+  /* The smallest chain links are narrower than a long word, so break at a
+     hyphen rather than splitting the word wherever it happens to land. */
+  overflow-wrap: break-word;
+  hyphens: auto;
   opacity: 0;
   animation: node-in 460ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
   transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms ease;

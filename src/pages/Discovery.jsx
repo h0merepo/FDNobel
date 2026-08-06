@@ -7,20 +7,14 @@ import {
   FIELDS,
   LAUREATES,
   MILESTONES,
-  PALETTE,
   THEMES,
-  fieldColor,
   findLaureate,
+  kindColor,
 } from '../data/content'
 import { ghostCircles, packCircles } from '../lib/layout'
 
 const WORLD = { width: 4200, height: 2800 }
 const BOUNDS = [1900, 2025]
-
-const themeColor = (theme) => {
-  const first = theme.laureates.map(findLaureate).find(Boolean)
-  return first ? fieldColor(first.field) : PALETTE.blue
-}
 
 const COUNTRIES = [...new Set(LAUREATES.map((l) => l.country))].sort()
 
@@ -38,7 +32,7 @@ export default function Discovery({ selection, onSelect }) {
         label: l.name,
         meta: `${FIELDS.find((f) => f.id === l.field)?.label.split(' ')[0]} ${l.year}`,
         r: 92,
-        color: fieldColor(l.field),
+        color: kindColor('person'),
         field: l.field,
         country: l.country,
         year: l.year,
@@ -48,7 +42,7 @@ export default function Discovery({ selection, onSelect }) {
         kind: 'theme',
         label: t.label,
         r: t.weight === 3 ? 118 : t.weight === 2 ? 92 : 72,
-        color: themeColor(t),
+        color: kindColor('theme'),
         fields: [...new Set(t.laureates.map((id) => findLaureate(id)?.field).filter(Boolean))],
         countries: [...new Set(t.laureates.map((id) => findLaureate(id)?.country).filter(Boolean))],
         years: t.laureates.map((id) => findLaureate(id)?.year).filter(Boolean),
@@ -59,7 +53,7 @@ export default function Discovery({ selection, onSelect }) {
         label: m.title,
         meta: String(m.year),
         r: 96,
-        color: PALETTE.sand,
+        color: kindColor('milestone'),
         year: m.year,
       })),
       ...ARTIFACTS.map((a) => ({
@@ -67,7 +61,7 @@ export default function Discovery({ selection, onSelect }) {
         kind: 'artifact',
         label: a.label,
         r: 78,
-        color: PALETTE.ink,
+        color: kindColor('artifact'),
       })),
     ]
     return packCircles(items, { ...WORLD, seed: 33, padding: 34 })

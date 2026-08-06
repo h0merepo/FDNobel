@@ -1,18 +1,40 @@
 export const PALETTE = {
   blue: '#7AA6C8',
+  green: '#A6BE6C',
+  gold: '#D8B45C',
   sand: '#DCD4C0',
   grey: '#C2C2C2',
   peach: '#F2C4A9',
   ink: '#141414',
 }
 
+// Colour encodes what a circle *is*, nowhere else. A reader who learns four
+// colours can read any view in the atlas without a key, so nothing else —
+// field, era, weight — is ever allowed to drive fill.
+export const KIND_COLORS = {
+  theme: PALETTE.blue,
+  milestone: PALETTE.green,
+  person: PALETTE.gold,
+  artifact: PALETTE.ink,
+}
+
+export const KIND_LABELS = {
+  theme: 'Story',
+  milestone: 'Milestone',
+  person: 'Laureate',
+  artifact: 'Artifact',
+}
+
+// 'laureate' is the reader-facing word; 'person' is the kind used in selections.
+export const kindColor = (kind) => KIND_COLORS[kind === 'laureate' ? 'person' : kind] ?? PALETTE.grey
+
 export const FIELDS = [
-  { id: 'physics', label: 'Physics', color: PALETTE.blue },
-  { id: 'chemistry', label: 'Chemistry', color: PALETTE.sand },
-  { id: 'medicine', label: 'Physiology or Medicine', color: PALETTE.peach },
-  { id: 'literature', label: 'Literature', color: PALETTE.grey },
-  { id: 'peace', label: 'Peace', color: PALETTE.ink },
-  { id: 'economics', label: 'Economic Sciences', color: PALETTE.sand },
+  { id: 'physics', label: 'Physics' },
+  { id: 'chemistry', label: 'Chemistry' },
+  { id: 'medicine', label: 'Physiology or Medicine' },
+  { id: 'literature', label: 'Literature' },
+  { id: 'peace', label: 'Peace' },
+  { id: 'economics', label: 'Economic Sciences' },
 ]
 
 export const THEMES = [
@@ -152,4 +174,3 @@ export const textOn = (background) => (background === PALETTE.ink ? '#ffffff' : 
 export const findTheme = (id) => THEMES.find((t) => t.id === id)
 export const findLaureate = (id) => LAUREATES.find((l) => l.id === id)
 export const findMilestone = (id) => MILESTONES.find((m) => m.id === id)
-export const fieldColor = (id) => FIELDS.find((f) => f.id === id)?.color ?? PALETTE.grey

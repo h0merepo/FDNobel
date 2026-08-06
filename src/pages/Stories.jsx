@@ -1,16 +1,11 @@
 import { useEffect, useMemo, useRef } from 'react'
 import Bubble from '../components/Bubble'
 import PanCanvas from '../components/PanCanvas'
-import { PALETTE, THEMES, fieldColor, findLaureate } from '../data/content'
+import { THEMES, kindColor } from '../data/content'
 import { ghostCircles, packCircles } from '../lib/layout'
 
 const WORLD = { width: 2900, height: 2050 }
 const RADIUS_BY_WEIGHT = { 1: 74, 2: 104, 3: 140 }
-
-const themeColor = (theme) => {
-  const first = theme.laureates.map(findLaureate).find(Boolean)
-  return first ? fieldColor(first.field) : PALETTE.blue
-}
 
 export default function Stories({ selection, onSelect }) {
   const controls = useRef(null)
@@ -23,7 +18,7 @@ export default function Stories({ selection, onSelect }) {
           kind: 'theme',
           label: t.label,
           r: RADIUS_BY_WEIGHT[t.weight] ?? 100,
-          color: themeColor(t),
+          color: kindColor('theme'),
         })),
         { ...WORLD, seed: 21, padding: 24 },
       ),

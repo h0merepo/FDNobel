@@ -2,26 +2,20 @@ import {
   ARTIFACTS,
   LAUREATES,
   MILESTONES,
-  PALETTE,
-  fieldColor,
   findLaureate,
   findMilestone,
   findTheme,
+  kindColor,
 } from '../data/content'
 
-export const themeColor = (theme) => {
-  const first = theme.laureates.map(findLaureate).find(Boolean)
-  return first ? fieldColor(first.field) : PALETTE.blue
-}
-
-const asTheme = (t) => ({ key: `theme:${t.id}`, kind: 'theme', id: t.id, label: t.label, color: themeColor(t) })
+const asTheme = (t) => ({ key: `theme:${t.id}`, kind: 'theme', id: t.id, label: t.label, color: kindColor('theme') })
 const asPerson = (p) => ({
   key: `person:${p.id}`,
   kind: 'person',
   id: p.id,
   label: p.name,
   sub: String(p.year),
-  color: fieldColor(p.field),
+  color: kindColor('person'),
 })
 const asMilestone = (m) => ({
   key: `milestone:${m.id}`,
@@ -29,9 +23,9 @@ const asMilestone = (m) => ({
   id: m.id,
   label: m.title,
   sub: String(m.year),
-  color: PALETTE.sand,
+  color: kindColor('milestone'),
 })
-const asArtifact = (a) => ({ key: `artifact:${a.id}`, kind: 'artifact', id: a.id, label: a.label, color: PALETTE.ink })
+const asArtifact = (a) => ({ key: `artifact:${a.id}`, kind: 'artifact', id: a.id, label: a.label, color: kindColor('artifact') })
 
 // Round-robin across the groups so a node's ring always shows a mix of kinds
 // rather than four laureates and nothing else. Labels are deduplicated because
@@ -133,7 +127,7 @@ export function nodeMeta(selection) {
   const { kind, id } = selection
   if (kind === 'theme') {
     const t = findTheme(id)
-    return t && { kicker: 'Story', label: t.label, blurb: t.blurb, color: themeColor(t) }
+    return t && { kicker: 'Story', label: t.label, blurb: t.blurb, color: kindColor('theme') }
   }
   if (kind === 'person') {
     const p = findLaureate(id)
@@ -143,14 +137,14 @@ export function nodeMeta(selection) {
         label: p.name,
         sub: `${p.year} · ${p.country}`,
         blurb: p.blurb,
-        color: fieldColor(p.field),
+        color: kindColor('person'),
       }
     )
   }
   if (kind === 'milestone') {
     const m = findMilestone(id)
-    return m && { kicker: 'Milestone', label: m.title, sub: String(m.year), blurb: m.blurb, color: PALETTE.sand }
+    return m && { kicker: 'Milestone', label: m.title, sub: String(m.year), blurb: m.blurb, color: kindColor('milestone') }
   }
   const a = ARTIFACTS.find((x) => x.id === id)
-  return a && { kicker: 'Artifact', label: a.label, blurb: a.blurb, color: PALETTE.ink }
+  return a && { kicker: 'Artifact', label: a.label, blurb: a.blurb, color: kindColor('artifact') }
 }
