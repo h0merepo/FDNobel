@@ -456,6 +456,17 @@ button {
   }
 }
 
+/* The route already walked: same colours as the ring, marked with a ring of
+   its own so a step you came through is distinguishable from one you have not. */
+.web-node.visited {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.95), 0 0 0 3px rgba(20, 20, 20, 0.28);
+}
+
+.web-lines line.path {
+  stroke: rgba(20, 20, 20, 0.6);
+  stroke-width: 1.4;
+}
+
 .web-node:hover,
 .web-node:focus-visible {
   transform: translate(-50%, -50%) scale(1.09);

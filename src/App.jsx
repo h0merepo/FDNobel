@@ -79,7 +79,7 @@ export default function App() {
       {focused && (
         <div className="focus-layer">
           <Ambient count={30} seed={41} />
-          <NodeWeb selection={selection} onSelect={select} />
+          <NodeWeb selection={selection} trail={trail} onSelect={select} />
           <StoryPanel selection={selection} onClose={closeFocus} />
 
         </div>
