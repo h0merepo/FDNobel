@@ -8,10 +8,13 @@ const SAT_MAX = 64
 // How many previously visited nodes stay drawn as a chain off the focal node.
 // Older steps remain reachable from the trail bar.
 const CHAIN_SHOWN = 3
-// The chain leaves the focal node towards the upper right; satellites are kept
-// out of this sector so the route never collides with the new relations.
-const CHAIN_ANGLE = -Math.PI * 0.3
-const CHAIN_GAP = 1.45
+// The chain leaves the focal node towards the upper right. Steeper angles look
+// closer to the reference but run out of vertical room first, so a flatter one
+// is taken before the links are allowed to shrink.
+const CHAIN_ANGLES = [-0.42, -0.34, -0.26, -0.18, -0.1].map((k) => k * Math.PI)
+const CHAIN_SCALES = [1, 0.94, 0.88, 0.82, 0.76, 0.7]
+// Clearance either side of the chain that satellites may not occupy.
+const CHAIN_CLEARANCE = 0.65
 
 function fitFontSize(radius, label) {
   const longest = label.split(' ').reduce((n, w) => Math.max(n, w.length), 0)
@@ -68,7 +71,9 @@ export default function NodeWeb({ selection, trail, onSelect }) {
     // Everything scales off the smaller half-axis so the web stays inside the
     // viewport on short screens instead of pushing satellites off the edges.
     const satR = clamp(half * 0.2, 34, SAT_MAX)
-    const focalR = clamp(half * 0.42, 68, FOCAL_MAX)
+    // A long chain needs the room back, so the focal node gives some up.
+    const wanted = Math.min(history.length, CHAIN_SHOWN)
+    const focalR = clamp(half * (wanted >= 2 ? 0.37 : 0.42), 64, FOCAL_MAX)
     const ring = clamp(half - satR - 26, focalR + satR + 18, 360)
 
     // --- the route so far, chained outwards from the focal node ---
@@ -84,27 +89,40 @@ export default function NodeWeb({ selection, trail, onSelect }) {
       )
     }
 
-    let chain = []
-    for (let count = history.length; count > 0; count -= 1) {
-      const attempt = []
+    const place = (count, baseAngle, scale) => {
+      const out = []
       let distance = 0
       let previousR = focalR
       for (let i = 0; i < count; i += 1) {
-        const r = Math.max(22, satR * 0.86 ** (i + 1))
-        distance += previousR + r + 38
+        const r = Math.max(20, satR * 0.9 ** (i + 1) * scale)
+        distance += previousR + r + 34 * scale
         previousR = r
-        attempt.push({ ...history[i], r, angle: CHAIN_ANGLE - i * 0.14, dist: distance })
+        out.push({ ...history[i], r, angle: baseAngle - i * 0.1, dist: distance })
       }
-      if (attempt.every((n) => n.dist + n.r + 8 <= roomAt(n.angle))) {
-        chain = attempt
-        break
+      return out
+    }
+    const fits = (nodes) => nodes.every((n) => n.dist + n.r + 10 <= roomAt(n.angle))
+
+    // Keep all three links on screen: flatten the chain first, then shrink it,
+    // and only drop a link if even the smallest arrangement will not fit.
+    let chain = []
+    outer: for (let count = wanted; count > 0; count -= 1) {
+      for (const scale of CHAIN_SCALES) {
+        for (const angle of CHAIN_ANGLES) {
+          const attempt = place(count, angle, scale)
+          if (fits(attempt)) {
+            chain = attempt
+            break outer
+          }
+        }
       }
     }
 
     const rng = makeRng(satellites.length * 31 + 7)
     // Satellites share whatever arc the chain is not using.
-    const arc = chain.length ? Math.PI * 2 - CHAIN_GAP : Math.PI * 2
-    const start = chain.length ? CHAIN_ANGLE + CHAIN_GAP / 2 : -Math.PI / 2
+    const spread = chain.length ? Math.abs(chain[chain.length - 1].angle - chain[0].angle) : 0
+    const arc = chain.length ? Math.PI * 2 - spread - CHAIN_CLEARANCE * 2 : Math.PI * 2
+    const start = chain.length ? chain[0].angle + CHAIN_CLEARANCE : -Math.PI / 2
     const step = arc / Math.max(satellites.length - (chain.length ? 1 : 0), 1)
 
     return {
