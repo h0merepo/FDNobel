@@ -4,11 +4,11 @@ import NavDock from './components/NavDock'
 import NodeWeb from './components/NodeWeb'
 import SearchSheet from './components/SearchSheet'
 import StoryPanel from './components/StoryPanel'
+import Trail from './components/Trail'
 import Discovery from './pages/Discovery'
 import Landing from './pages/Landing'
 import Milestones from './pages/Milestones'
 import Stories from './pages/Stories'
-import { nodeMeta } from './lib/relations'
 
 const PAGE_FOR_KIND = {
   theme: 'stories',
@@ -18,10 +18,6 @@ const PAGE_FOR_KIND = {
 }
 
 const sameNode = (a, b) => a && b && a.kind === b.kind && a.id === b.id
-
-// Deep paths are truncated from the left so the trail stays on one line and
-// never wraps down into the top of the node web.
-const TRAIL_SHOWN = 4
 
 export default function App() {
   const [page, setPage] = useState('landing')
@@ -86,25 +82,10 @@ export default function App() {
           <NodeWeb selection={selection} onSelect={select} />
           <StoryPanel selection={selection} onClose={closeFocus} />
 
-          {trail.length > 1 && (
-            <nav className="trail" aria-label="Path through the atlas">
-              {trail.length > TRAIL_SHOWN && <i aria-hidden="true">…</i>}
-              {trail.slice(-TRAIL_SHOWN).map((node, i) => (
-                <span key={`${node.kind}:${node.id}`}>
-                  {(i > 0 || trail.length > TRAIL_SHOWN) && <i aria-hidden="true">→</i>}
-                  <button
-                    onClick={() => select(node)}
-                    className={sameNode(node, selection) ? 'here' : undefined}
-                    disabled={sameNode(node, selection)}
-                  >
-                    {nodeMeta(node)?.label}
-                  </button>
-                </span>
-              ))}
-            </nav>
-          )}
         </div>
       )}
+
+      {focused && <Trail trail={trail} selection={selection} onSelect={select} />}
 
       <NavDock
         showHome={page !== 'landing'}

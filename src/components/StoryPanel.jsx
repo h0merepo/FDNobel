@@ -7,6 +7,22 @@ export default function StoryPanel({ selection, onClose }) {
   if (!meta) return null
 
   const seed = `${selection.kind}:${selection.id}`
+
+  // Concepts sit one level above the written material: the box is a full-bleed
+  // placeholder until the level 3 story for that theme exists. Laureates,
+  // artifacts and milestones carry their narrative now.
+  if (selection.kind === 'theme') {
+    return (
+      <article className="story-panel placeholder" key={seed}>
+        <button className="close" onClick={onClose} aria-label="Close story">
+          ✕
+        </button>
+        <Plate seed={seed} />
+        <span className="placeholder-label">Level 3 story</span>
+      </article>
+    )
+  }
+
   const { standfirst, body, caption, credit } = narrativeFor(selection.kind, selection.id, meta.blurb)
 
   return (
