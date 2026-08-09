@@ -28,6 +28,24 @@ const angleDelta = (a, b) => {
   return d
 }
 
+// Route circles are secondary, so they may set smaller than a satellite — but
+// never so small that a word will not fit. Both the radius floor and the type
+// size come off the longest word, so a step can never clip its own name.
+const CHAIN_FONT_MIN = 8
+
+const longestWord = (label) => label.split(' ').reduce((n, w) => Math.max(n, w.length), 0)
+
+function chainRadiusFor(label) {
+  return Math.max(26, longestWord(label) * 2.6 + 9)
+}
+
+function chainFontSize(radius, label) {
+  return Math.max(
+    CHAIN_FONT_MIN,
+    Math.min(radius / 4.6, (radius * 1.7) / Math.max(longestWord(label), 5), 17),
+  )
+}
+
 function fitFontSize(radius, label) {
   const longest = label.split(' ').reduce((n, w) => Math.max(n, w.length), 0)
   return Math.max(9, Math.min(radius / 4.6, (radius * 1.7) / Math.max(longest, 5), 26))
@@ -115,7 +133,10 @@ export default function NodeWeb({ selection, trail, onSelect }) {
       let distance = 0
       let previousR = focalR
       for (let i = 0; i < count; i += 1) {
-        const r = Math.max(20, satR * 0.9 ** (i + 1) * scale)
+        const r = Math.max(
+          chainRadiusFor(history[i].meta.label),
+          satR * 0.9 ** (i + 1) * scale,
+        )
         distance += previousR + r + 42 * scale
         previousR = r
         out.push({ ...history[i], r, angle: baseAngle - i * 0.1, dist: distance })
@@ -147,8 +168,7 @@ export default function NodeWeb({ selection, trail, onSelect }) {
     const step = arc / Math.max(satellites.length - (chain.length ? 1 : 0), 1)
 
     const placed = buildNodes()
-    // Visited steps are drawn as circles only. Nothing labels them in the web —
-    // the rail along the bottom carries their names.
+    // Visited steps carry their own name, at a size their radius guarantees.
     const laid = chain.map((node) => ({
       ...node,
       x: cx + Math.cos(node.angle) * node.dist,
@@ -274,12 +294,15 @@ export default function NodeWeb({ selection, trail, onSelect }) {
                 width: n.r * 2,
                 height: n.r * 2,
                 background: n.meta.color,
+                color: textOn(n.meta.color),
+                fontSize: chainFontSize(n.r, n.meta.label),
               }}
               onClick={() => onSelect(n)}
               title={`Back to ${n.meta.label}`}
-              aria-label={`Back to ${n.meta.label}`}
             >
-              <span className="sr-only">{n.meta.label}</span>
+              <span className="label">{n.meta.label}</span>
+              {/* just the year here, as on the ring — the country is in the panel */}
+              {n.meta.sub && <span className="meta">{n.meta.sub.split(' · ')[0]}</span>}
             </button>
           ))}
 

@@ -134,8 +134,8 @@ button {
 .entry p {
   margin: 0;
   font-size: clamp(0.85rem, 1.05vw, 1.02rem);
-  font-weight: 400;
-  color: #4a4a4a;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.72);
   line-height: 1.35;
 }
 
@@ -467,8 +467,7 @@ button {
    Its name is set outside the circle, so the circle can stay small without ever
    breaking or clipping a word. */
 .web-node.visited {
-  overflow: visible;
-  padding: 0;
+  padding: 0.55em;
 }
 
 .sr-only {

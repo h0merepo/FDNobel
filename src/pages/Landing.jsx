@@ -1,5 +1,5 @@
 import Ambient from '../components/Ambient'
-import { PALETTE } from '../data/content'
+import { PALETTE, textOn } from '../data/content'
 
 const ENTRIES = [
   {
@@ -36,7 +36,7 @@ export default function Landing({ onNavigate }) {
             <button
               key={entry.id}
               className="entry"
-              style={{ background: entry.color }}
+              style={{ background: entry.color, color: textOn(entry.color) }}
               onClick={() => onNavigate(entry.id)}
             >
               <h2>{entry.title}</h2>
