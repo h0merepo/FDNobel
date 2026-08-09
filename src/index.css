@@ -1,7 +1,8 @@
-@import '@fontsource/poppins/300.css';
-@import '@fontsource/poppins/400.css';
-@import '@fontsource/poppins/500.css';
-@import '@fontsource/poppins/700.css';
+@import '@fontsource/lexend/latin-200.css';
+@import '@fontsource/lexend/latin-300.css';
+@import '@fontsource/lexend/latin-400.css';
+@import '@fontsource/lexend/latin-500.css';
+@import '@fontsource/lexend/latin-600.css';
 
 :root {
   --blue: #7aa6c8;
@@ -9,10 +10,14 @@
   --grey: #c2c2c2;
   --peach: #f2c4a9;
   --ink: #141414;
-  --muted: #6f6f6f;
-  --paper: #fdfdfc;
-  --ghost: #f0eeea;
-  font-family: 'Poppins', 'Century Gothic', 'Futura', system-ui, sans-serif;
+  --muted: #6b6b6b;
+  --paper: #e8e8e8;
+  --ghost: #bcbcbc;
+  --panel: #171717;
+  --hairline: rgba(255, 255, 255, 0.88);
+  --on-dark: rgba(255, 255, 255, 0.82);
+  --on-dark-muted: rgba(255, 255, 255, 0.52);
+  font-family: 'Lexend', system-ui, sans-serif;
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
 }
@@ -58,7 +63,7 @@ button {
   position: absolute;
   border-radius: 50%;
   background: var(--ghost);
-  filter: blur(6px);
+  filter: blur(26px);
   transform: translate(-50%, -50%);
 }
 
@@ -78,9 +83,9 @@ button {
 }
 
 .landing h1 {
-  font-size: clamp(3rem, 9vw, 7.5rem);
-  font-weight: 300;
-  letter-spacing: 0.02em;
+  font-size: clamp(2.6rem, 7.6vw, 6.4rem);
+  font-weight: 200;
+  letter-spacing: 0.01em;
   margin: 0;
   line-height: 1;
 }
@@ -120,9 +125,9 @@ button {
 
 .entry h2 {
   margin: 0;
-  font-size: clamp(1.1rem, 1.5vw, 1.45rem);
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-size: clamp(1rem, 1.35vw, 1.3rem);
+  font-weight: 500;
+  letter-spacing: 0.06em;
 }
 
 .entry p {
@@ -158,7 +163,7 @@ button {
   position: absolute;
   border-radius: 50%;
   background: var(--ghost);
-  filter: blur(5px);
+  filter: blur(22px);
   transform: translate(-50%, -50%);
 }
 
@@ -197,9 +202,11 @@ button {
 }
 
 .bubble .label {
-  font-weight: 500;
-  letter-spacing: 0.03em;
+  font-weight: 400;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .bubble .meta {
@@ -220,11 +227,11 @@ button {
   z-index: 40;
   display: flex;
   align-items: stretch;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.86);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(20, 20, 20, 0.1);
+  border: 1px solid rgba(20, 20, 20, 0.22);
   border-radius: 999px;
-  box-shadow: 0 10px 30px rgba(20, 20, 20, 0.1);
+  box-shadow: 0 10px 30px rgba(20, 20, 20, 0.12);
   overflow: hidden;
 }
 
@@ -262,9 +269,9 @@ button {
   bottom: 6.2rem;
   z-index: 41;
   width: min(380px, calc(100vw - 4rem));
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(18px);
-  border: 1px solid rgba(20, 20, 20, 0.1);
+  border: 1px solid rgba(20, 20, 20, 0.22);
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(20, 20, 20, 0.16);
   padding: 1rem;
@@ -373,7 +380,7 @@ button {
 }
 
 .web-lines line {
-  stroke: rgba(20, 20, 20, 0.42);
+  stroke: rgba(20, 20, 20, 0.5);
   stroke-width: 1;
   opacity: 0;
   animation: line-in 420ms ease forwards;
@@ -399,22 +406,12 @@ button {
   overflow-wrap: anywhere;
 }
 
-/* The brushed ring around the focal node: a conic sweep of greys with the
-   coloured face sitting inside it. */
+/* The focal node reads as a disc cut out of the ground: a white hairline with
+   a finer dark line outside it, no bevel or gradient. */
 .web-focal {
-  padding: 11px;
-  background: conic-gradient(
-    from 210deg,
-    #4a4a4a,
-    #f4f4f4 18%,
-    #8f8f8f 33%,
-    #2c2c2c 47%,
-    #e8e8e8 63%,
-    #9a9a9a 78%,
-    #3a3a3a 92%,
-    #4a4a4a
-  );
-  box-shadow: 0 26px 70px rgba(20, 20, 20, 0.24);
+  padding: 0;
+  box-shadow: 0 0 0 4px #ffffff, 0 0 0 5px rgba(20, 20, 20, 0.42),
+    0 30px 70px rgba(20, 20, 20, 0.22);
   animation: focal-in 460ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -433,8 +430,8 @@ button {
   align-items: center;
   justify-content: center;
   padding: 0.9em;
-  font-weight: 500;
-  letter-spacing: 0.04em;
+  font-weight: 400;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -462,9 +459,27 @@ button {
 }
 
 /* The route already walked: same colours as the ring, marked with a ring of
-   its own so a step you came through is distinguishable from one you have not. */
+   its own so a step you came through is distinguishable from one you have not.
+   Its name is set outside the circle, so the circle can stay small without ever
+   breaking or clipping a word. */
 .web-node.visited {
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.95), 0 0 0 3px rgba(20, 20, 20, 0.28);
+  box-shadow: 0 0 0 3px #ffffff, 0 0 0 4px rgba(20, 20, 20, 0.34);
+  overflow: visible;
+  padding: 0;
+}
+
+.chain-label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  white-space: nowrap;
+  font-size: 0.66rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-shadow: 0 0 6px var(--paper), 0 0 12px var(--paper);
+  pointer-events: none;
 }
 
 .web-lines line.path {
@@ -481,9 +496,11 @@ button {
 }
 
 .web-node .label {
-  font-weight: 500;
-  letter-spacing: 0.035em;
+  font-weight: 400;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .web-node .meta {
@@ -492,6 +509,49 @@ button {
   opacity: 0.8;
   margin-top: 0.3em;
   letter-spacing: 0.02em;
+}
+
+/* --- the type tag: hollow ring on a leader line --- */
+
+.web-lines line.leader {
+  stroke: rgba(20, 20, 20, 0.75);
+  stroke-width: 1;
+}
+
+.node-tag {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: fade-up 500ms 260ms ease backwards;
+}
+
+.tag-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid var(--ink);
+}
+
+.tag-label {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.tag-label.left {
+  right: calc(100% + 13px);
+}
+
+.tag-label.right {
+  left: calc(100% + 13px);
 }
 
 /* --- narrative panel --- */
@@ -505,9 +565,13 @@ button {
   width: min(430px, calc(100vw - 3.8rem));
   display: flex;
   flex-direction: column;
-  background: var(--paper);
-  border-radius: 20px;
-  box-shadow: 0 30px 80px rgba(20, 20, 20, 0.22);
+  color: #ffffff;
+  background: var(--panel);
+  /* A very large disc cropped by the viewport: the top reads as an arc rather
+     than a card edge, and the bottom closes with a shallower one. */
+  border-radius: 50% 50% 48% 48% / 21% 21% 15% 15%;
+  border: 1px solid var(--hairline);
+  box-shadow: 0 34px 90px rgba(20, 20, 20, 0.34);
   overflow: hidden;
   animation: panel-in 380ms cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -527,7 +591,8 @@ button {
   right: 0;
   bottom: 0;
   height: 40px;
-  background: linear-gradient(to top, var(--paper), rgba(253, 253, 252, 0));
+  height: 56px;
+  background: linear-gradient(to top, var(--panel), rgba(23, 23, 23, 0));
   pointer-events: none;
 }
 
@@ -545,19 +610,21 @@ button {
   font-size: 1rem;
   line-height: 1;
   color: #fff;
-  background: rgba(20, 20, 20, 0.4);
-  backdrop-filter: blur(6px);
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  transition: background 160ms ease, border-color 160ms ease;
 }
 
 .story-panel .close:hover {
-  background: rgba(20, 20, 20, 0.72);
+  background: rgba(255, 255, 255, 0.16);
+  border-color: #fff;
 }
 
 .story-hero {
   position: relative;
   flex: none;
   aspect-ratio: 4 / 3;
-  max-height: 42%;
+  max-height: 44%;
   overflow: hidden;
 }
 
@@ -573,7 +640,7 @@ button {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(10, 10, 10, 0.82) 0%, rgba(10, 10, 10, 0) 62%);
+  background: linear-gradient(to top, var(--panel) 2%, rgba(23, 23, 23, 0.72) 34%, rgba(23, 23, 23, 0) 78%);
 }
 
 .story-hero-text {
@@ -587,10 +654,10 @@ button {
 
 .story-hero-text .kicker {
   display: block;
-  font-size: 0.68rem;
-  letter-spacing: 0.16em;
+  font-size: 0.66rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  opacity: 0.78;
+  opacity: 0.72;
   font-weight: 400;
 }
 
@@ -600,8 +667,8 @@ button {
 
 .story-hero-text h2 {
   margin: 0.45rem 0 0;
-  font-size: clamp(1.7rem, 2.6vw, 2.3rem);
-  font-weight: 300;
+  font-size: clamp(1.6rem, 2.4vw, 2.15rem);
+  font-weight: 200;
   line-height: 1.06;
   text-wrap: balance;
 }
@@ -609,21 +676,22 @@ button {
 .story-body {
   flex: 1;
   overflow-y: auto;
-  padding: 1.7rem 1.6rem 1.9rem;
+  padding: 0.4rem 2.1rem 2.6rem;
 }
 
 .story-body p {
   margin: 0;
-  font-size: 0.94rem;
-  line-height: 1.62;
-  color: #3a3a3a;
+  font-size: 0.92rem;
+  line-height: 1.66;
+  font-weight: 300;
+  color: var(--on-dark);
 }
 
 .story-body .standfirst {
-  font-size: 1.06rem;
-  line-height: 1.5;
-  font-weight: 400;
-  color: var(--ink);
+  font-size: 1.04rem;
+  line-height: 1.52;
+  font-weight: 300;
+  color: #ffffff;
 }
 
 .para-row {
@@ -651,18 +719,18 @@ button {
 
 .inset figcaption {
   margin-top: 0.5rem;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   line-height: 1.35;
-  color: var(--muted);
+  color: var(--on-dark-muted);
 }
 
 .story-credit {
   margin-top: 1.8rem;
   padding-top: 1rem;
-  border-top: 1px solid rgba(20, 20, 20, 0.12);
-  font-size: 0.72rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
+  font-size: 0.7rem;
   line-height: 1.45;
-  color: var(--muted);
+  color: var(--on-dark-muted);
 }
 
 /* --- path trail --- */
@@ -677,11 +745,11 @@ button {
   align-items: center;
   gap: 0.1rem;
   padding: 0.42rem 0.85rem;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.86);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(20, 20, 20, 0.1);
+  border: 1px solid rgba(20, 20, 20, 0.22);
   border-radius: 999px;
-  box-shadow: 0 10px 30px rgba(20, 20, 20, 0.1);
+  box-shadow: 0 10px 30px rgba(20, 20, 20, 0.12);
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -747,9 +815,9 @@ button {
   position: relative;
   z-index: 1;
   color: #fff;
-  font-size: 1.15rem;
-  font-weight: 400;
-  letter-spacing: 0.22em;
+  font-size: 1.05rem;
+  font-weight: 300;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.6);
 }
@@ -985,15 +1053,15 @@ button {
   pointer-events: none;
   padding: 0.7rem 1.1rem;
   border-radius: 16px;
-  background: rgba(253, 253, 252, 0.82);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
 }
 
 .page-hint h1 {
   margin: 0;
-  font-size: 1.35rem;
-  font-weight: 400;
-  letter-spacing: 0.16em;
+  font-size: 1.2rem;
+  font-weight: 300;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 

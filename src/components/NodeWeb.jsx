@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { textOn } from '../data/content'
+import { KIND_LABELS, textOn } from '../data/content'
 import { clamp, makeRng } from '../lib/layout'
 import { nodeMeta, relatedTo } from '../lib/relations'
 
@@ -15,6 +15,18 @@ const CHAIN_ANGLES = [-0.42, -0.34, -0.26, -0.18, -0.1].map((k) => k * Math.PI)
 const CHAIN_SCALES = [1, 0.94, 0.88, 0.82, 0.76, 0.7]
 // Clearance either side of the chain that satellites may not occupy.
 const CHAIN_CLEARANCE = 0.65
+// The focal node carries a hollow ring on a leader line naming what kind of
+// thing it is. It is parked in whatever direction is emptiest, preferring the
+// upper left.
+const TAG_TARGET = -Math.PI * 0.78
+const TAG_RING = 16
+
+const angleDelta = (a, b) => {
+  let d = (a - b) % (Math.PI * 2)
+  if (d > Math.PI) d -= Math.PI * 2
+  if (d < -Math.PI) d += Math.PI * 2
+  return d
+}
 
 function fitFontSize(radius, label) {
   const longest = label.split(' ').reduce((n, w) => Math.max(n, w.length), 0)
@@ -125,16 +137,79 @@ export default function NodeWeb({ selection, trail, onSelect }) {
     const start = chain.length ? chain[0].angle + CHAIN_CLEARANCE : -Math.PI / 2
     const step = arc / Math.max(satellites.length - (chain.length ? 1 : 0), 1)
 
+    const placed = buildNodes()
+    // Chain links are too small to hold a long name, so the label sits outside
+    // the circle — set clear of the chain on the side the satellites do not use.
+    const laid = chain.map((node) => {
+      const x = cx + Math.cos(node.angle) * node.dist
+      const y = cy + Math.sin(node.angle) * node.dist
+      const perpendicular = node.angle - Math.PI / 2
+      const reach = node.r + 15
+      const width = node.meta.label.length * 6.4
+      const inside = (dx, dy) =>
+        x + dx - width / 2 > 6 &&
+        x + dx + width / 2 < w - 6 &&
+        y + dy - 9 > 6 &&
+        y + dy + 9 < h - 6
+
+      let ox = Math.cos(perpendicular) * reach
+      let oy = Math.sin(perpendicular) * reach
+      if (!inside(ox, oy)) {
+        if (inside(-ox, -oy)) {
+          ox = -ox
+          oy = -oy
+        } else {
+          // Both sides run off an edge, so pull the label back into the frame.
+          ox = clamp(ox, 6 + width / 2 - x, w - 6 - width / 2 - x)
+          oy = clamp(oy, 15 - y, h - 15 - y)
+        }
+      }
+      return { ...node, x, y, ox, oy }
+    })
+
+    // Park the tag in the emptiest direction so its leader line never crosses a
+    // circle, preferring the upper left where the reference puts it.
+    const occupied = [...placed.map((n) => n.angle), ...laid.map((n) => n.angle)]
+    let tag = null
+    for (let a = -Math.PI; a < Math.PI; a += 0.06) {
+      const clearance = occupied.length
+        ? Math.min(...occupied.map((u) => Math.abs(angleDelta(a, u))))
+        : Math.PI
+      if (clearance < 0.36) continue
+      const score = -Math.abs(angleDelta(a, TAG_TARGET))
+      if (!tag || score > tag.score) tag = { angle: a, score }
+    }
+    if (tag) {
+      const dist = Math.min(ring * 1.3, roomAt(tag.angle) - TAG_RING - 14)
+      if (dist < focalR + 74) {
+        tag = null
+      } else {
+        const cos = Math.cos(tag.angle)
+        const sin = Math.sin(tag.angle)
+        tag = {
+          label: KIND_LABELS[selection.kind] ?? '',
+          side: cos < 0 ? 'left' : 'right',
+          x: cx + cos * dist,
+          y: cy + sin * dist,
+          fromX: cx + cos * (focalR + 3),
+          fromY: cy + sin * (focalR + 3),
+          toX: cx + cos * (dist - TAG_RING),
+          toY: cy + sin * (dist - TAG_RING),
+        }
+      }
+    }
+
     return {
       cx,
       cy,
       focalR,
-      chain: chain.map((node) => ({
-        ...node,
-        x: cx + Math.cos(node.angle) * node.dist,
-        y: cy + Math.sin(node.angle) * node.dist,
-      })),
-      nodes: satellites.map((s, i) => {
+      chain: laid,
+      nodes: placed,
+      tag,
+    }
+
+    function buildNodes() {
+      return satellites.map((s, i) => {
         const angle = start + step * i + (rng() - 0.5) * step * 0.12
         const dist = ring * (0.9 + rng() * 0.18)
         // Long names get a proportionally larger circle so "Microorganisms and
@@ -142,13 +217,14 @@ export default function NodeWeb({ selection, trail, onSelect }) {
         const grow = clamp(s.label.length / 20, 0.86, 1.2)
         return {
           ...s,
+          angle,
           r: satR * grow * (s.kind === 'theme' ? 1 : 0.92),
           x: cx + Math.cos(angle) * dist,
           y: cy + Math.sin(angle) * dist,
         }
-      }),
+      })
     }
-  }, [box, satellites, history])
+  }, [box, satellites, history, selection])
 
   if (!focal) return null
 
@@ -171,7 +247,23 @@ export default function NodeWeb({ selection, trail, onSelect }) {
               const from = i === 0 ? { x: geometry.cx, y: geometry.cy } : geometry.chain[i - 1]
               return <line className="path" key={n.key} x1={from.x} y1={from.y} x2={n.x} y2={n.y} />
             })}
+            {geometry.tag && (
+              <line
+                className="leader"
+                x1={geometry.tag.fromX}
+                y1={geometry.tag.fromY}
+                x2={geometry.tag.toX}
+                y2={geometry.tag.toY}
+              />
+            )}
           </svg>
+
+          {geometry.tag && (
+            <div className="node-tag" style={{ left: geometry.tag.x, top: geometry.tag.y }}>
+              <span className="tag-ring" />
+              <span className={`tag-label ${geometry.tag.side}`}>{geometry.tag.label}</span>
+            </div>
+          )}
 
           {geometry.chain.map((n) => (
             <button
@@ -183,13 +275,16 @@ export default function NodeWeb({ selection, trail, onSelect }) {
                 width: n.r * 2,
                 height: n.r * 2,
                 background: n.meta.color,
-                color: textOn(n.meta.color),
-                fontSize: fitFontSize(n.r, n.meta.label),
               }}
               onClick={() => onSelect(n)}
               title={`Back to ${n.meta.label}`}
             >
-              <span className="label">{n.meta.label}</span>
+              <span
+                className="chain-label"
+                style={{ transform: `translate(calc(-50% + ${n.ox}px), calc(-50% + ${n.oy}px))` }}
+              >
+                {n.meta.label}
+              </span>
             </button>
           ))}
 
