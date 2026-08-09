@@ -471,28 +471,6 @@ button {
   padding: 0;
 }
 
-/* Each step of the route is named by a pill riding the neck it arrived along. */
-.neck-pill {
-  position: absolute;
-  z-index: 4;
-  padding: 0.26rem 0.62rem;
-  border-radius: 999px;
-  background: #ffffff;
-  color: var(--ink);
-  font-size: 0.6rem;
-  font-weight: 400;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  box-shadow: 0 3px 12px rgba(20, 20, 20, 0.16);
-  animation: fade-up 460ms 200ms ease backwards;
-}
-
-.neck-pill:hover {
-  background: var(--ink);
-  color: #fff;
-}
-
 .sr-only {
   position: absolute;
   width: 1px;

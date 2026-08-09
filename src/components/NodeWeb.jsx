@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { KIND_LABELS, textOn } from '../data/content'
 import { clamp, makeRng } from '../lib/layout'
-import { midpointOf } from '../lib/necks'
 import { nodeMeta, relatedTo } from '../lib/relations'
 
 const FOCAL_MAX = 128
@@ -27,20 +26,6 @@ const angleDelta = (a, b) => {
   if (d > Math.PI) d -= Math.PI * 2
   if (d < -Math.PI) d += Math.PI * 2
   return d
-}
-
-// A pill has only the gap between two circles to live in. Rather than cutting a
-// name mid-word, fall back to the form people actually use — a surname, or the
-// first significant word — and only trim if even that will not fit.
-function pillLabel(label, kind, budget) {
-  const words = label.replace(/^(the|a|an)\s+/i, '').split(/\s+/)
-  const candidates = [label]
-  if (kind === 'person') candidates.push(words[words.length - 1])
-  else if (words.length > 1) candidates.push(words[0])
-  const fits = candidates.find((c) => c.length <= budget)
-  if (fits) return fits
-  const shortest = candidates[candidates.length - 1]
-  return `${shortest.slice(0, Math.max(3, budget - 1)).trimEnd()}…`
 }
 
 function fitFontSize(radius, label) {
@@ -131,7 +116,7 @@ export default function NodeWeb({ selection, trail, onSelect }) {
       let previousR = focalR
       for (let i = 0; i < count; i += 1) {
         const r = Math.max(20, satR * 0.9 ** (i + 1) * scale)
-        distance += previousR + r + 74 * scale
+        distance += previousR + r + 42 * scale
         previousR = r
         out.push({ ...history[i], r, angle: baseAngle - i * 0.1, dist: distance })
       }
@@ -162,34 +147,13 @@ export default function NodeWeb({ selection, trail, onSelect }) {
     const step = arc / Math.max(satellites.length - (chain.length ? 1 : 0), 1)
 
     const placed = buildNodes()
-    // Chain links are too small to hold a long name, so the label sits outside
-    // the circle — set clear of the chain on the side the satellites do not use.
-    const laid = chain.map((node) => {
-      const x = cx + Math.cos(node.angle) * node.dist
-      const y = cy + Math.sin(node.angle) * node.dist
-      const perpendicular = node.angle - Math.PI / 2
-      const reach = node.r + 15
-      const width = node.meta.label.length * 6.4
-      const inside = (dx, dy) =>
-        x + dx - width / 2 > 6 &&
-        x + dx + width / 2 < w - 6 &&
-        y + dy - 9 > 6 &&
-        y + dy + 9 < h - 6
-
-      let ox = Math.cos(perpendicular) * reach
-      let oy = Math.sin(perpendicular) * reach
-      if (!inside(ox, oy)) {
-        if (inside(-ox, -oy)) {
-          ox = -ox
-          oy = -oy
-        } else {
-          // Both sides run off an edge, so pull the label back into the frame.
-          ox = clamp(ox, 6 + width / 2 - x, w - 6 - width / 2 - x)
-          oy = clamp(oy, 15 - y, h - 15 - y)
-        }
-      }
-      return { ...node, x, y, ox, oy }
-    })
+    // Visited steps are drawn as circles only. Nothing labels them in the web —
+    // the rail along the bottom carries their names.
+    const laid = chain.map((node) => ({
+      ...node,
+      x: cx + Math.cos(node.angle) * node.dist,
+      y: cy + Math.sin(node.angle) * node.dist,
+    }))
 
     // Park the tag in the emptiest direction so its leader line never crosses a
     // circle, preferring the upper left where the reference puts it.
@@ -236,25 +200,6 @@ export default function NodeWeb({ selection, trail, onSelect }) {
       links.unshift({ key: 'panel', x1: panelRight, y1: cy, x2: cx, y2: cy })
     }
 
-    // Each step of the route is named by a pill sitting on the neck it arrived
-    // along, which keeps long names off the small circles entirely.
-    const pills = laid.map((n, i) => {
-      const span = midpointOf(i === 0 ? focalBody : laid[i - 1], n)
-      // Long names are trimmed to what the gap can hold; the rail along the
-      // bottom always carries the full one.
-      // The pill may ride a little onto the rim of the circles either side, as
-      // in the reference, which is what makes a surname fit at all.
-      const room = span.gap + Math.min(span.minR, 60) * 1.5 - 18
-      const budget = Math.max(4, Math.floor(room / 6.3))
-      return {
-        key: n.key,
-        label: pillLabel(n.meta.label, n.kind, budget),
-        title: n.meta.label,
-        node: n,
-        ...span,
-      }
-    })
-
     return {
       cx,
       cy,
@@ -262,7 +207,6 @@ export default function NodeWeb({ selection, trail, onSelect }) {
       chain: laid,
       nodes: placed,
       links,
-      pills,
       tag,
     }
 
@@ -333,20 +277,9 @@ export default function NodeWeb({ selection, trail, onSelect }) {
               }}
               onClick={() => onSelect(n)}
               title={`Back to ${n.meta.label}`}
+              aria-label={`Back to ${n.meta.label}`}
             >
               <span className="sr-only">{n.meta.label}</span>
-            </button>
-          ))}
-
-          {geometry.pills.map((pill) => (
-            <button
-              key={pill.key}
-              className="neck-pill"
-              style={{ left: pill.x, top: pill.y, transform: `translate(-50%, -50%) rotate(${pill.angle}deg)` }}
-              onClick={() => onSelect(pill.node)}
-              title={pill.title}
-            >
-              {pill.label}
             </button>
           ))}
 
