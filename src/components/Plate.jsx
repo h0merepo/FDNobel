@@ -10,31 +10,40 @@ function hash(str) {
   return h >>> 0
 }
 
-// Stands in for an archival photograph: a seeded monochrome composition of
-// out-of-focus discs over a grain wash, deterministic per node so a story
-// always opens with the same plate.
+// Stands in for the artwork: a smooth spectral wash in whites and light greys,
+// deterministic per node so a story always opens with the same plate. The hues
+// are barely there — enough for the light to bend across the surface without
+// the plate reading as coloured.
+const SWEEP = [
+  { h: 210, s: 22 },
+  { h: 268, s: 18 },
+  { h: 34, s: 24 },
+  { h: 168, s: 16 },
+]
+
 export default function Plate({ seed, variant = 'hero', className = '' }) {
   const id = useMemo(() => `pl${hash(seed + variant).toString(36)}`, [seed, variant])
 
-  const { discs, tilt, base } = useMemo(() => {
+  const { tilt, base, blooms } = useMemo(() => {
     const rng = makeRng(hash(seed))
-    const count = variant === 'hero' ? 26 : 12
+    const offset = Math.floor(rng() * SWEEP.length)
     return {
-      base: 0.1 + rng() * 0.35,
-      tilt: rng() * 140 - 70,
-      discs: Array.from({ length: count }, () => {
-        const r = 3 + rng() ** 2.2 * 30
+      tilt: rng() * 360,
+      base: 3 + rng() * 5,
+      blooms: SWEEP.map((band, i) => {
+        const tone = SWEEP[(i + offset) % SWEEP.length]
         return {
-          cx: rng() * 100,
-          cy: rng() * 100,
-          r,
-          light: rng() > 0.42,
-          o: 0.06 + rng() * 0.42,
-          blur: r > 16 ? 1.8 : 0.5,
+          hue: tone.h,
+          saturation: tone.s,
+          light: 96 - rng() * 7,
+          cx: 12 + rng() * 76,
+          cy: 12 + rng() * 76,
+          r: 42 + rng() * 46,
+          opacity: 0.58 + rng() * 0.4,
         }
       }),
     }
-  }, [seed, variant])
+  }, [seed])
 
   return (
     <svg
@@ -44,34 +53,38 @@ export default function Plate({ seed, variant = 'hero', className = '' }) {
       aria-hidden="true"
     >
       <defs>
-        <linearGradient id={`${id}g`} gradientTransform={`rotate(${tilt} 0.5 0.5)`}>
-          <stop offset="0%" stopColor={`hsl(30 6% ${8 + base * 40}%)`} />
-          <stop offset="52%" stopColor={`hsl(30 5% ${26 + base * 34}%)`} />
-          <stop offset="100%" stopColor={`hsl(30 7% ${6 + base * 22}%)`} />
+        <linearGradient id={`${id}b`} gradientTransform={`rotate(${tilt} 0.5 0.5)`}>
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="32%" stopColor={`hsl(220 16% ${96 - base * 0.3}%)`} />
+          <stop offset="64%" stopColor={`hsl(32 14% ${90 - base * 0.5}%)`} />
+          <stop offset="100%" stopColor={`hsl(214 16% ${85 - base * 0.7}%)`} />
         </linearGradient>
-        <filter id={`${id}s`} x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="1.6" />
-        </filter>
-        <filter id={`${id}n`}>
-          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed={hash(seed) % 500} />
-          <feColorMatrix type="saturate" values="0" />
-        </filter>
+
+        {blooms.map((bloom, i) => (
+          <radialGradient key={i} id={`${id}g${i}`} cx="50%" cy="50%" r="50%">
+            <stop
+              offset="0%"
+              stopColor={`hsl(${bloom.hue} ${bloom.saturation}% ${bloom.light}%)`}
+              stopOpacity={bloom.opacity}
+            />
+            <stop
+              offset="55%"
+              stopColor={`hsl(${bloom.hue} ${bloom.saturation * 0.6}% ${bloom.light + 1.5}%)`}
+              stopOpacity={bloom.opacity * 0.45}
+            />
+            <stop
+              offset="100%"
+              stopColor={`hsl(${bloom.hue} ${bloom.saturation}% ${bloom.light}%)`}
+              stopOpacity="0"
+            />
+          </radialGradient>
+        ))}
       </defs>
 
-      <rect width="100" height="100" fill={`url(#${id}g)`} />
-      <g filter={`url(#${id}s)`}>
-        {discs.map((d, i) => (
-          <circle
-            key={i}
-            cx={d.cx}
-            cy={d.cy}
-            r={d.r}
-            fill={d.light ? '#ffffff' : '#000000'}
-            opacity={d.o}
-          />
-        ))}
-      </g>
-      <rect width="100" height="100" filter={`url(#${id}n)`} opacity="0.14" />
+      <rect width="100" height="100" fill={`url(#${id}b)`} />
+      {blooms.map((bloom, i) => (
+        <circle key={i} cx={bloom.cx} cy={bloom.cy} r={bloom.r} fill={`url(#${id}g${i})`} />
+      ))}
     </svg>
   )
 }
