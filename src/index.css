@@ -15,6 +15,8 @@
   --ghost: #bcbcbc;
   --panel: #171717;
   --chrome: #1c1c1c;
+  --rail-h: 48px;
+  --rail-gap: 10px;
   --hairline: rgba(255, 255, 255, 0.88);
   --on-dark: rgba(255, 255, 255, 0.82);
   --on-dark-muted: rgba(255, 255, 255, 0.52);
@@ -249,7 +251,8 @@ button {
 }
 
 .dock button {
-  padding: 0.8rem 1.05rem;
+  height: var(--rail-h);
+  padding: 0 1.05rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -735,101 +738,111 @@ button {
   color: var(--on-dark-muted);
 }
 
-/* --- the route, as linked segments --- */
+/* --- the route, as one fused rail --- */
+
+.goo-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
 
 .trail {
+  min-width: 0;
+}
+
+.trail-inner {
+  position: relative;
+  display: inline-block;
+}
+
+/* Shape only. The blur bleeds past the segments, so the layer is given room to
+   spill without being clipped by the scroller. */
+.trail-goo {
+  position: absolute;
+  inset: -26px;
   display: flex;
   align-items: center;
-  gap: 3px;
-  min-width: 0;
-  max-width: 100%;
-  padding: 3px;
-  background: var(--chrome);
-  border-radius: 999px;
-  overflow-x: auto;
-  scrollbar-width: none;
+  padding: 26px;
+  gap: var(--rail-gap);
+  filter: url(#rail-goo);
+  pointer-events: none;
 }
 
-.trail::-webkit-scrollbar {
-  display: none;
+.trail-face {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--rail-gap);
 }
 
+.goo-home,
 .trail-home {
   flex: none;
-  width: 40px;
-  height: 40px;
+  width: var(--rail-h);
+  height: var(--rail-h);
+  border-radius: 999px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
-  color: #fff;
-  transition: background 160ms ease;
 }
 
-.trail-home:hover {
-  background: rgba(255, 255, 255, 0.16);
+/* Both layers carry the same box so their widths cannot drift apart: the border
+   is always there, and only the current step paints it. */
+.goo-step.short,
+.trail-step.short {
+  padding: 0 1.1rem;
 }
 
-.trail-home svg {
-  width: 19px;
-  height: 19px;
-}
-
+.goo-step,
 .trail-step {
   flex: none;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  height: 40px;
-  padding: 0 1.05rem;
+  height: var(--rail-h);
+  max-width: 21rem;
+  padding: 0 1.6rem;
+  border: 5px solid transparent;
   border-radius: 999px;
+  /* a block with a fixed line box, so an over-long name ellipsises identically
+     on both layers and the two stay the same width */
+  display: block;
+  line-height: calc(var(--rail-h) - 10px);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 0.72rem;
   font-weight: 400;
   letter-spacing: 0.13em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.72);
-  transition: background 160ms ease, color 160ms ease;
 }
 
+.goo-home,
+.goo-step {
+  background: var(--chrome);
+  color: transparent;
+}
+
+.trail-home,
+.trail-step {
+  background: none;
+  color: rgba(255, 255, 255, 0.78);
+  transition: color 160ms ease;
+}
+
+.trail-home svg {
+  width: 20px;
+  height: 20px;
+}
+
+.trail-home:hover,
 .trail-step:hover {
-  background: rgba(255, 255, 255, 0.16);
   color: #fff;
 }
 
 /* The step you are on is cut out of the rail rather than filled into it. */
 .trail-step.here {
   background: var(--paper);
+  border-color: var(--chrome);
   color: var(--ink);
   cursor: default;
-}
-
-/* --- panel scroll rail --- */
-
-.scroll-rail {
-  position: absolute;
-  left: 20px;
-  top: 24%;
-  bottom: 12%;
-  width: 3px;
-  z-index: 3;
-  pointer-events: none;
-  /* the unread remainder, drawn as dashes */
-  background-image: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.42) 0 8px,
-    transparent 8px 16px
-  );
-  background-size: 3px 16px;
-}
-
-.scroll-rail i {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  border-radius: 2px;
-  background: #ffffff;
-  transition: transform 120ms linear;
 }
 
 /* --- paged story reader --- */
