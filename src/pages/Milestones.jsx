@@ -2,36 +2,35 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Bubble from '../components/Bubble'
 import PanCanvas from '../components/PanCanvas'
 import Scrubber from '../components/Scrubber'
-import { LAUREATES, MILESTONES, kindColor } from '../data/content'
+import { MILESTONES, kindColor } from '../data/content'
 import { ghostCircles } from '../lib/layout'
 import { DECADES, END_YEAR, PX_PER_YEAR, START_YEAR, WORLD, layoutByYear, yearToX } from '../lib/timeline'
 
-const MILESTONE_RADIUS = { 2: 108, 3: 142, 4: 176 }
+// Only key events sit on the timeline; the people who made them are reached by
+// opening an event, not by sharing the page with it.
+const MILESTONE_RADIUS = { 2: 122, 3: 156, 4: 192 }
 
 export default function Milestones({ selection, onSelect }) {
   const controls = useRef(null)
   const [year, setYear] = useState(1950)
 
-  const nodes = useMemo(() => {
-    const milestones = MILESTONES.map((m) => ({
-      id: m.id,
-      kind: 'milestone',
-      label: m.title,
-      year: m.year,
-      r: MILESTONE_RADIUS[m.weight] ?? 108,
-      color: kindColor('milestone'),
-    }))
-    const people = LAUREATES.map((l) => ({
-      id: l.id,
-      kind: 'person',
-      label: l.name,
-      meta: String(l.year),
-      year: l.year,
-      r: 66,
-      color: kindColor('person'),
-    }))
-    return layoutByYear([...milestones, ...people], { seed: 9 })
-  }, [])
+  const nodes = useMemo(
+    () =>
+      layoutByYear(
+        MILESTONES.map((m) => ({
+          id: m.id,
+          kind: 'milestone',
+          label: m.title,
+          meta: String(m.year),
+          year: m.year,
+          r: MILESTONE_RADIUS[m.weight] ?? 122,
+          color: kindColor('milestone'),
+        })),
+        // keep the band clear of the scrubber at the foot of the page
+        { seed: 9, top: 92, bottom: 648, padding: 26 },
+      ),
+    [],
+  )
 
   const ghosts = useMemo(() => ghostCircles(40, { ...WORLD, seed: 71 }), [])
 
@@ -62,7 +61,7 @@ export default function Milestones({ selection, onSelect }) {
     <>
       <div className="page-hint">
         <h1>Milestones</h1>
-        <p>Drag through the century · scrub below to jump</p>
+        <p>Key events across the century · open one to meet its laureates</p>
       </div>
       <PanCanvas world={WORLD} offsetRef={controls} onOffsetChange={handleOffset} lockY>
         {ghosts.map((g) => (

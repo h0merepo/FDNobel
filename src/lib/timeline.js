@@ -12,7 +12,7 @@ export const yearToX = (year) => (year - START_YEAR) * PX_PER_YEAR
 
 // Nodes settle mostly vertically; x may drift a little either side of its year
 // so that busy years can still resolve into a readable, non-overlapping cluster.
-const X_DRIFT = 46
+const X_DRIFT = 66
 
 function relax(circles, { padding, top, bottom, rng, iterations = 600 }) {
   for (let iter = 0; iter < iterations; iter++) {
