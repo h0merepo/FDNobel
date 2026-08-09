@@ -1,24 +1,24 @@
 import Ambient from '../components/Ambient'
-import { PALETTE, kindColor } from '../data/content'
+import { PALETTE } from '../data/content'
 
 const ENTRIES = [
   {
     id: 'stories',
     title: 'STORY',
     copy: 'Discover the story behind remarkable minds',
-    color: kindColor('theme'),
+    color: PALETTE.ink,
   },
   {
     id: 'milestones',
     title: 'MILESTONE',
     copy: 'Move through moments that changed the world',
-    color: kindColor('milestone'),
+    color: PALETTE.ink,
   },
   {
     id: 'discovery',
     title: 'DISCOVERY',
     copy: 'Follow your curiosity and explore your own path',
-    color: PALETTE.grey,
+    color: PALETTE.ink,
   },
 ]
 

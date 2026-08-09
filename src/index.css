@@ -14,7 +14,6 @@
   --paper: #e8e8e8;
   --ghost: #bcbcbc;
   --panel: #171717;
-  --halo: #b6b6b6;
   --chrome: #1c1c1c;
   --hairline: rgba(255, 255, 255, 0.88);
   --on-dark: rgba(255, 255, 255, 0.82);
@@ -184,17 +183,18 @@ button {
   transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), opacity 240ms ease,
     box-shadow 240ms ease;
   overflow: hidden;
+  box-shadow: 0 0 0 2px #ffffff;
 }
 
 .bubble:hover {
   transform: translate(-50%, -50%) scale(1.05);
-  box-shadow: 0 18px 46px rgba(20, 20, 20, 0.16);
+  box-shadow: 0 0 0 2px #ffffff, 0 18px 46px rgba(20, 20, 20, 0.18);
   z-index: 3;
 }
 
 .bubble.selected {
   transform: translate(-50%, -50%) scale(1.08);
-  box-shadow: 0 0 0 3px rgba(20, 20, 20, 0.85);
+  box-shadow: 0 0 0 4px #ffffff;
   z-index: 4;
 }
 
@@ -319,13 +319,6 @@ button {
   background: rgba(20, 20, 20, 0.06);
 }
 
-.search-results .swatch {
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  flex: none;
-}
-
 .search-results .kind {
   margin-left: auto;
   font-size: 0.72rem;
@@ -385,10 +378,16 @@ button {
   overflow: visible;
 }
 
-.web-lines .neck {
-  fill: var(--halo);
+.web-lines line {
+  stroke: rgba(20, 20, 20, 0.55);
+  stroke-width: 1;
   opacity: 0;
   animation: line-in 460ms ease forwards;
+}
+
+.web-lines line.path {
+  stroke: rgba(20, 20, 20, 0.75);
+  stroke-width: 1.2;
 }
 
 @keyframes line-in {
@@ -411,11 +410,11 @@ button {
   overflow-wrap: anywhere;
 }
 
-/* Every circle carries a halo in the same grey as the necks, so the whole web
-   reads as one body with coloured discs set into it. */
+/* Circles are flat ink with a single light hairline separating them from the
+   ground — no ring, no bevel, no halo. */
 .web-focal {
   padding: 0;
-  box-shadow: 0 0 0 15px var(--halo);
+  box-shadow: 0 0 0 2px #ffffff;
   animation: focal-in 460ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -446,7 +445,7 @@ button {
      hyphen rather than splitting the word wherever it happens to land. */
   overflow-wrap: break-word;
   hyphens: auto;
-  box-shadow: 0 0 0 9px var(--halo);
+  box-shadow: 0 0 0 2px #ffffff;
   opacity: 0;
   animation: node-in 460ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
   transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms ease;
@@ -470,7 +469,6 @@ button {
 .web-node.visited {
   overflow: visible;
   padding: 0;
-  box-shadow: 0 0 0 9px var(--halo);
 }
 
 /* Each step of the route is named by a pill riding the neck it arrived along. */
@@ -512,7 +510,7 @@ button {
 .web-node:hover,
 .web-node:focus-visible {
   transform: translate(-50%, -50%) scale(1.07);
-  box-shadow: 0 0 0 9px var(--halo), 0 16px 38px rgba(20, 20, 20, 0.22);
+  box-shadow: 0 0 0 2px #ffffff, 0 16px 38px rgba(20, 20, 20, 0.22);
   outline: none;
   z-index: 3;
 }
@@ -599,7 +597,7 @@ button {
   /* A very large disc cropped by the viewport: the top reads as an arc rather
      than a card edge, and the bottom closes with a shallower one. */
   border-radius: 46px 96px 28px 96px;
-  box-shadow: 0 0 0 12px var(--halo), 0 34px 90px rgba(20, 20, 20, 0.26);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 34px 90px rgba(20, 20, 20, 0.26);
   overflow: hidden;
 }
 
@@ -827,13 +825,6 @@ button {
   background: var(--paper);
   color: var(--ink);
   cursor: default;
-}
-
-.trail-step .dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  flex: none;
 }
 
 /* --- panel scroll rail --- */

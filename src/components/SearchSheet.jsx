@@ -58,7 +58,6 @@ export default function SearchSheet({ query, onQuery, onSelect }) {
         {results.length === 0 && <p className="search-empty">Nothing matches “{query}”.</p>}
         {results.map((item) => (
           <button key={`${item.kind}-${item.id}`} onClick={() => onSelect({ kind: item.kind, id: item.id })}>
-            <i className="swatch" style={{ background: item.color }} />
             {item.label}
             <span className="kind">{item.kind}</span>
           </button>

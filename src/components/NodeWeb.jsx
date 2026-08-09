@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { KIND_LABELS, textOn } from '../data/content'
 import { clamp, makeRng } from '../lib/layout'
-import { midpointOf, neckPath, slabAnchor } from '../lib/necks'
+import { midpointOf } from '../lib/necks'
 import { nodeMeta, relatedTo } from '../lib/relations'
 
 const FOCAL_MAX = 128
@@ -224,23 +224,16 @@ export default function NodeWeb({ selection, trail, onSelect }) {
     }
 
     const focalBody = { x: cx, y: cy, r: focalR }
-    const necks = [
-      ...placed.map((n) => ({ key: `n-${n.key}`, d: neckPath(focalBody, n) })),
-      ...laid.map((n, i) => ({
-        key: `c-${n.key}`,
-        d: neckPath(i === 0 ? focalBody : laid[i - 1], n),
-      })),
+    const links = [
+      ...placed.map((n) => ({ key: `n-${n.key}`, x1: cx, y1: cy, x2: n.x, y2: n.y })),
+      ...laid.map((n, i) => {
+        const from = i === 0 ? focalBody : laid[i - 1]
+        return { key: `c-${n.key}`, route: true, x1: from.x, y1: from.y, x2: n.x, y2: n.y }
+      }),
     ]
-    // The panel is joined to the focal node by the same connective tissue.
+    // The panel is tethered to the focal node by the same hairline.
     if (panelRight !== null) {
-      necks.unshift({
-        key: 'panel',
-        d: neckPath(slabAnchor(panelRight, cy, 150), focalBody, {
-          flare: 0.22,
-          pinch: 0.5,
-          bend: 0.36,
-        }),
-      })
+      links.unshift({ key: 'panel', x1: panelRight, y1: cy, x2: cx, y2: cy })
     }
 
     // Each step of the route is named by a pill sitting on the neck it arrived
@@ -268,7 +261,7 @@ export default function NodeWeb({ selection, trail, onSelect }) {
       focalR,
       chain: laid,
       nodes: placed,
-      necks,
+      links,
       pills,
       tag,
     }
@@ -298,11 +291,14 @@ export default function NodeWeb({ selection, trail, onSelect }) {
       {geometry && (
         <>
           <svg className="web-lines" aria-hidden="true">
-            {geometry.necks.map((neck, i) => (
-              <path
-                className="neck"
-                key={neck.key}
-                d={neck.d}
+            {geometry.links.map((link, i) => (
+              <line
+                className={link.route ? 'path' : undefined}
+                key={link.key}
+                x1={link.x1}
+                y1={link.y1}
+                x2={link.x2}
+                y2={link.y2}
                 style={{ animationDelay: `${90 + i * 45}ms` }}
               />
             ))}

@@ -8,16 +8,9 @@ export const PALETTE = {
   ink: '#141414',
 }
 
-// Colour encodes what a circle *is*, nowhere else. A reader who learns four
-// colours can read any view in the atlas without a key, so nothing else —
-// field, era, weight — is ever allowed to drive fill.
-export const KIND_COLORS = {
-  theme: PALETTE.blue,
-  milestone: PALETTE.green,
-  person: PALETTE.gold,
-  artifact: PALETTE.ink,
-}
-
+// The atlas is black and white: nothing about a circle's fill encodes what it
+// is. Type is carried by the tag on the focal node and by the labels, never by
+// colour. kindColor is kept as the single seam so a palette could return.
 export const KIND_LABELS = {
   theme: 'Story',
   milestone: 'Milestone',
@@ -25,8 +18,7 @@ export const KIND_LABELS = {
   artifact: 'Artifact',
 }
 
-// 'laureate' is the reader-facing word; 'person' is the kind used in selections.
-export const kindColor = (kind) => KIND_COLORS[kind === 'laureate' ? 'person' : kind] ?? PALETTE.grey
+export const kindColor = () => PALETTE.ink
 
 export const FIELDS = [
   { id: 'physics', label: 'Physics' },

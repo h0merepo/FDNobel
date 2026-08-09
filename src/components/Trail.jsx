@@ -36,7 +36,6 @@ export default function Trail({ trail, selection, onSelect, onHome }) {
             disabled={here}
             aria-current={here ? 'step' : undefined}
           >
-            <i className="dot" style={{ background: meta.color }} aria-hidden="true" />
             {meta.label}
           </button>
         )
