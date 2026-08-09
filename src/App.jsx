@@ -85,15 +85,16 @@ export default function App() {
         </div>
       )}
 
-      {focused && <Trail trail={trail} selection={selection} onSelect={select} />}
-
-      <NavDock
-        showHome={page !== 'landing'}
-        onHome={goHome}
-        searchOpen={searchOpen}
-        onSearch={() => setSearchOpen((o) => !o)}
-        onLanguage={() => {}}
-      />
+      <div className="chrome-bar">
+        <NavDock
+          searchOpen={searchOpen}
+          onSearch={() => setSearchOpen((o) => !o)}
+          onLanguage={() => {}}
+        />
+        {page !== 'landing' && (
+          <Trail trail={trail} selection={selection} onSelect={select} onHome={goHome} />
+        )}
+      </div>
 
       {searchOpen && <SearchSheet query={query} onQuery={setQuery} onSelect={select} />}
     </div>

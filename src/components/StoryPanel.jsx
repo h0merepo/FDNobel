@@ -1,8 +1,41 @@
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Plate from './Plate'
 import { narrativeFor } from '../data/narrative'
 import { nodeMeta } from '../lib/relations'
 
+// Reading position on the left edge: a solid run for what is on screen, dashes
+// for what is still below.
+function ScrollRail({ targetRef }) {
+  const [{ size, offset }, setState] = useState({ size: 0, offset: 0 })
+
+  const measure = useCallback(() => {
+    const el = targetRef.current
+    if (!el) return
+    const ratio = el.clientHeight / el.scrollHeight
+    setState({
+      size: Math.min(1, ratio),
+      offset: el.scrollHeight > el.clientHeight ? el.scrollTop / el.scrollHeight : 0,
+    })
+  }, [targetRef])
+
+  useEffect(() => {
+    const el = targetRef.current
+    if (!el) return
+    measure()
+    el.addEventListener('scroll', measure, { passive: true })
+    return () => el.removeEventListener('scroll', measure)
+  }, [targetRef, measure])
+
+  if (size >= 1) return null
+  return (
+    <span className="scroll-rail" aria-hidden="true">
+      <i style={{ height: `${size * 100}%`, top: `${offset * 100}%` }} />
+    </span>
+  )
+}
+
 export default function StoryPanel({ selection, onClose }) {
+  const bodyRef = useRef(null)
   const meta = nodeMeta(selection)
   if (!meta) return null
 
@@ -13,23 +46,24 @@ export default function StoryPanel({ selection, onClose }) {
   // artifacts and milestones carry their narrative now.
   if (selection.kind === 'theme') {
     return (
-      <article className="story-panel placeholder" key={seed}>
+      <div className="story-holder" key={seed}>
+        <article className="story-panel placeholder">
+          <Plate seed={seed} />
+          <span className="placeholder-label">Level 3 story</span>
+        </article>
         <button className="close" onClick={onClose} aria-label="Close story">
           ✕
         </button>
-        <Plate seed={seed} />
-        <span className="placeholder-label">Level 3 story</span>
-      </article>
+      </div>
     )
   }
 
   const { standfirst, body, caption, credit } = narrativeFor(selection.kind, selection.id, meta.blurb)
 
   return (
-    <article className="story-panel" key={seed}>
-      <button className="close" onClick={onClose} aria-label="Close story">
-        ✕
-      </button>
+    <div className="story-holder" key={seed}>
+      <article className="story-panel">
+        <ScrollRail targetRef={bodyRef} />
 
       <header className="story-hero">
         <Plate seed={seed} />
@@ -42,7 +76,7 @@ export default function StoryPanel({ selection, onClose }) {
         </div>
       </header>
 
-      <div className="story-body">
+      <div className="story-body" ref={bodyRef}>
         <p className="standfirst">{standfirst}</p>
 
         {body.map((paragraph, i) => (
@@ -58,7 +92,11 @@ export default function StoryPanel({ selection, onClose }) {
         ))}
 
         <footer className="story-credit">{credit}</footer>
-      </div>
-    </article>
+        </div>
+      </article>
+      <button className="close" onClick={onClose} aria-label="Close story">
+        ✕
+      </button>
+    </div>
   )
 }

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { KIND_LABELS, textOn } from '../data/content'
 import { clamp, makeRng } from '../lib/layout'
+import { midpointOf, neckPath, slabAnchor } from '../lib/necks'
 import { nodeMeta, relatedTo } from '../lib/relations'
 
 const FOCAL_MAX = 128
@@ -12,7 +13,7 @@ const CHAIN_SHOWN = 3
 // closer to the reference but run out of vertical room first, so a flatter one
 // is taken before the links are allowed to shrink.
 const CHAIN_ANGLES = [-0.42, -0.34, -0.26, -0.18, -0.1].map((k) => k * Math.PI)
-const CHAIN_SCALES = [1, 0.94, 0.88, 0.82, 0.76, 0.7]
+const CHAIN_SCALES = [1, 0.94, 0.88, 0.82, 0.76, 0.7, 0.64, 0.58]
 // Clearance either side of the chain that satellites may not occupy.
 const CHAIN_CLEARANCE = 0.65
 // The focal node carries a hollow ring on a leader line naming what kind of
@@ -28,6 +29,20 @@ const angleDelta = (a, b) => {
   return d
 }
 
+// A pill has only the gap between two circles to live in. Rather than cutting a
+// name mid-word, fall back to the form people actually use — a surname, or the
+// first significant word — and only trim if even that will not fit.
+function pillLabel(label, kind, budget) {
+  const words = label.replace(/^(the|a|an)\s+/i, '').split(/\s+/)
+  const candidates = [label]
+  if (kind === 'person') candidates.push(words[words.length - 1])
+  else if (words.length > 1) candidates.push(words[0])
+  const fits = candidates.find((c) => c.length <= budget)
+  if (fits) return fits
+  const shortest = candidates[candidates.length - 1]
+  return `${shortest.slice(0, Math.max(3, budget - 1)).trimEnd()}…`
+}
+
 function fitFontSize(radius, label) {
   const longest = label.split(' ').reduce((n, w) => Math.max(n, w.length), 0)
   return Math.max(9, Math.min(radius / 4.6, (radius * 1.7) / Math.max(longest, 5), 26))
@@ -35,17 +50,26 @@ function fitFontSize(radius, label) {
 
 export default function NodeWeb({ selection, trail, onSelect }) {
   const ref = useRef(null)
-  const [box, setBox] = useState({ w: 0, h: 0 })
+  const [box, setBox] = useState({ w: 0, h: 0, panelRight: null })
 
   useEffect(() => {
     const el = ref.current
     if (!el) return
-    const measure = () => setBox({ w: el.clientWidth, h: el.clientHeight })
+    const measure = () => {
+      const own = el.getBoundingClientRect()
+      const panel = document.querySelector('.story-panel')?.getBoundingClientRect()
+      setBox({
+        w: el.clientWidth,
+        h: el.clientHeight,
+        // local coordinates, so the neck can start behind the panel edge
+        panelRight: panel ? panel.right - own.left : null,
+      })
+    }
     measure()
     const ro = new ResizeObserver(measure)
     ro.observe(el)
     return () => ro.disconnect()
-  }, [])
+  }, [selection])
 
   const focal = nodeMeta(selection)
 
@@ -74,7 +98,7 @@ export default function NodeWeb({ selection, trail, onSelect }) {
   }, [selection, trail])
 
   const geometry = useMemo(() => {
-    const { w, h } = box
+    const { w, h, panelRight } = box
     if (!w || !h) return null
     const cx = w / 2
     const cy = h / 2
@@ -107,7 +131,7 @@ export default function NodeWeb({ selection, trail, onSelect }) {
       let previousR = focalR
       for (let i = 0; i < count; i += 1) {
         const r = Math.max(20, satR * 0.9 ** (i + 1) * scale)
-        distance += previousR + r + 34 * scale
+        distance += previousR + r + 74 * scale
         previousR = r
         out.push({ ...history[i], r, angle: baseAngle - i * 0.1, dist: distance })
       }
@@ -175,12 +199,12 @@ export default function NodeWeb({ selection, trail, onSelect }) {
       const clearance = occupied.length
         ? Math.min(...occupied.map((u) => Math.abs(angleDelta(a, u))))
         : Math.PI
-      if (clearance < 0.36) continue
+      if (clearance < 0.28) continue
       const score = -Math.abs(angleDelta(a, TAG_TARGET))
       if (!tag || score > tag.score) tag = { angle: a, score }
     }
     if (tag) {
-      const dist = Math.min(ring * 1.3, roomAt(tag.angle) - TAG_RING - 14)
+      const dist = Math.min(ring * 1.36, roomAt(tag.angle) - TAG_RING - 14)
       if (dist < focalR + 74) {
         tag = null
       } else {
@@ -199,12 +223,53 @@ export default function NodeWeb({ selection, trail, onSelect }) {
       }
     }
 
+    const focalBody = { x: cx, y: cy, r: focalR }
+    const necks = [
+      ...placed.map((n) => ({ key: `n-${n.key}`, d: neckPath(focalBody, n) })),
+      ...laid.map((n, i) => ({
+        key: `c-${n.key}`,
+        d: neckPath(i === 0 ? focalBody : laid[i - 1], n),
+      })),
+    ]
+    // The panel is joined to the focal node by the same connective tissue.
+    if (panelRight !== null) {
+      necks.unshift({
+        key: 'panel',
+        d: neckPath(slabAnchor(panelRight, cy, 150), focalBody, {
+          flare: 0.22,
+          pinch: 0.5,
+          bend: 0.36,
+        }),
+      })
+    }
+
+    // Each step of the route is named by a pill sitting on the neck it arrived
+    // along, which keeps long names off the small circles entirely.
+    const pills = laid.map((n, i) => {
+      const span = midpointOf(i === 0 ? focalBody : laid[i - 1], n)
+      // Long names are trimmed to what the gap can hold; the rail along the
+      // bottom always carries the full one.
+      // The pill may ride a little onto the rim of the circles either side, as
+      // in the reference, which is what makes a surname fit at all.
+      const room = span.gap + Math.min(span.minR, 60) * 1.5 - 18
+      const budget = Math.max(4, Math.floor(room / 6.3))
+      return {
+        key: n.key,
+        label: pillLabel(n.meta.label, n.kind, budget),
+        title: n.meta.label,
+        node: n,
+        ...span,
+      }
+    })
+
     return {
       cx,
       cy,
       focalR,
       chain: laid,
       nodes: placed,
+      necks,
+      pills,
       tag,
     }
 
@@ -233,20 +298,14 @@ export default function NodeWeb({ selection, trail, onSelect }) {
       {geometry && (
         <>
           <svg className="web-lines" aria-hidden="true">
-            {geometry.nodes.map((n, i) => (
-              <line
-                key={n.key}
-                x1={geometry.cx}
-                y1={geometry.cy}
-                x2={n.x}
-                y2={n.y}
-                style={{ animationDelay: `${120 + i * 55}ms` }}
+            {geometry.necks.map((neck, i) => (
+              <path
+                className="neck"
+                key={neck.key}
+                d={neck.d}
+                style={{ animationDelay: `${90 + i * 45}ms` }}
               />
             ))}
-            {geometry.chain.map((n, i) => {
-              const from = i === 0 ? { x: geometry.cx, y: geometry.cy } : geometry.chain[i - 1]
-              return <line className="path" key={n.key} x1={from.x} y1={from.y} x2={n.x} y2={n.y} />
-            })}
             {geometry.tag && (
               <line
                 className="leader"
@@ -279,12 +338,19 @@ export default function NodeWeb({ selection, trail, onSelect }) {
               onClick={() => onSelect(n)}
               title={`Back to ${n.meta.label}`}
             >
-              <span
-                className="chain-label"
-                style={{ transform: `translate(calc(-50% + ${n.ox}px), calc(-50% + ${n.oy}px))` }}
-              >
-                {n.meta.label}
-              </span>
+              <span className="sr-only">{n.meta.label}</span>
+            </button>
+          ))}
+
+          {geometry.pills.map((pill) => (
+            <button
+              key={pill.key}
+              className="neck-pill"
+              style={{ left: pill.x, top: pill.y, transform: `translate(-50%, -50%) rotate(${pill.angle}deg)` }}
+              onClick={() => onSelect(pill.node)}
+              title={pill.title}
+            >
+              {pill.label}
             </button>
           ))}
 

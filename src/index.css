@@ -14,6 +14,8 @@
   --paper: #e8e8e8;
   --ghost: #bcbcbc;
   --panel: #171717;
+  --halo: #b6b6b6;
+  --chrome: #1c1c1c;
   --hairline: rgba(255, 255, 255, 0.88);
   --on-dark: rgba(255, 255, 255, 0.82);
   --on-dark-muted: rgba(255, 255, 255, 0.52);
@@ -218,46 +220,50 @@ button {
   letter-spacing: 0;
 }
 
-/* ---------- nav dock ---------- */
+/* ---------- chrome bar: tools + route rail ---------- */
 
-.dock {
+.chrome-bar {
   position: absolute;
   left: 2rem;
-  bottom: 2rem;
+  bottom: 1.7rem;
+  right: 2rem;
   z-index: 40;
   display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  pointer-events: none;
+}
+
+.chrome-bar > * {
+  pointer-events: auto;
+}
+
+.dock {
+  display: flex;
   align-items: stretch;
-  background: rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(20, 20, 20, 0.22);
+  flex: none;
+  background: var(--chrome);
   border-radius: 999px;
-  box-shadow: 0 10px 30px rgba(20, 20, 20, 0.12);
+  color: #fff;
   overflow: hidden;
 }
 
 .dock button {
-  padding: 0.85rem 1.15rem;
+  padding: 0.8rem 1.05rem;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background 180ms ease;
 }
 
-.dock button + button {
-  border-left: 1px solid rgba(20, 20, 20, 0.14);
-}
-
-.dock button:hover {
-  background: rgba(20, 20, 20, 0.06);
-}
-
+.dock button:hover,
 .dock button.active {
-  background: rgba(20, 20, 20, 0.09);
+  background: rgba(255, 255, 255, 0.16);
 }
 
 .dock svg {
-  width: 22px;
-  height: 22px;
+  width: 21px;
+  height: 21px;
   display: block;
 }
 
@@ -379,11 +385,10 @@ button {
   overflow: visible;
 }
 
-.web-lines line {
-  stroke: rgba(20, 20, 20, 0.5);
-  stroke-width: 1;
+.web-lines .neck {
+  fill: var(--halo);
   opacity: 0;
-  animation: line-in 420ms ease forwards;
+  animation: line-in 460ms ease forwards;
 }
 
 @keyframes line-in {
@@ -406,12 +411,11 @@ button {
   overflow-wrap: anywhere;
 }
 
-/* The focal node reads as a disc cut out of the ground: a white hairline with
-   a finer dark line outside it, no bevel or gradient. */
+/* Every circle carries a halo in the same grey as the necks, so the whole web
+   reads as one body with coloured discs set into it. */
 .web-focal {
   padding: 0;
-  box-shadow: 0 0 0 4px #ffffff, 0 0 0 5px rgba(20, 20, 20, 0.42),
-    0 30px 70px rgba(20, 20, 20, 0.22);
+  box-shadow: 0 0 0 15px var(--halo);
   animation: focal-in 460ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -442,6 +446,7 @@ button {
      hyphen rather than splitting the word wherever it happens to land. */
   overflow-wrap: break-word;
   hyphens: auto;
+  box-shadow: 0 0 0 9px var(--halo);
   opacity: 0;
   animation: node-in 460ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
   transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms ease;
@@ -463,23 +468,40 @@ button {
    Its name is set outside the circle, so the circle can stay small without ever
    breaking or clipping a word. */
 .web-node.visited {
-  box-shadow: 0 0 0 3px #ffffff, 0 0 0 4px rgba(20, 20, 20, 0.34);
   overflow: visible;
   padding: 0;
+  box-shadow: 0 0 0 9px var(--halo);
 }
 
-.chain-label {
+/* Each step of the route is named by a pill riding the neck it arrived along. */
+.neck-pill {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  white-space: nowrap;
-  font-size: 0.66rem;
-  font-weight: 400;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  z-index: 4;
+  padding: 0.26rem 0.62rem;
+  border-radius: 999px;
+  background: #ffffff;
   color: var(--ink);
-  text-shadow: 0 0 6px var(--paper), 0 0 12px var(--paper);
-  pointer-events: none;
+  font-size: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: 0 3px 12px rgba(20, 20, 20, 0.16);
+  animation: fade-up 460ms 200ms ease backwards;
+}
+
+.neck-pill:hover {
+  background: var(--ink);
+  color: #fff;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .web-lines line.path {
@@ -489,8 +511,8 @@ button {
 
 .web-node:hover,
 .web-node:focus-visible {
-  transform: translate(-50%, -50%) scale(1.09);
-  box-shadow: 0 18px 44px rgba(20, 20, 20, 0.2);
+  transform: translate(-50%, -50%) scale(1.07);
+  box-shadow: 0 0 0 9px var(--halo), 0 16px 38px rgba(20, 20, 20, 0.22);
   outline: none;
   z-index: 3;
 }
@@ -556,24 +578,29 @@ button {
 
 /* --- narrative panel --- */
 
-.story-panel {
+.story-holder {
   position: absolute;
   top: 1.9rem;
   bottom: 6.6rem;
   left: 1.9rem;
   z-index: 32;
   width: min(430px, calc(100vw - 3.8rem));
+  animation: panel-in 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.story-panel {
+  position: relative;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   color: #ffffff;
   background: var(--panel);
   /* A very large disc cropped by the viewport: the top reads as an arc rather
      than a card edge, and the bottom closes with a shallower one. */
-  border-radius: 50% 50% 48% 48% / 21% 21% 15% 15%;
-  border: 1px solid var(--hairline);
-  box-shadow: 0 34px 90px rgba(20, 20, 20, 0.34);
+  border-radius: 46px 96px 28px 96px;
+  box-shadow: 0 0 0 12px var(--halo), 0 34px 90px rgba(20, 20, 20, 0.26);
   overflow: hidden;
-  animation: panel-in 380ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes panel-in {
@@ -596,28 +623,28 @@ button {
   pointer-events: none;
 }
 
-.story-panel .close {
+.story-holder .close {
   position: absolute;
-  top: 0.85rem;
-  right: 0.85rem;
-  z-index: 2;
-  width: 32px;
-  height: 32px;
+  top: -10px;
+  right: -54px;
+  z-index: 34;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1rem;
   line-height: 1;
-  color: #fff;
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  transition: background 160ms ease, border-color 160ms ease;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  transition: background 160ms ease, color 160ms ease;
 }
 
-.story-panel .close:hover {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: #fff;
+.story-holder .close:hover {
+  background: var(--ink);
+  color: #fff;
 }
 
 .story-hero {
@@ -733,23 +760,17 @@ button {
   color: var(--on-dark-muted);
 }
 
-/* --- path trail --- */
+/* --- the route, as linked segments --- */
 
 .trail {
-  position: absolute;
-  top: 1.6rem;
-  right: 2rem;
-  z-index: 40;
-  max-width: min(58vw, 760px);
   display: flex;
   align-items: center;
-  gap: 0.1rem;
-  padding: 0.42rem 0.85rem;
-  background: rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(20, 20, 20, 0.22);
+  gap: 3px;
+  min-width: 0;
+  max-width: 100%;
+  padding: 3px;
+  background: var(--chrome);
   border-radius: 999px;
-  box-shadow: 0 10px 30px rgba(20, 20, 20, 0.12);
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -758,50 +779,89 @@ button {
   display: none;
 }
 
-.trail-step {
+.trail-home {
+  flex: none;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
-  flex: none;
-}
-
-.trail-link {
-  width: 14px;
-  height: 1px;
-  margin: 0 0.15rem;
-  background: rgba(20, 20, 20, 0.3);
-  flex: none;
-}
-
-.trail button {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  white-space: nowrap;
-  padding: 0.24rem 0.5rem;
+  justify-content: center;
   border-radius: 999px;
-  font-size: 0.78rem;
-  color: var(--muted);
+  color: #fff;
+  transition: background 160ms ease;
+}
+
+.trail-home:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.trail-home svg {
+  width: 19px;
+  height: 19px;
+}
+
+.trail-step {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 40px;
+  padding: 0 1.05rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
   transition: background 160ms ease, color 160ms ease;
 }
 
-.trail button:hover {
-  background: rgba(20, 20, 20, 0.07);
-  color: var(--ink);
+.trail-step:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
 }
 
-.trail button .dot {
+/* The step you are on is cut out of the rail rather than filled into it. */
+.trail-step.here {
+  background: var(--paper);
+  color: var(--ink);
+  cursor: default;
+}
+
+.trail-step .dot {
   width: 9px;
   height: 9px;
   border-radius: 50%;
   flex: none;
-  box-shadow: inset 0 0 0 1px rgba(20, 20, 20, 0.14);
 }
 
-.trail button.here {
-  color: var(--ink);
-  font-weight: 500;
-  background: rgba(20, 20, 20, 0.07);
-  cursor: default;
+/* --- panel scroll rail --- */
+
+.scroll-rail {
+  position: absolute;
+  left: 20px;
+  top: 24%;
+  bottom: 12%;
+  width: 3px;
+  z-index: 3;
+  pointer-events: none;
+  /* the unread remainder, drawn as dashes */
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.42) 0 8px,
+    transparent 8px 16px
+  );
+  background-size: 3px 16px;
+}
+
+.scroll-rail i {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  border-radius: 2px;
+  background: #ffffff;
+  transition: transform 120ms linear;
 }
 
 /* --- concept placeholder --- */

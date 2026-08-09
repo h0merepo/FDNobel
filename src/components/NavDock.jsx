@@ -1,9 +1,3 @@
-const HomeIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-    <path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z" strokeLinejoin="round" />
-  </svg>
-)
-
 const SearchIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
     <circle cx="11" cy="11" r="6.5" />
@@ -18,14 +12,12 @@ const TranslateIcon = () => (
   </svg>
 )
 
-export default function NavDock({ onHome, onSearch, searchOpen, onLanguage, showHome = true }) {
+export default function NavDock({ onSearch, searchOpen, onLanguage }) {
   return (
     <nav className="dock">
-      {showHome && (
-        <button onClick={onHome} aria-label="Home">
-          <HomeIcon />
-        </button>
-      )}
+      <button onClick={onLanguage} aria-label="Language">
+        <TranslateIcon />
+      </button>
       <button
         onClick={onSearch}
         className={searchOpen ? 'active' : ''}
@@ -33,9 +25,6 @@ export default function NavDock({ onHome, onSearch, searchOpen, onLanguage, show
         aria-pressed={searchOpen}
       >
         <SearchIcon />
-      </button>
-      <button onClick={onLanguage} aria-label="Language">
-        <TranslateIcon />
       </button>
     </nav>
   )
