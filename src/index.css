@@ -832,7 +832,82 @@ button {
   transition: transform 120ms linear;
 }
 
-/* --- concept placeholder --- */
+/* --- paged story reader --- */
+
+.story-panel.reader .story-body {
+  padding-bottom: 4.6rem;
+}
+
+/* Seven marks for seven screens, filling as the reader moves through. */
+.screen-rail {
+  position: absolute;
+  left: 22px;
+  top: 8%;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.screen-rail i {
+  width: 3px;
+  height: 13px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.32);
+  transition: background 200ms ease;
+}
+
+.screen-rail i.read {
+  background: #ffffff;
+}
+
+.reader-nav {
+  position: absolute;
+  left: 2.1rem;
+  right: 2.1rem;
+  bottom: 1.5rem;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.reader-nav button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  transition: background 160ms ease, opacity 160ms ease;
+}
+
+.reader-nav button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.reader-nav button:disabled {
+  opacity: 0.28;
+  cursor: default;
+}
+
+.reader-nav svg {
+  width: 17px;
+  height: 17px;
+}
+
+.reader-count {
+  font-size: 0.72rem;
+  font-weight: 300;
+  letter-spacing: 0.17em;
+  color: var(--on-dark-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- theme call to action --- */
 
 .story-panel.placeholder {
   align-items: center;
@@ -842,12 +917,15 @@ button {
 .placeholder-label {
   position: relative;
   z-index: 1;
+  max-width: 17ch;
+  padding: 0 2rem;
+  text-align: center;
+  text-wrap: balance;
   color: #fff;
-  font-size: 1.05rem;
+  font-size: clamp(1.15rem, 1.6vw, 1.5rem);
   font-weight: 300;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.6);
+  line-height: 1.32;
+  text-shadow: 0 2px 26px rgba(0, 0, 0, 0.7);
 }
 
 @media (prefers-reduced-motion: reduce) {

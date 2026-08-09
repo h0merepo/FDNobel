@@ -15,6 +15,7 @@ const PAGE_FOR_KIND = {
   milestone: 'milestones',
   person: 'discovery',
   artifact: 'discovery',
+  story: 'discovery',
 }
 
 const sameNode = (a, b) => a && b && a.kind === b.kind && a.id === b.id

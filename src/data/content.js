@@ -12,7 +12,8 @@ export const PALETTE = {
 // is. Type is carried by the tag on the focal node and by the labels, never by
 // colour. kindColor is kept as the single seam so a palette could return.
 export const KIND_LABELS = {
-  theme: 'Story',
+  theme: 'Theme',
+  story: 'Story',
   milestone: 'Milestone',
   person: 'Laureate',
   artifact: 'Artifact',
@@ -125,6 +126,8 @@ export const LAUREATES = [
   { id: 'gore', name: 'Al Gore and the IPCC', field: 'peace', year: 2007, country: 'United States', blurb: 'A shared prize for turning accumulated climate data into public argument.', themes: ['climate-t', 'commons', 'truth'] },
   { id: 'ross', name: 'Ronald Ross', field: 'medicine', year: 1902, country: 'United Kingdom', blurb: 'Found the malaria parasite in a mosquito\'s stomach, and wrote a poem about it that night.', themes: ['microorganisms-t', 'observation', 'healthcare'] },
   { id: 'ressa', name: 'Maria Ressa', field: 'peace', year: 2021, country: 'Philippines', blurb: 'Reporting under a barrage of arrest warrants; the first Filipino laureate.', themes: ['truth', 'courage', 'women-rights'] },
+  { id: 'shirakawa', name: 'Hideki Shirakawa', field: 'chemistry', year: 2000, country: 'Japan', blurb: 'A catalyst added at a thousand times the intended concentration produced a plastic that conducts electricity.', themes: ['accident', 'chance', 'testing', 'instruments'] },
+  { id: 'penzias', name: 'Arno Penzias', field: 'physics', year: 1978, country: 'United States', blurb: 'Spent a year trying to eliminate a hiss in an antenna that turned out to be the afterglow of the early universe.', themes: ['chance', 'instruments', 'scale', 'observation'] },
   { id: 'sherrington', name: 'Charles Sherrington', field: 'medicine', year: 1932, country: 'United Kingdom', blurb: 'Named the synapse and described the nervous system as an "enchanted loom".', themes: ['consciousness', 'senses-behaviour'] },
 ]
 

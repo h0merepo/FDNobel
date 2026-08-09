@@ -1,5 +1,6 @@
 import { useMemo, useRef, useEffect } from 'react'
 import { ARTIFACTS, LAUREATES, MILESTONES, THEMES, kindColor } from '../data/content'
+import { STORIES } from '../data/stories'
 
 const INDEX = [
   ...THEMES.map((t) => ({
@@ -22,6 +23,17 @@ const INDEX = [
     label: `${m.title} · ${m.year}`,
     hay: `${m.title} ${m.year} ${m.blurb}`.toLowerCase(),
     color: kindColor('milestone'),
+  })),
+  ...STORIES.map((n) => ({
+    kind: 'story',
+    id: n.id,
+    label: `${n.title} · ${n.sub}`,
+    // the whole narrative is searchable, so a story can be found by a detail
+    // inside it rather than only by its title
+    hay: `${n.title} ${n.sub} ${n.screens
+      .map((s) => `${s.heading} ${s.body}`)
+      .join(' ')}`.toLowerCase(),
+    color: kindColor('story'),
   })),
   ...ARTIFACTS.map((a) => ({
     kind: 'artifact',

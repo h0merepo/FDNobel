@@ -7,6 +7,7 @@ import {
   findTheme,
   kindColor,
 } from '../data/content'
+import { STORIES, findStory } from '../data/stories'
 
 const asTheme = (t) => ({ key: `theme:${t.id}`, kind: 'theme', id: t.id, label: t.label, color: kindColor('theme') })
 const asPerson = (p) => ({
@@ -24,6 +25,14 @@ const asMilestone = (m) => ({
   label: m.title,
   sub: String(m.year),
   color: kindColor('milestone'),
+})
+const asStory = (n) => ({
+  key: `story:${n.id}`,
+  kind: 'story',
+  id: n.id,
+  label: n.title,
+  sub: n.sub,
+  color: kindColor('story'),
 })
 const asArtifact = (a) => ({ key: `artifact:${a.id}`, kind: 'artifact', id: a.id, label: a.label, color: kindColor('artifact') })
 
@@ -57,6 +66,7 @@ export function relatedTo(selection, limit = 8) {
     if (!t) return []
     return interleave(
       [
+        STORIES.filter((n) => n.themes.includes(id)).map(asStory),
         t.laureates.map(findLaureate).filter(Boolean).map(asPerson),
         t.related.map(findTheme).filter(Boolean).map(asTheme),
         t.milestones.map(findMilestone).filter(Boolean).map(asMilestone),
@@ -72,6 +82,7 @@ export function relatedTo(selection, limit = 8) {
     if (!p) return []
     return interleave(
       [
+        STORIES.filter((n) => n.laureates.includes(id)).map(asStory),
         p.themes.map(findTheme).filter(Boolean).map(asTheme),
         MILESTONES.filter((m) => m.laureates.includes(id)).map(asMilestone),
         LAUREATES.filter((l) => l.id !== id && l.field === p.field && Math.abs(l.year - p.year) <= 12)
@@ -91,6 +102,7 @@ export function relatedTo(selection, limit = 8) {
     if (!m) return []
     return interleave(
       [
+        STORIES.filter((n) => n.milestones.includes(id)).map(asStory),
         m.themes.map(findTheme).filter(Boolean).map(asTheme),
         m.laureates.map(findLaureate).filter(Boolean).map(asPerson),
         MILESTONES.filter((o) => o.id !== m.id && Math.abs(o.year - m.year) <= 12)
@@ -102,6 +114,23 @@ export function relatedTo(selection, limit = 8) {
       ],
       limit,
       [m.title],
+    )
+  }
+
+  if (kind === 'story') {
+    const n = findStory(id)
+    if (!n) return []
+    return interleave(
+      [
+        n.laureates.map(findLaureate).filter(Boolean).map(asPerson),
+        n.themes.map(findTheme).filter(Boolean).map(asTheme),
+        n.milestones.map(findMilestone).filter(Boolean).map(asMilestone),
+        ARTIFACTS.filter((a) => a.themes.some((th) => n.themes.includes(th)))
+          .slice(0, 2)
+          .map(asArtifact),
+      ],
+      limit,
+      [n.title],
     )
   }
 
@@ -127,7 +156,7 @@ export function nodeMeta(selection) {
   const { kind, id } = selection
   if (kind === 'theme') {
     const t = findTheme(id)
-    return t && { kicker: 'Story', label: t.label, blurb: t.blurb, color: kindColor('theme') }
+    return t && { kicker: 'Theme', label: t.label, blurb: t.blurb, color: kindColor('theme') }
   }
   if (kind === 'person') {
     const p = findLaureate(id)
@@ -140,6 +169,10 @@ export function nodeMeta(selection) {
         color: kindColor('person'),
       }
     )
+  }
+  if (kind === 'story') {
+    const n = findStory(id)
+    return n && { kicker: 'Story', label: n.title, sub: n.sub, color: kindColor('story') }
   }
   if (kind === 'milestone') {
     const m = findMilestone(id)

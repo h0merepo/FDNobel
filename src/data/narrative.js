@@ -4,6 +4,7 @@
 
 const themes = {
   chance: {
+    cta: 'Discover how the unexpected sparks new light',
     standfirst:
       'Almost every laboratory keeps a story about the day nothing went to plan and something arrived anyway.',
     body: [
@@ -13,6 +14,7 @@ const themes = {
     caption: 'A ring of cleared bacteria around a contaminant',
   },
   creativity: {
+    cta: 'See what happens when someone imagines the shape first',
     standfirst:
       'A discovery is not found lying in the world. Someone has to imagine the shape it might take before the evidence can confirm it.',
     body: [
@@ -22,6 +24,7 @@ const themes = {
     caption: 'Working notes, redrawn',
   },
   revolt: {
+    cta: 'Meet the people who refused the settled account',
     standfirst:
       'Every settled account of the world was once a minority position held by someone who would not let it go.',
     body: [
@@ -31,6 +34,7 @@ const themes = {
     caption: 'A disputed result, first presentation',
   },
   accident: {
+    cta: 'Follow the discoveries that began as somebody’s mistake',
     standfirst:
       'A spill, a slip, a contaminated sample. Some of the most consequential findings of the century began as somebody\'s mistake.',
     body: [
@@ -40,6 +44,7 @@ const themes = {
     caption: 'The ruined preparation, kept',
   },
   'invisible-worlds': {
+    cta: 'Look beneath the threshold of the eye',
     standfirst:
       'Beneath the threshold of the eye there is a second world — microbes, atoms, radiation, genes — and almost all of it was discovered within a single lifetime.',
     body: [
@@ -49,6 +54,7 @@ const themes = {
     caption: 'Exposure made without visible light',
   },
   courage: {
+    cta: 'Stand with those who spoke when it cost them everything',
     standfirst:
       'Standing in the open when it costs something — a professorship, a passport, a country, occasionally a life.',
     body: [
@@ -58,6 +64,7 @@ const themes = {
     caption: 'Delegates leaving the congress',
   },
   play: {
+    cta: 'Find out what serious work looks like when it looks like fiddling',
     standfirst:
       'Serious work that looks, from outside, like fiddling about — and turns out to be physics.',
     body: [
@@ -67,6 +74,7 @@ const themes = {
     caption: 'Apparatus assembled from what was to hand',
   },
   solitude: {
+    cta: 'Spend time with the quiet where breakthroughs are made',
     standfirst:
       'Long stretches alone with a problem: the quiet, unwitnessed condition in which most breakthroughs are actually made.',
     body: [
@@ -76,6 +84,7 @@ const themes = {
     caption: 'A single-occupant laboratory',
   },
   dreams: {
+    cta: 'Follow the answers that arrived in sleep',
     standfirst:
       'Answers that arrive sideways, in sleep or reverie, when the reasoning mind has stopped insisting.',
     body: [
@@ -85,6 +94,7 @@ const themes = {
     caption: 'Notes taken at three in the morning',
   },
   youth: {
+    cta: 'Meet the laureates who were far too young to know better',
     standfirst: 'Work done absurdly early, by people the field had not yet learned to take seriously.',
     body: [
       'Lawrence Bragg was twenty-five when he shared the physics prize with his father for reading the structure of crystals with X-rays; he remains the youngest science laureate. Malala Yousafzai was seventeen.',
@@ -93,6 +103,7 @@ const themes = {
     caption: 'The youngest laureate, on the day',
   },
   collaboration: {
+    cta: 'Count the names a prize for three could never hold',
     standfirst:
       'The statutes allow a prize to be divided three ways. Discoveries are rarely so considerate.',
     body: [
@@ -102,6 +113,7 @@ const themes = {
     caption: 'The group photograph, with omissions',
   },
   persistence: {
+    cta: 'Sit with the unglamorous middle of the story',
     standfirst:
       'Tonnes of pitchblende reduced, by hand, in a shed, to a decigram of radium chloride. This is the part of the story that gets summarised in a clause.',
     body: [
@@ -111,6 +123,7 @@ const themes = {
     caption: 'Four years of extraction, one result',
   },
   observation: {
+    cta: 'Learn to look harder at what everyone has already seen',
     standfirst: 'Looking harder at exactly what everybody else has already looked at.',
     body: [
       'Koch established that a specific organism produces a specific disease, every time — turning contagion from a mood into a mechanism. Lorenz founded ethology by watching geese decide he was their mother.',
@@ -119,6 +132,7 @@ const themes = {
     caption: 'The same field, examined again',
   },
   imagination: {
+    cta: 'Picture a world before anyone could measure it',
     standfirst:
       'Picturing a world you cannot yet measure, and then building the measurement to check.',
     body: [
@@ -128,6 +142,7 @@ const themes = {
     caption: 'A geometry drawn before it was observed',
   },
   mentoring: {
+    cta: 'Trace the corridors that keep producing laureates',
     standfirst:
       'Lineages of teachers and students; particular corridors that keep producing laureates decade after decade.',
     body: [
@@ -137,6 +152,7 @@ const themes = {
     caption: 'A laboratory and its descendants',
   },
   testing: {
+    cta: 'Watch a discipline built on proving yourself wrong',
     standfirst:
       'The discipline of trying, methodically, to prove yourself wrong — several thousand times, on the record.',
     body: [
@@ -146,6 +162,7 @@ const themes = {
     caption: 'The log of unsuccessful preparations',
   },
   'senses-behaviour': {
+    cta: 'Explore how a body takes in a world',
     standfirst:
       'How bodies and brains take in a world: sight, smell, pain, instinct, memory, habit.',
     body: [
@@ -155,6 +172,7 @@ const themes = {
     caption: 'Response measured against stimulus',
   },
   healthcare: {
+    cta: 'Follow a finding from the bench to the ward',
     standfirst:
       'The slow translation of a laboratory finding into ordinary, unremarkable survival.',
     body: [
@@ -164,6 +182,7 @@ const themes = {
     caption: 'Ward records, before and after',
   },
   'the-atomic-age': {
+    cta: 'Face the physics that lit cities and ended two of them',
     standfirst:
       'The same physics that lit cities also ended two of them, within four decades of the first prize.',
     body: [
@@ -173,6 +192,7 @@ const themes = {
     caption: 'Instrument readings, 1945',
   },
   'antibiotics-t': {
+    cta: 'Travel the decade between a mould and a medicine',
     standfirst:
       'A decade separates the mould on Fleming\'s dish from the drug in the vial, and the second half of that story is chemistry.',
     body: [
@@ -182,6 +202,7 @@ const themes = {
     caption: 'The original plate, re-photographed',
   },
   genes: {
+    cta: 'Read the instructions written in four letters',
     standfirst:
       'Instructions written in four letters — jumping, folding, mutating, and now edited.',
     body: [
@@ -191,6 +212,7 @@ const themes = {
     caption: 'Sequence data, partial',
   },
   'women-rights': {
+    cta: 'Meet the women kept out of the rooms they changed',
     standfirst:
       'Suffrage, settlement houses, schooling — and, separately, the laureates who were kept out of the laboratories where the work was done.',
     body: [
@@ -200,6 +222,7 @@ const themes = {
     caption: 'Congress delegates, The Hague, 1915',
   },
   'arms-defense': {
+    cta: 'Hear the disarmament case made by the weapon builders',
     standfirst:
       'Disarmament treaties argued for, with unusual authority, by the people who had built the weapons.',
     body: [
@@ -209,6 +232,7 @@ const themes = {
     caption: 'Treaty text, initialled',
   },
   'economic-history': {
+    cta: 'Revisit the crashes the models never saw coming',
     standfirst: 'Booms, crashes, and the models that consistently failed to see them coming.',
     body: [
       'The 1929 crash turned macroeconomics into a subject governments were obliged to listen to. Friedman reread the Depression as a monetary failure and reshaped central banking for forty years on the strength of it.',
@@ -217,6 +241,7 @@ const themes = {
     caption: 'Index series, 1928–1933',
   },
   conscience: {
+    cta: 'Meet the scientists who turned against their own work',
     standfirst:
       'Scientists who spent the second half of their careers campaigning against the first half.',
     body: [
@@ -226,6 +251,7 @@ const themes = {
     caption: 'Open letter, first page',
   },
   exile: {
+    cta: 'Follow the work that continued somewhere else',
     standfirst:
       'Passports withdrawn, laboratories abandoned, appointments cancelled — and the work continued somewhere else.',
     body: [
@@ -235,6 +261,7 @@ const themes = {
     caption: 'Travel document, annotated',
   },
   outsiders: {
+    cta: 'Meet the amateurs and assistants who changed the field',
     standfirst:
       'Amateurs, clerks, immigrants and unpaid assistants who changed a field that had not made room for them.',
     body: [
@@ -244,6 +271,7 @@ const themes = {
     caption: 'Correspondence, unanswered',
   },
   instruments: {
+    cta: 'Discover the machines that had to exist before the seeing',
     standfirst: 'You cannot see a thing until somebody has built the thing that sees it.',
     body: [
       'Ruska built the first electron microscope in 1931 and was recognised fifty-five years later, at eighty. Betzig broke the diffraction limit that was supposed to be a hard physical ceiling on optical microscopy.',
@@ -252,6 +280,7 @@ const themes = {
     caption: 'Optical assembly, sectioned',
   },
   scale: {
+    cta: 'Travel from the quark to the galaxy in one step',
     standfirst: 'From quarks to galaxies: the vertigo of very small and very large numbers.',
     body: [
       'The century began with the atom as a convenient fiction and ended with the cosmic microwave background mapped to a precision that constrains the age of the universe.',
@@ -260,6 +289,7 @@ const themes = {
     caption: 'Sky survey, background subtracted',
   },
   storytelling: {
+    cta: 'Find out whose life became a story worth telling',
     standfirst: 'Literature laureates who changed whose life counts as a story worth telling.',
     body: [
       'Morrison put the interior life of Black America at the centre of the American novel. García Márquez wrote a continent\'s history as though the impossible were simply local weather. Ernaux stripped autobiography of consolation.',
@@ -268,6 +298,7 @@ const themes = {
     caption: 'Manuscript page, corrected',
   },
   memory: {
+    cta: 'Compare what a nerve cell keeps with what a country forgets',
     standfirst:
       'What a nerve cell keeps, and what a country agrees to forget. Two subjects that turn out to share a vocabulary.',
     body: [
@@ -277,6 +308,7 @@ const themes = {
     caption: 'Synaptic trace, recorded',
   },
   language: {
+    cta: 'Consider the languages a prize has never read',
     standfirst:
       'Prizes given for sentences — and for the many languages a Stockholm committee has never read.',
     body: [
@@ -286,6 +318,7 @@ const themes = {
     caption: 'Parallel text, two editions',
   },
   doubt: {
+    cta: 'Take uncertainty as a working method',
     standfirst:
       'The productive kind: uncertainty adopted as a working method rather than admitted as a failure.',
     body: [
@@ -295,6 +328,7 @@ const themes = {
     caption: 'Conference proceedings, 1927',
   },
   patience: {
+    cta: 'Wait forty years for a finding to be believed',
     standfirst:
       'The interval between a finding and its recognition, measured in decades rather than years.',
     body: [
@@ -304,6 +338,7 @@ const themes = {
     caption: 'Publication date and citation date',
   },
   hunger: {
+    cta: 'Weigh bread from air against the famines it never stopped',
     standfirst:
       'Nitrogen pulled out of the air, semi-dwarf wheat, and convoys — alongside the famines none of them prevented.',
     body: [
@@ -313,6 +348,7 @@ const themes = {
     caption: 'Yield trials, two varieties',
   },
   commons: {
+    cta: 'See who can be trusted with what everyone owns',
     standfirst:
       'Shared fisheries, forests and atmospheres, and the question of who can be trusted to govern them.',
     body: [
@@ -322,6 +358,7 @@ const themes = {
     caption: 'Field survey, common pasture',
   },
   'climate-t': {
+    cta: 'Watch a century of measurement become a politics',
     standfirst:
       'A century of patient measurement before the graph turned into a politics.',
     body: [
@@ -331,6 +368,7 @@ const themes = {
     caption: 'Temperature series, annotated',
   },
   peacebuilding: {
+    cta: 'Join the slow work that has no clean ending',
     standfirst:
       'Settlement houses, mediation tables, refugee agencies: slow institutional work with no clean ending.',
     body: [
@@ -340,6 +378,7 @@ const themes = {
     caption: 'Settlement house, afternoon',
   },
   'microorganisms-t': {
+    cta: 'Watch illness turn from fate into cause and effect',
     standfirst:
       'The germ theory that turned illness from a fate into a chain of cause and effect.',
     body: [
@@ -349,6 +388,7 @@ const themes = {
     caption: 'Stained preparation, high power',
   },
   code: {
+    cta: 'Follow nature from something written to something edited',
     standfirst:
       'Nature understood as something written, and then — within fifty years — as something editable.',
     body: [
@@ -358,6 +398,7 @@ const themes = {
     caption: 'Four-letter sequence, aligned',
   },
   truth: {
+    cta: 'Stand with the reporters who refused the official version',
     standfirst:
       'Journalists and dissidents recognised for declining to accept an official version of events.',
     body: [
@@ -367,6 +408,7 @@ const themes = {
     caption: 'Front page, later retracted',
   },
   consciousness: {
+    cta: 'Study the one object that is doing the studying',
     standfirst:
       'The hardest available object of study, on account of being the thing conducting the study.',
     body: [
@@ -376,6 +418,7 @@ const themes = {
     caption: 'Cortical mapping, early attempt',
   },
   translation: {
+    cta: 'Follow a prize decided in Swedish to its reader',
     standfirst:
       'How a prize decided in Swedish reaches a reader in any other language at all.',
     body: [
@@ -385,6 +428,7 @@ const themes = {
     caption: 'Two editions, same paragraph',
   },
   inequality: {
+    cta: 'Ask who is counted, treated, and awarded',
     standfirst:
       'Who receives prizes, who receives treatment, and who appears in the data at all.',
     body: [
@@ -394,6 +438,7 @@ const themes = {
     caption: 'Distribution, by decade',
   },
   'invisible-hands': {
+    cta: 'Credit the labour inside every citation',
     standfirst:
       'Technicians, spouses, students and human computers: the uncredited labour inside every citation.',
     body: [
@@ -718,6 +763,11 @@ const artifacts = {
 }
 
 const CREDIT = 'Imagery generated for this prototype. Text drawn from Nobel Prize history.'
+
+// The invitation shown on a theme, in place of any written narrative.
+export function ctaFor(id) {
+  return themes[id]?.cta ?? 'Follow the connections and see where they lead'
+}
 
 export function narrativeFor(kind, id, fallback) {
   if (kind === 'theme') {

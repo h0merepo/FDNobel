@@ -11,6 +11,7 @@ import {
   findLaureate,
   kindColor,
 } from '../data/content'
+import { STORIES } from '../data/stories'
 import { ghostCircles, packCircles } from '../lib/layout'
 
 const WORLD = { width: 4200, height: 2800 }
@@ -55,6 +56,14 @@ export default function Discovery({ selection, onSelect }) {
         r: 96,
         color: kindColor('milestone'),
         year: m.year,
+      })),
+      ...STORIES.map((n) => ({
+        id: n.id,
+        kind: 'story',
+        label: n.title,
+        meta: n.sub,
+        r: 104,
+        color: kindColor('story'),
       })),
       ...ARTIFACTS.map((a) => ({
         id: a.id,
