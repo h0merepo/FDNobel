@@ -1,3 +1,5 @@
+import { tr } from '../i18n'
+
 export const PALETTE = {
   blue: '#7AA6C8',
   green: '#A6BE6C',
@@ -169,3 +171,23 @@ export const textOn = (background) => (background === PALETTE.ink ? '#ffffff' : 
 export const findTheme = (id) => THEMES.find((t) => t.id === id)
 export const findLaureate = (id) => LAUREATES.find((l) => l.id === id)
 export const findMilestone = (id) => MILESTONES.find((m) => m.id === id)
+
+// --- localized accessors -------------------------------------------------
+// The English data above stays the source of truth; these return the Swedish
+// string when one exists and the English original when it does not.
+
+const SECTION = {
+  theme: 'themes',
+  person: 'laureates',
+  milestone: 'milestones',
+  artifact: 'artifacts',
+  story: 'stories',
+}
+
+export const themeLabel = (theme) => tr(theme.label, 'themes', theme.id, 'label')
+export const milestoneTitle = (m) => tr(m.title, 'milestones', m.id, 'title')
+export const artifactLabel = (a) => tr(a.label, 'artifacts', a.id, 'label')
+export const fieldLabel = (field) => tr(field.label, 'fields', field.id)
+export const countryName = (country) => tr(country, 'countries', country)
+export const kindLabel = (kind) => tr(KIND_LABELS[kind] ?? kind, 'kinds', kind)
+export const blurbFor = (kind, id, fallback) => tr(fallback, SECTION[kind], id, 'blurb')

@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef } from 'react'
 import Bubble from '../components/Bubble'
 import PanCanvas from '../components/PanCanvas'
-import { THEMES, kindColor } from '../data/content'
+import { THEMES, kindColor, themeLabel } from '../data/content'
+import { t } from '../i18n'
 import { ghostCircles, packCircles } from '../lib/layout'
 
 const WORLD = { width: 2900, height: 2050 }
@@ -16,7 +17,7 @@ export default function Stories({ selection, onSelect }) {
         THEMES.map((t) => ({
           id: t.id,
           kind: 'theme',
-          label: t.label,
+          label: themeLabel(t),
           r: RADIUS_BY_WEIGHT[t.weight] ?? 100,
           color: kindColor('theme'),
         })),
@@ -39,8 +40,8 @@ export default function Stories({ selection, onSelect }) {
   return (
     <>
       <div className="page-hint">
-        <h1>Stories</h1>
-        <p>Drag to explore · tap a story to open it</p>
+        <h1>{t('storiesTitle')}</h1>
+        <p>{t('storiesHint')}</p>
       </div>
       <PanCanvas world={WORLD} offsetRef={controls}>
         {ghosts.map((g) => (

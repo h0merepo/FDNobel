@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { nodeMeta } from '../lib/relations'
+import { t } from '../i18n'
 
 const sameNode = (a, b) => a && b && a.kind === b.kind && a.id === b.id
 
@@ -21,8 +22,8 @@ export default function Trail({ trail, selection, onSelect, onHome }) {
   }, [trail])
 
   return (
-    <nav className="trail" aria-label="Path through the atlas">
-      <button className="trail-home" onClick={onHome} aria-label="Home">
+    <nav className="trail" aria-label={t('trailLabel')}>
+      <button className="trail-home" onClick={onHome} aria-label={t('home')}>
         <HomeIcon />
       </button>
       <div className="trail-scroll" ref={ref}>

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { KIND_LABELS, textOn } from '../data/content'
+import { kindLabel, textOn } from '../data/content'
 import { clamp, makeRng } from '../lib/layout'
 import { nodeMeta, relatedTo } from '../lib/relations'
 
@@ -195,7 +195,7 @@ export default function NodeWeb({ selection, trail, onSelect }) {
         const cos = Math.cos(tag.angle)
         const sin = Math.sin(tag.angle)
         tag = {
-          label: KIND_LABELS[selection.kind] ?? '',
+          label: kindLabel(selection.kind),
           side: cos < 0 ? 'left' : 'right',
           x: cx + cos * dist,
           y: cy + sin * dist,

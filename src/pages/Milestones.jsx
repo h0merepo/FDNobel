@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Bubble from '../components/Bubble'
 import PanCanvas from '../components/PanCanvas'
 import Scrubber from '../components/Scrubber'
-import { MILESTONES, kindColor } from '../data/content'
+import { MILESTONES, kindColor, milestoneTitle } from '../data/content'
+import { t } from '../i18n'
 import { ghostCircles } from '../lib/layout'
 import { DECADES, END_YEAR, PX_PER_YEAR, START_YEAR, WORLD, layoutByYear, yearToX } from '../lib/timeline'
 
@@ -20,7 +21,7 @@ export default function Milestones({ selection, onSelect }) {
         MILESTONES.map((m) => ({
           id: m.id,
           kind: 'milestone',
-          label: m.title,
+          label: milestoneTitle(m),
           meta: String(m.year),
           year: m.year,
           r: MILESTONE_RADIUS[m.weight] ?? 122,
@@ -60,8 +61,8 @@ export default function Milestones({ selection, onSelect }) {
   return (
     <>
       <div className="page-hint">
-        <h1>Milestones</h1>
-        <p>Key events across the century · open one to meet its laureates</p>
+        <h1>{t('milestonesTitle')}</h1>
+        <p>{t('milestonesHint')}</p>
       </div>
       <PanCanvas world={WORLD} offsetRef={controls} onOffsetChange={handleOffset} lockY>
         {ghosts.map((g) => (

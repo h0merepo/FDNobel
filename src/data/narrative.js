@@ -1,3 +1,4 @@
+import { tr, t as ui } from '../i18n'
 // Narrative copy for the story panel. Keyed `${kind}:${id}`.
 // `standfirst` is the lead paragraph, `body` the continuation, `caption` labels
 // the inset plate. Anything without an entry falls back to its blurb.
@@ -762,20 +763,23 @@ const artifacts = {
   ],
 }
 
-const CREDIT = 'Imagery generated for this prototype. Text drawn from Nobel Prize history.'
+
 
 // The invitation shown on a theme, in place of any written narrative.
 export function ctaFor(id) {
-  return themes[id]?.cta ?? 'Follow the connections and see where they lead'
+  return tr(themes[id]?.cta ?? 'Follow the connections and see where they lead', 'themes', id, 'cta')
 }
 
+const SECTION = { person: 'laureates', milestone: 'milestones', artifact: 'artifacts' }
+
 export function narrativeFor(kind, id, fallback) {
+  const credit = ui('credit')
   if (kind === 'theme') {
-    const t = themes[id]
-    if (t) return { standfirst: t.standfirst, body: t.body, caption: t.caption, credit: CREDIT }
+    const theme = themes[id]
+    if (theme) return { standfirst: theme.standfirst, body: theme.body, caption: theme.caption, credit }
   }
   const table = kind === 'person' ? people : kind === 'milestone' ? events : kind === 'artifact' ? artifacts : null
   const paras = table?.[id]
-  if (paras) return { standfirst: fallback, body: paras, caption: null, credit: CREDIT }
-  return { standfirst: fallback, body: [], caption: null, credit: CREDIT }
+  if (!paras) return { standfirst: fallback, body: [], caption: null, credit }
+  return { standfirst: fallback, body: tr(paras, SECTION[kind], id, 'narrative'), caption: null, credit }
 }

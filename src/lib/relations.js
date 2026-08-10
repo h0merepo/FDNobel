@@ -5,11 +5,17 @@ import {
   findLaureate,
   findMilestone,
   findTheme,
+  artifactLabel,
+  blurbFor,
+  countryName,
   kindColor,
+  kindLabel,
+  milestoneTitle,
+  themeLabel,
 } from '../data/content'
-import { STORIES, findStory } from '../data/stories'
+import { STORIES, findStory, storyTitle } from '../data/stories'
 
-const asTheme = (t) => ({ key: `theme:${t.id}`, kind: 'theme', id: t.id, label: t.label, color: kindColor('theme') })
+const asTheme = (t) => ({ key: `theme:${t.id}`, kind: 'theme', id: t.id, label: themeLabel(t), color: kindColor('theme') })
 const asPerson = (p) => ({
   key: `person:${p.id}`,
   kind: 'person',
@@ -22,7 +28,7 @@ const asMilestone = (m) => ({
   key: `milestone:${m.id}`,
   kind: 'milestone',
   id: m.id,
-  label: m.title,
+  label: milestoneTitle(m),
   sub: String(m.year),
   color: kindColor('milestone'),
 })
@@ -30,11 +36,11 @@ const asStory = (n) => ({
   key: `story:${n.id}`,
   kind: 'story',
   id: n.id,
-  label: n.title,
+  label: storyTitle(n),
   sub: n.sub,
   color: kindColor('story'),
 })
-const asArtifact = (a) => ({ key: `artifact:${a.id}`, kind: 'artifact', id: a.id, label: a.label, color: kindColor('artifact') })
+const asArtifact = (a) => ({ key: `artifact:${a.id}`, kind: 'artifact', id: a.id, label: artifactLabel(a), color: kindColor('artifact') })
 
 // Round-robin across the groups so a node's ring always shows a mix of kinds
 // rather than four laureates and nothing else. Labels are deduplicated because
@@ -73,7 +79,7 @@ export function relatedTo(selection, limit = 8) {
         ARTIFACTS.filter((a) => a.themes.includes(id)).map(asArtifact),
       ],
       limit,
-      [t.label],
+      [themeLabel(t)],
     )
   }
 
@@ -113,7 +119,7 @@ export function relatedTo(selection, limit = 8) {
           .map(asArtifact),
       ],
       limit,
-      [m.title],
+      [milestoneTitle(m)],
     )
   }
 
@@ -130,7 +136,7 @@ export function relatedTo(selection, limit = 8) {
           .map(asArtifact),
       ],
       limit,
-      [n.title],
+      [storyTitle(n)],
     )
   }
 
@@ -147,7 +153,7 @@ export function relatedTo(selection, limit = 8) {
         .map(asMilestone),
     ],
     limit,
-    [a.label],
+    [artifactLabel(a)],
   )
 }
 
@@ -156,28 +162,28 @@ export function nodeMeta(selection) {
   const { kind, id } = selection
   if (kind === 'theme') {
     const t = findTheme(id)
-    return t && { kicker: 'Theme', label: t.label, blurb: t.blurb, color: kindColor('theme') }
+    return t && { kicker: kindLabel('theme'), label: themeLabel(t), blurb: blurbFor('theme', id, t.blurb), color: kindColor('theme') }
   }
   if (kind === 'person') {
     const p = findLaureate(id)
     return (
       p && {
-        kicker: 'Laureate',
+        kicker: kindLabel('person'),
         label: p.name,
-        sub: `${p.year} · ${p.country}`,
-        blurb: p.blurb,
+        sub: `${p.year} · ${countryName(p.country)}`,
+        blurb: blurbFor('person', id, p.blurb),
         color: kindColor('person'),
       }
     )
   }
   if (kind === 'story') {
     const n = findStory(id)
-    return n && { kicker: 'Story', label: n.title, sub: n.sub, color: kindColor('story') }
+    return n && { kicker: kindLabel('story'), label: storyTitle(n), sub: n.sub, color: kindColor('story') }
   }
   if (kind === 'milestone') {
     const m = findMilestone(id)
-    return m && { kicker: 'Milestone', label: m.title, sub: String(m.year), blurb: m.blurb, color: kindColor('milestone') }
+    return m && { kicker: kindLabel('milestone'), label: milestoneTitle(m), sub: String(m.year), blurb: blurbFor('milestone', id, m.blurb), color: kindColor('milestone') }
   }
   const a = ARTIFACTS.find((x) => x.id === id)
-  return a && { kicker: 'Artifact', label: a.label, blurb: a.blurb, color: kindColor('artifact') }
+  return a && { kicker: kindLabel('artifact'), label: artifactLabel(a), blurb: blurbFor('artifact', id, a.blurb), color: kindColor('artifact') }
 }

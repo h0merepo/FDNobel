@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { fieldLabel, countryName } from '../data/content'
+import { t } from '../i18n'
 
 const Chevron = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -37,7 +39,7 @@ export default function FilterPanel({
 
   return (
     <div className="filters">
-      <Group title="Fields">
+      <Group title={t('fields')}>
         <div className="filter-options">
           {fields.map((f) => (
             <label key={f.id}>
@@ -46,13 +48,13 @@ export default function FilterPanel({
                 checked={activeFields.includes(f.id)}
                 onChange={() => onToggleField(f.id)}
               />
-              {f.label}
+              {fieldLabel(f)}
             </label>
           ))}
         </div>
       </Group>
 
-      <Group title="Timeline">
+      <Group title={t('timeline')}>
         <div className="range">
           <div className="range-track">
             <span className="range-fill" style={{ left: `${leftPct}%`, width: `${rightPct - leftPct}%` }} />
@@ -80,7 +82,7 @@ export default function FilterPanel({
         </div>
       </Group>
 
-      <Group title="Location" defaultOpen={false}>
+      <Group title={t('location')} defaultOpen={false}>
         <div className="filter-options">
           {countries.map((c) => (
             <label key={c}>
@@ -89,14 +91,14 @@ export default function FilterPanel({
                 checked={activeCountries.includes(c)}
                 onChange={() => onToggleCountry(c)}
               />
-              {c}
+              {countryName(c)}
             </label>
           ))}
         </div>
       </Group>
 
       <button className="filter-reset" onClick={onReset}>
-        Reset filters
+        {t('resetFilters')}
       </button>
     </div>
   )

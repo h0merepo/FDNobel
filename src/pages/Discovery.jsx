@@ -8,10 +8,16 @@ import {
   LAUREATES,
   MILESTONES,
   THEMES,
+  artifactLabel,
+  countryName,
+  fieldLabel,
   findLaureate,
   kindColor,
+  milestoneTitle,
+  themeLabel,
 } from '../data/content'
-import { STORIES } from '../data/stories'
+import { t } from '../i18n'
+import { STORIES, storyTitle } from '../data/stories'
 import { ghostCircles, packCircles } from '../lib/layout'
 
 const WORLD = { width: 4200, height: 2800 }
@@ -31,7 +37,7 @@ export default function Discovery({ selection, onSelect }) {
         id: l.id,
         kind: 'person',
         label: l.name,
-        meta: `${FIELDS.find((f) => f.id === l.field)?.label.split(' ')[0]} ${l.year}`,
+        meta: `${fieldLabel(FIELDS.find((f) => f.id === l.field) ?? { id: l.field, label: l.field }).split(' ')[0]} ${l.year}`,
         r: 92,
         color: kindColor('person'),
         field: l.field,
@@ -41,7 +47,7 @@ export default function Discovery({ selection, onSelect }) {
       ...THEMES.map((t) => ({
         id: t.id,
         kind: 'theme',
-        label: t.label,
+        label: themeLabel(t),
         r: t.weight === 3 ? 118 : t.weight === 2 ? 92 : 72,
         color: kindColor('theme'),
         fields: [...new Set(t.laureates.map((id) => findLaureate(id)?.field).filter(Boolean))],
@@ -51,7 +57,7 @@ export default function Discovery({ selection, onSelect }) {
       ...MILESTONES.map((m) => ({
         id: m.id,
         kind: 'milestone',
-        label: m.title,
+        label: milestoneTitle(m),
         meta: String(m.year),
         r: 96,
         color: kindColor('milestone'),
@@ -60,7 +66,7 @@ export default function Discovery({ selection, onSelect }) {
       ...STORIES.map((n) => ({
         id: n.id,
         kind: 'story',
-        label: n.title,
+        label: storyTitle(n),
         meta: n.sub,
         r: 104,
         color: kindColor('story'),
@@ -68,7 +74,7 @@ export default function Discovery({ selection, onSelect }) {
       ...ARTIFACTS.map((a) => ({
         id: a.id,
         kind: 'artifact',
-        label: a.label,
+        label: artifactLabel(a),
         r: 78,
         color: kindColor('artifact'),
       })),
@@ -124,8 +130,8 @@ export default function Discovery({ selection, onSelect }) {
   return (
     <>
       <div className="page-hint">
-        <h1>Discovery</h1>
-        <p>Filter the matrix · drag to explore</p>
+        <h1>{t('discoveryTitle')}</h1>
+        <p>{t('discoveryHint')}</p>
       </div>
       <PanCanvas world={WORLD} offsetRef={controls}>
         {ghosts.map((g) => (
@@ -161,7 +167,7 @@ export default function Discovery({ selection, onSelect }) {
           setRange(BOUNDS)
         }}
       />
-      {visibleCount === 0 && <p className="empty-state">Nothing matches these filters.</p>}
+      {visibleCount === 0 && <p className="empty-state">{t('nothingHere')}</p>}
     </>
   )
 }

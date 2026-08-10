@@ -1,25 +1,11 @@
 import Ambient from '../components/Ambient'
 import { PALETTE, textOn } from '../data/content'
+import { t } from '../i18n'
 
 const ENTRIES = [
-  {
-    id: 'stories',
-    title: 'STORY',
-    copy: 'Discover the story behind remarkable minds',
-    color: PALETTE.ink,
-  },
-  {
-    id: 'milestones',
-    title: 'MILESTONE',
-    copy: 'Move through moments that changed the world',
-    color: PALETTE.ink,
-  },
-  {
-    id: 'discovery',
-    title: 'DISCOVERY',
-    copy: 'Follow your curiosity and explore your own path',
-    color: PALETTE.ink,
-  },
+  { id: 'stories', title: 'entryStory', copy: 'entryStoryBlurb' },
+  { id: 'milestones', title: 'entryMilestone', copy: 'entryMilestoneBlurb' },
+  { id: 'discovery', title: 'entryDiscovery', copy: 'entryDiscoveryBlurb' },
 ]
 
 export default function Landing({ onNavigate }) {
@@ -29,18 +15,18 @@ export default function Landing({ onNavigate }) {
       <div className="landing">
         <header>
           <h1>NOBEL ATLAS</h1>
-          <p className="tagline">Tap on what you want to explore today</p>
+          <p className="tagline">{t('landingTagline')}</p>
         </header>
         <div className="entries">
           {ENTRIES.map((entry) => (
             <button
               key={entry.id}
               className="entry"
-              style={{ background: entry.color, color: textOn(entry.color) }}
+              style={{ background: PALETTE.ink, color: textOn(PALETTE.ink) }}
               onClick={() => onNavigate(entry.id)}
             >
-              <h2>{entry.title}</h2>
-              <p>{entry.copy}</p>
+              <h2>{t(entry.title)}</h2>
+              <p>{t(entry.copy)}</p>
             </button>
           ))}
         </div>

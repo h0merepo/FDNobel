@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Plate from './Plate'
 import { ctaFor, narrativeFor } from '../data/narrative'
-import { findStory } from '../data/stories'
+import { findStory, storyScreens, storyTitle } from '../data/stories'
 import { nodeMeta } from '../lib/relations'
+import { t } from '../i18n'
 
 // Reading position on the left edge: a solid run for what is on screen, dashes
 // for what is still below.
@@ -35,6 +36,12 @@ function ScrollRail({ targetRef, dependency }) {
   )
 }
 
+const CloseIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+    <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
+  </svg>
+)
+
 const Chevron = ({ back }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
     <path
@@ -50,7 +57,8 @@ const Chevron = ({ back }) => (
 function StoryReader({ story, seed }) {
   const [screen, setScreen] = useState(0)
   const bodyRef = useRef(null)
-  const total = story.screens.length
+  const screens = storyScreens(story)
+  const total = screens.length
   const step = useCallback(
     (delta) => setScreen((n) => Math.min(total - 1, Math.max(0, n + delta))),
     [total],
@@ -69,12 +77,12 @@ function StoryReader({ story, seed }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [step])
 
-  const current = story.screens[screen]
+  const current = screens[screen]
 
   return (
     <>
       <span className="screen-rail" aria-hidden="true">
-        {story.screens.map((_, i) => (
+        {screens.map((_, i) => (
           <i key={i} className={i <= screen ? 'read' : undefined} />
         ))}
       </span>
@@ -83,9 +91,9 @@ function StoryReader({ story, seed }) {
         <Plate seed={`${seed}:${screen}`} />
         <div className="story-hero-text">
           <span className="kicker">
-            Story · {screen + 1} of {total}
+            {t('storyKicker')} · {screen + 1} {t('of')} {total}
           </span>
-          <h2>{screen === 0 ? story.title : current.heading}</h2>
+          <h2>{screen === 0 ? storyTitle(story) : current.heading}</h2>
         </div>
       </header>
 
@@ -96,8 +104,8 @@ function StoryReader({ story, seed }) {
 
       <ScrollRail targetRef={bodyRef} dependency={screen} />
 
-      <nav className="reader-nav" aria-label="Story screens">
-        <button onClick={() => step(-1)} disabled={screen === 0} aria-label="Previous screen">
+      <nav className="reader-nav" aria-label={t('storyScreens')}>
+        <button onClick={() => step(-1)} disabled={screen === 0} aria-label={t('previousScreen')}>
           <Chevron back />
         </button>
         <span className="reader-count">
@@ -106,7 +114,7 @@ function StoryReader({ story, seed }) {
         <button
           onClick={() => step(1)}
           disabled={screen === total - 1}
-          aria-label="Next screen"
+          aria-label={t('nextScreen')}
         >
           <Chevron />
         </button>
@@ -131,8 +139,8 @@ export default function StoryPanel({ selection, onClose }) {
           <Plate seed={seed} />
           <span className="placeholder-label">{ctaFor(selection.id)}</span>
         </article>
-        <button className="close" onClick={onClose} aria-label="Close">
-          ✕
+        <button className="close" onClick={onClose} aria-label={t('close')}>
+          <CloseIcon />
         </button>
       </div>
     )
@@ -145,8 +153,8 @@ export default function StoryPanel({ selection, onClose }) {
         <article className="story-panel reader">
           {story && <StoryReader story={story} seed={seed} />}
         </article>
-        <button className="close" onClick={onClose} aria-label="Close">
-          ✕
+        <button className="close" onClick={onClose} aria-label={t('close')}>
+          <CloseIcon />
         </button>
       </div>
     )
@@ -188,8 +196,8 @@ export default function StoryPanel({ selection, onClose }) {
           <footer className="story-credit">{credit}</footer>
         </div>
       </article>
-      <button className="close" onClick={onClose} aria-label="Close">
-        ✕
+      <button className="close" onClick={onClose} aria-label={t('close')}>
+        <CloseIcon />
       </button>
     </div>
   )

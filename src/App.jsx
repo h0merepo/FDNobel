@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { otherLocale, setLocale } from './i18n'
 import Ambient from './components/Ambient'
 import NavDock from './components/NavDock'
 import NodeWeb from './components/NodeWeb'
@@ -21,6 +22,11 @@ const PAGE_FOR_KIND = {
 const sameNode = (a, b) => a && b && a.kind === b.kind && a.id === b.id
 
 export default function App() {
+  const [locale, setLocaleState] = useState('en')
+  // Publish the locale before any child renders, so the content accessors —
+  // which are plain functions, not hooks — never read a stale value.
+  setLocale(locale)
+
   const [page, setPage] = useState('landing')
   const [selection, setSelection] = useState(null)
   const [trail, setTrail] = useState([])
@@ -90,7 +96,7 @@ export default function App() {
         <NavDock
           searchOpen={searchOpen}
           onSearch={() => setSearchOpen((o) => !o)}
-          onLanguage={() => {}}
+          onLanguage={() => setLocaleState(otherLocale())}
         />
         {page !== 'landing' && (
           <Trail trail={trail} selection={selection} onSelect={select} onHome={goHome} />

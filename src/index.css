@@ -130,6 +130,9 @@ button {
   font-size: clamp(1rem, 1.35vw, 1.3rem);
   font-weight: 500;
   letter-spacing: 0.06em;
+  /* the entry names were uppercase strings before they moved into the locale
+     file, so the casing lives here now and holds for both languages */
+  text-transform: uppercase;
 }
 
 .entry p {
@@ -261,6 +264,13 @@ button {
 .dock button:hover,
 .dock button.active {
   background: rgba(255, 255, 255, 0.16);
+}
+
+.dock .lang {
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  min-width: 3.2rem;
 }
 
 .dock svg {
@@ -611,12 +621,15 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
-  line-height: 1;
   color: var(--ink);
   background: var(--paper);
   border: 1.5px solid var(--ink);
   transition: background 160ms ease, color 160ms ease;
+}
+
+.story-holder .close svg {
+  width: 17px;
+  height: 17px;
 }
 
 .story-holder .close:hover {

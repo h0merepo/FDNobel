@@ -1,3 +1,4 @@
+import { tr } from '../i18n'
 // Long-form narratives. Each one is a bubble in the web that opens as a
 // seven-screen read inside the content panel. `sub` is the name shown under the
 // title on the bubble, matching the way the design labels them.
@@ -234,3 +235,5 @@ export const STORIES = [
 ]
 
 export const findStory = (id) => STORIES.find((s) => s.id === id)
+export const storyTitle = (story) => tr(story.title, 'stories', story.id, 'title')
+export const storyScreens = (story) => tr(story.screens, 'stories', story.id, 'screens')
