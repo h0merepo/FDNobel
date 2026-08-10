@@ -1,10 +1,7 @@
+import { useEffect, useRef } from 'react'
 import { nodeMeta } from '../lib/relations'
 
 const sameNode = (a, b) => a && b && a.kind === b.kind && a.id === b.id
-// The rail cannot scroll — a scroll container would clip the blur the fused
-// shape depends on — so a long route is trimmed from the left and the dropped
-// steps collapse into one segment that returns to the start.
-const RAIL_STEPS = 4
 
 const HomeIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor">
@@ -12,58 +9,31 @@ const HomeIcon = () => (
   </svg>
 )
 
-// The rail is drawn twice. The lower layer is shape only, blurred and then
-// re-thresholded so neighbouring segments fuse into one body with a pinched
-// neck between them; the upper layer carries the text, unfiltered, so nothing
-// is softened. Both layers lay out identically, so they stay registered.
+// One continuous pill holding the whole route: home at the head, then each
+// topic behind a dot. A long path scrolls within the pill rather than being
+// trimmed, and stays scrolled to the step you are on.
 export default function Trail({ trail, selection, onSelect, onHome }) {
-  const all = trail.map((node) => ({ node, meta: nodeMeta(node) })).filter((s) => s.meta)
-  const steps = all.slice(-RAIL_STEPS)
-  const dropped = all.length - steps.length
+  const ref = useRef(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (el) el.scrollLeft = el.scrollWidth
+  }, [trail])
 
   return (
-    <div className="trail">
-      <svg className="goo-defs" aria-hidden="true" focusable="false">
-        {/* the blur needs room outside the layer box or the ends get cropped */}
-        <filter id="rail-goo" x="-5%" y="-80%" width="110%" height="260%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="11" result="blur" />
-          <feColorMatrix
-            in="blur"
-            type="matrix"
-            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -8"
-          />
-        </filter>
-      </svg>
-
-      <div className="trail-inner">
-        <div className="trail-goo" aria-hidden="true">
-          <span className="goo-home" />
-          {dropped > 0 && <span className="goo-step short">…</span>}
-          {steps.map(({ node, meta }) => (
-            <span className="goo-step" key={`${node.kind}:${node.id}`}>
-              {meta.label}
-            </span>
-          ))}
-        </div>
-
-        <nav className="trail-face" aria-label="Path through the atlas">
-          <button className="trail-home" onClick={onHome} aria-label="Home">
-            <HomeIcon />
-          </button>
-          {dropped > 0 && (
-            <button
-              className="trail-step short"
-              onClick={() => onSelect(all[0].node)}
-              aria-label={`Back to the start of the route, ${dropped} earlier steps`}
-            >
-              …
-            </button>
-          )}
-          {steps.map(({ node, meta }) => {
-            const here = sameNode(node, selection)
-            return (
+    <nav className="trail" aria-label="Path through the atlas">
+      <button className="trail-home" onClick={onHome} aria-label="Home">
+        <HomeIcon />
+      </button>
+      <div className="trail-scroll" ref={ref}>
+        {trail.map((node) => {
+          const meta = nodeMeta(node)
+          if (!meta) return null
+          const here = sameNode(node, selection)
+          return (
+            <span className="trail-item" key={`${node.kind}:${node.id}`}>
+              <i className="trail-sep" aria-hidden="true" />
               <button
-                key={`${node.kind}:${node.id}`}
                 className={`trail-step${here ? ' here' : ''}`}
                 onClick={() => onSelect(node)}
                 disabled={here}
@@ -71,10 +41,10 @@ export default function Trail({ trail, selection, onSelect, onHome }) {
               >
                 {meta.label}
               </button>
-            )
-          })}
-        </nav>
+            </span>
+          )
+        })}
       </div>
-    </div>
+    </nav>
   )
 }

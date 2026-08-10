@@ -16,7 +16,6 @@
   --panel: #171717;
   --chrome: #1c1c1c;
   --rail-h: 48px;
-  --rail-gap: 10px;
   --hairline: rgba(255, 255, 255, 0.88);
   --on-dark: rgba(255, 255, 255, 0.82);
   --on-dark-muted: rgba(255, 255, 255, 0.52);
@@ -744,73 +743,82 @@ button {
   color: var(--on-dark-muted);
 }
 
-/* --- the route, as one fused rail --- */
-
-.goo-defs {
-  position: absolute;
-  width: 0;
-  height: 0;
-}
+/* --- the route, as one continuous pill --- */
 
 .trail {
+  display: flex;
+  align-items: center;
   min-width: 0;
+  max-width: 100%;
+  padding: 4px;
+  background: var(--chrome);
+  border-radius: 999px;
+  overflow: hidden;
 }
 
-.trail-inner {
-  position: relative;
-  display: inline-block;
-}
-
-/* Shape only. The blur bleeds past the segments, so the layer is given room to
-   spill without being clipped by the scroller. */
-.trail-goo {
-  position: absolute;
-  inset: -26px;
+/* Only the topics scroll; the home button sits outside the scroller so it can
+   never be carried out of reach. Content entering from the left fades rather
+   than being cut off mid-word. */
+.trail-scroll {
   display: flex;
   align-items: center;
-  padding: 26px;
-  gap: var(--rail-gap);
-  filter: url(#rail-goo);
-  pointer-events: none;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  mask-image: linear-gradient(to right, transparent 0, #000 26px, #000 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 26px, #000 100%);
 }
 
-.trail-face {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: var(--rail-gap);
+.trail-scroll::-webkit-scrollbar {
+  display: none;
 }
 
-.goo-home,
 .trail-home {
   flex: none;
-  width: var(--rail-h);
-  height: var(--rail-h);
+  width: 40px;
+  height: 40px;
   border-radius: 999px;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #fff;
+  transition: background 160ms ease;
 }
 
-/* Both layers carry the same box so their widths cannot drift apart: the border
-   is always there, and only the current step paints it. */
-.goo-step.short,
-.trail-step.short {
-  padding: 0 1.1rem;
+.trail-home:hover {
+  background: rgba(255, 255, 255, 0.16);
 }
 
-.goo-step,
+.trail-home svg {
+  width: 19px;
+  height: 19px;
+}
+
+.trail-item {
+  flex: none;
+  display: flex;
+  align-items: center;
+}
+
+/* A dot in front of every topic, doing the separating the gaps used to do. */
+.trail-sep {
+  flex: none;
+  width: 4px;
+  height: 4px;
+  margin: 0 0.6rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+}
+
 .trail-step {
   flex: none;
-  height: var(--rail-h);
+  height: 40px;
   max-width: 21rem;
-  padding: 0 1.6rem;
-  border: 5px solid transparent;
+  padding: 0 0.95rem;
   border-radius: 999px;
-  /* a block with a fixed line box, so an over-long name ellipsises identically
-     on both layers and the two stay the same width */
   display: block;
-  line-height: calc(var(--rail-h) - 10px);
+  line-height: 40px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -818,35 +826,18 @@ button {
   font-weight: 400;
   letter-spacing: 0.13em;
   text-transform: uppercase;
-}
-
-.goo-home,
-.goo-step {
-  background: var(--chrome);
-  color: transparent;
-}
-
-.trail-home,
-.trail-step {
-  background: none;
   color: rgba(255, 255, 255, 0.78);
-  transition: color 160ms ease;
+  transition: background 160ms ease, color 160ms ease;
 }
 
-.trail-home svg {
-  width: 20px;
-  height: 20px;
-}
-
-.trail-home:hover,
 .trail-step:hover {
+  background: rgba(255, 255, 255, 0.14);
   color: #fff;
 }
 
-/* The step you are on is cut out of the rail rather than filled into it. */
+/* The step you are on is cut out of the pill rather than filled into it. */
 .trail-step.here {
   background: var(--paper);
-  border-color: var(--chrome);
   color: var(--ink);
   cursor: default;
 }
