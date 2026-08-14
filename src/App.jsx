@@ -76,19 +76,31 @@ export default function App() {
 
   return (
     <div className="app">
-      <div className={`page-layer${focused ? ' behind' : ''}`} aria-hidden={focused}>
+      <div
+        className={`page-layer${focused && page !== 'milestones' ? ' behind' : ''}`}
+        aria-hidden={focused && page !== 'milestones'}
+      >
         {page === 'landing' && <Landing onNavigate={setPage} />}
         {page === 'stories' && <Stories selection={selection} onSelect={select} />}
         {page === 'milestones' && <Milestones selection={selection} onSelect={select} />}
-        {page === 'discovery' && <Discovery selection={selection} onSelect={select} />}
+        {page === 'discovery' && (
+          <Discovery
+            selection={selection}
+            onSelect={select}
+            search={<SearchSheet variant="hero" query={query} onQuery={setQuery} onSelect={select} />}
+          />
+        )}
       </div>
 
+      {/* Milestones keeps its network on the timeline, so only the panel is
+          overlaid there; the other modes get the radial web. */}
       {focused && (
-        <div className="focus-layer">
-          <Ambient count={30} seed={41} />
-          <NodeWeb selection={selection} trail={trail} onSelect={select} />
+        <div className={`focus-layer${page === 'milestones' ? ' panel-only' : ''}`}>
+          {page !== 'milestones' && <Ambient count={30} seed={41} />}
+          {page !== 'milestones' && (
+            <NodeWeb selection={selection} trail={trail} mode={page} onSelect={select} />
+          )}
           <StoryPanel selection={selection} onClose={closeFocus} />
-
         </div>
       )}
 
@@ -103,7 +115,9 @@ export default function App() {
         )}
       </div>
 
-      {searchOpen && <SearchSheet query={query} onQuery={setQuery} onSelect={select} />}
+      {searchOpen && page !== 'discovery' && (
+        <SearchSheet query={query} onQuery={setQuery} onSelect={select} />
+      )}
     </div>
   )
 }

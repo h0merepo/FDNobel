@@ -10,6 +10,10 @@ const ui = {
     en: 'Search stories, laureates, milestones…',
     sv: 'Sök berättelser, pristagare, milstolpar…',
   },
+  searchAnything: { en: 'Search for anything', sv: 'Sök efter vad som helst' },
+  shuffle: { en: 'Shuffle', sv: 'Blanda' },
+  jumpForward: { en: 'Jump forward to', sv: 'Hoppa fram till' },
+  jumpBack: { en: 'Jump back to', sv: 'Hoppa tillbaka till' },
   nothingMatches: { en: 'Nothing matches', sv: 'Inget matchar' },
   trailLabel: { en: 'Path through the atlas', sv: 'Vägen genom atlasen' },
 
@@ -41,7 +45,7 @@ const ui = {
     sv: 'Seklets viktigaste händelser · öppna en för att möta dess pristagare',
   },
   discoveryTitle: { en: 'Discovery', sv: 'Upptäck' },
-  discoveryHint: { en: 'Filter the matrix · drag to explore', sv: 'Filtrera matrisen · dra för att utforska' },
+  discoveryHint: { en: 'Search, shuffle or drag to explore', sv: 'Sök, blanda eller dra för att utforska' },
   nothingHere: { en: 'Nothing matches these filters', sv: 'Inget matchar dessa filter' },
 
   fields: { en: 'Fields', sv: 'Områden' },

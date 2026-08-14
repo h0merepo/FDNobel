@@ -51,7 +51,7 @@ function fitFontSize(radius, label) {
   return Math.max(9, Math.min(radius / 4.6, (radius * 1.7) / Math.max(longest, 5), 26))
 }
 
-export default function NodeWeb({ selection, trail, onSelect }) {
+export default function NodeWeb({ selection, trail, mode, onSelect }) {
   const ref = useRef(null)
   const [box, setBox] = useState({ w: 0, h: 0, panelRight: null })
 
@@ -95,10 +95,10 @@ export default function NodeWeb({ selection, trail, onSelect }) {
   const satellites = useMemo(() => {
     const visitedKeys = new Set(trail.map((n) => `${n.kind}:${n.id}`))
     const visitedLabels = new Set(trail.map((n) => nodeMeta(n)?.label).filter(Boolean))
-    return relatedTo(selection, 12)
+    return relatedTo(selection, 12, mode)
       .filter((s) => !visitedKeys.has(s.key) && !visitedLabels.has(s.label))
       .slice(0, 8)
-  }, [selection, trail])
+  }, [selection, trail, mode])
 
   const geometry = useMemo(() => {
     const { w, h, panelRight } = box

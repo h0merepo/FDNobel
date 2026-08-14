@@ -151,6 +151,8 @@ button {
   cursor: grab;
   touch-action: none;
   overflow: hidden;
+  /* A drag across the plane is a pan, not a text selection. */
+  user-select: none;
 }
 
 .canvas.dragging {
@@ -283,9 +285,9 @@ button {
 
 .search-sheet {
   position: absolute;
+  z-index: 41;
   left: 2rem;
   bottom: 6.2rem;
-  z-index: 41;
   width: min(380px, calc(100vw - 4rem));
   background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(18px);
@@ -295,7 +297,27 @@ button {
   padding: 1rem;
 }
 
+/* On the open plane the search is the way in, so it sits at the vertical
+   midpoint and carries its own weight rather than hiding behind an icon. */
+.search-sheet.hero {
+  left: 50%;
+  top: 50%;
+  bottom: auto;
+  transform: translate(-50%, -50%);
+  width: min(560px, calc(100vw - 4rem));
+  padding: 0;
+  background: none;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.search-field {
+  position: relative;
+}
+
 .search-sheet input {
+  position: relative;
   width: 100%;
   font: inherit;
   font-size: 0.95rem;
@@ -303,10 +325,188 @@ button {
   border: 1px solid rgba(20, 20, 20, 0.16);
   border-radius: 12px;
   outline: none;
+  background: transparent;
 }
 
 .search-sheet input:focus {
   border-color: rgba(20, 20, 20, 0.5);
+}
+
+.search-sheet.hero input {
+  font-size: 1.15rem;
+  font-weight: 300;
+  padding: 1.05rem 1.5rem;
+  border-radius: 999px;
+  border: 1.5px solid rgba(20, 20, 20, 0.5);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 16px 46px rgba(20, 20, 20, 0.12);
+  text-align: center;
+}
+
+.search-sheet.hero input::placeholder {
+  color: rgba(20, 20, 20, 0.45);
+}
+
+/* The typed text is repeated invisibly so the suggested ending lines up
+   exactly after the caret. */
+.search-ghost {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.95rem;
+  white-space: pre;
+  pointer-events: none;
+  color: rgba(20, 20, 20, 0.34);
+  overflow: hidden;
+}
+
+.search-sheet.hero .search-ghost {
+  justify-content: center;
+  padding: 1.05rem 1.5rem;
+  font-size: 1.15rem;
+  font-weight: 300;
+}
+
+.search-ghost i {
+  font-style: normal;
+  color: transparent;
+}
+
+.search-sheet.hero .search-results {
+  margin-top: 0.7rem;
+  max-height: 42vh;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(20, 20, 20, 0.16);
+  border-radius: 18px;
+  box-shadow: 0 18px 50px rgba(20, 20, 20, 0.16);
+  padding: 0.4rem;
+}
+
+.search-results button.active {
+  background: rgba(20, 20, 20, 0.09);
+}
+
+/* ---------- shuffle ---------- */
+
+.shuffle {
+  position: absolute;
+  right: 2rem;
+  bottom: 1.7rem;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  height: var(--rail-h);
+  padding: 0 1.3rem;
+  border-radius: 999px;
+  background: var(--chrome);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  transition: background 160ms ease;
+}
+
+.shuffle:hover {
+  background: #313131;
+}
+
+.shuffle svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ---------- the network, held on the timeline ---------- */
+
+.timeline-links {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.timeline-links line {
+  stroke: rgba(20, 20, 20, 0.55);
+  stroke-width: 1.2;
+}
+
+/* The web's own anchor when the reader has stepped onto something the page
+   does not draw itself. */
+.web-node.focal {
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.web-node.focal .meta {
+  margin-top: 0.5em;
+  font-size: 0.7em;
+  opacity: 0.7;
+}
+
+/* Where a connection leaves the frame, the reader gets a way to travel to it
+   rather than a line that goes nowhere. */
+.timeline-jump {
+  position: absolute;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 15rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  background: var(--chrome);
+  color: #fff;
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  box-shadow: 0 10px 26px rgba(20, 20, 20, 0.24);
+  transition: background 160ms ease;
+}
+
+/* Each control sits just inside the edge it points at, so neither hangs off
+   the frame it is there to tell you about. */
+.timeline-jump.back {
+  transform: translate(0, -50%);
+}
+
+.timeline-jump.fwd {
+  transform: translate(-100%, -50%);
+}
+
+.timeline-jump:hover {
+  background: #313131;
+}
+
+.timeline-jump svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+}
+
+.timeline-jump span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* With the network on the timeline the panel is the only overlay, so the layer
+   must not swallow drags meant for the canvas underneath. */
+.focus-layer.panel-only {
+  pointer-events: none;
+}
+
+.focus-layer.panel-only > * {
+  pointer-events: auto;
 }
 
 .search-results {
