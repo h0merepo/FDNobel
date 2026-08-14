@@ -300,10 +300,10 @@ button {
 /* On the open plane the search is the way in, so it sits at the vertical
    midpoint and carries its own weight rather than hiding behind an icon. */
 .search-sheet.hero {
-  left: 50%;
+  left: 2rem;
   top: 50%;
   bottom: auto;
-  transform: translate(-50%, -50%);
+  transform: translateY(-50%);
   width: min(560px, calc(100vw - 4rem));
   padding: 0;
   background: none;
@@ -326,6 +326,7 @@ button {
   border-radius: 12px;
   outline: none;
   background: transparent;
+  color: var(--ink);
 }
 
 .search-sheet input:focus {
@@ -341,7 +342,8 @@ button {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(14px);
   box-shadow: 0 16px 46px rgba(20, 20, 20, 0.12);
-  text-align: center;
+  text-align: left;
+  color: var(--ink);
 }
 
 .search-sheet.hero input::placeholder {
@@ -353,6 +355,9 @@ button {
 .search-ghost {
   position: absolute;
   inset: 0;
+  /* above the field, since the only part of it that shows is the suggested
+     ending, which falls on empty ground after the caret */
+  z-index: 2;
   display: flex;
   align-items: center;
   padding: 0.65rem 0.85rem;
@@ -364,7 +369,6 @@ button {
 }
 
 .search-sheet.hero .search-ghost {
-  justify-content: center;
   padding: 1.05rem 1.5rem;
   font-size: 1.15rem;
   font-weight: 300;
