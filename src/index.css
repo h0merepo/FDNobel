@@ -379,7 +379,13 @@ button {
   color: transparent;
 }
 
+/* Hung below the field rather than stacked under it, so the sheet's own height
+   never changes and the field stays put as results come and go. */
 .search-sheet.hero .search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
   margin-top: 0.7rem;
   max-height: 42vh;
   background: rgba(255, 255, 255, 0.95);
