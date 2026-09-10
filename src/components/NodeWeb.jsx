@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { kindLabel, textOn } from '../data/content'
 import { clamp, makeRng } from '../lib/layout'
+import { fusable, metaballPath } from '../lib/metaball'
 import { nodeMeta, relatedTo } from '../lib/relations'
 
 const FOCAL_MAX = 128
@@ -220,8 +221,11 @@ export default function NodeWeb({ selection, trail, mode, onSelect }) {
         key: `n-${n.key}`,
         x1: cx,
         y1: cy,
+        r1: focalR,
         x2: n.x,
         y2: n.y,
+        r2: n.r,
+        color: n.color,
         ...landing(cx, cy, n),
       })),
       ...laid.map((n, i) => {
@@ -231,8 +235,10 @@ export default function NodeWeb({ selection, trail, mode, onSelect }) {
           route: true,
           x1: from.x,
           y1: from.y,
+          r1: from.r,
           x2: n.x,
           y2: n.y,
+          r2: n.r,
           ...landing(from.x, from.y, n),
         }
       }),
@@ -240,6 +246,16 @@ export default function NodeWeb({ selection, trail, mode, onSelect }) {
     // The panel is tethered to the focal node by the same hairline.
     if (panelRight !== null) {
       links.unshift({ key: 'panel', x1: panelRight, y1: cy, x2: cx, y2: cy })
+    }
+
+    // Circles sitting close enough are joined by a neck instead of a line, so
+    // the route out of the focal node reads as one body rather than a diagram.
+    for (const link of links) {
+      if (link.r1 === undefined || link.r2 === undefined) continue
+      const a = { x: link.x1, y: link.y1, r: link.r1 }
+      const b = { x: link.x2, y: link.y2, r: link.r2 }
+      if (!fusable(a, b)) continue
+      link.neck = metaballPath(a, b, { spread: 0.34, handle: 2.6 })
     }
 
     return {
@@ -277,21 +293,35 @@ export default function NodeWeb({ selection, trail, mode, onSelect }) {
       {geometry && (
         <>
           <svg className="web-lines" aria-hidden="true">
-            {geometry.links.map((link, i) => (
-              <line
-                className={link.route ? 'path' : undefined}
-                key={link.key}
-                x1={link.x1}
-                y1={link.y1}
-                x2={link.x2}
-                y2={link.y2}
-                style={{ animationDelay: `${90 + i * 45}ms` }}
-              />
-            ))}
+            {geometry.links.map((link, i) =>
+              link.neck ? (
+                <path
+                  className={`web-neck${link.route ? ' path' : ''}`}
+                  key={link.key}
+                  d={link.neck}
+                  style={{
+                    animationDelay: `${90 + i * 45}ms`,
+                    // the neck belongs to the circle it grows out of, so it
+                    // carries that circle's colour rather than the line's
+                    fill: link.route ? undefined : link.color,
+                  }}
+                />
+              ) : (
+                <line
+                  className={link.route ? 'path' : undefined}
+                  key={link.key}
+                  x1={link.x1}
+                  y1={link.y1}
+                  x2={link.x2}
+                  y2={link.y2}
+                  style={{ animationDelay: `${90 + i * 45}ms` }}
+                />
+              ),
+            )}
             {/* Each connection lands on a small point rather than running
                 blindly into the circle it belongs to. */}
             {geometry.links
-              .filter((link) => link.ex !== undefined)
+              .filter((link) => link.ex !== undefined && !link.neck)
               .map((link, i) => (
                 <circle
                   className={`link-end${link.route ? ' path' : ''}`}

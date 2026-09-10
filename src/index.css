@@ -34,7 +34,7 @@
 
   /* The grain every circle is dusted with, and the light falling across it. */
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' preserveAspectRatio='none'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.8'/%3E%3C/svg%3E");
-  --sheen: radial-gradient(circle at 32% 20%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 60%),
+  --sheen: radial-gradient(circle at 32% 20%, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 62%),
     radial-gradient(circle at 74% 90%, rgba(20, 14, 8, 0.34), rgba(20, 14, 8, 0) 64%);
 
   font-family: 'Alfred Sans', system-ui, sans-serif;
@@ -87,80 +87,160 @@ button {
   transform: translate(-50%, -50%);
 }
 
-/* ---------- landing ---------- */
+/* ---------- attractor ---------- */
 
-.landing {
+/* The title sits at the centre with the three ways in hung around it, each
+   joined to the middle by a neck that grows out of its own circle. */
+.attractor {
   position: relative;
   z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   height: 100%;
-  gap: 2.5rem;
-  text-align: center;
-  padding: 2rem;
+  width: 100%;
 }
 
-.landing h1 {
-  font-size: clamp(2.2rem, 6.4vw, 5.4rem);
-  letter-spacing: 0.16em;
+.attractor-necks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.attractor-necks path {
+  animation: neck-in 700ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@keyframes neck-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* The two lines are pinned to their own heights rather than stacked, so the
+   gap the necks pass through stays the same on any screen. */
+.attractor-title {
+  position: absolute;
+  inset: 0;
   margin: 0;
+  font-size: clamp(2.4rem, 5.2vw, 6.4rem);
+  font-weight: 400;
   line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
   color: var(--pale);
+  pointer-events: none;
 }
 
-.landing .tagline {
-  font-size: clamp(0.95rem, 1.5vw, 1.35rem);
-  letter-spacing: 0.04em;
-  margin: 1rem 0 0;
-  color: var(--muted);
+.attractor-title span {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-.entries {
-  display: flex;
-  gap: clamp(1rem, 5vw, 5rem);
-  flex-wrap: wrap;
-  justify-content: center;
+.attractor-title .line-one {
+  top: 37.8%;
+}
+
+.attractor-title .line-two {
+  top: 55.3%;
+}
+
+/* A dark lozenge in the middle of the title, where the necks converge. */
+.attractor-tagline {
+  position: absolute;
+  left: 48.7%;
+  top: 46.2%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  padding: 0.5rem 1.4rem;
+  border-radius: 999px;
+  background: rgba(30, 28, 26, 0.9);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--on-dark);
+  pointer-events: none;
 }
 
 .entry {
-  width: clamp(200px, 21vw, 310px);
-  aspect-ratio: 1;
   border-radius: 50%;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.9rem;
-  padding: 2.4rem;
+  text-align: center;
+  padding: 1.2rem;
   transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 260ms ease;
   background-image: var(--grain), var(--sheen);
   background-blend-mode: soft-light, normal;
   background-size: 100% 100%, 100% 100%;
+  animation: entry-in 700ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@keyframes entry-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.86);
+  }
 }
 
 .entry:hover,
 .entry:focus-visible {
-  transform: scale(1.06);
   box-shadow: 0 28px 70px rgba(0, 0, 0, 0.5);
   outline: none;
 }
 
-.entry h2 {
-  margin: 0;
-  font-size: clamp(1rem, 1.35vw, 1.3rem);
-  letter-spacing: 0.16em;
-  /* the entry names were uppercase strings before they moved into the locale
-     file, so the casing lives here now and holds for both languages */
+.entry-name {
+  font-size: clamp(0.8rem, 1.15vw, 1.2rem);
+  letter-spacing: 0.14em;
   text-transform: uppercase;
+  line-height: 1.2;
 }
 
-.entry p {
-  margin: 0;
-  font-size: clamp(0.85rem, 1.05vw, 1.02rem);
-  opacity: 0.78;
-  line-height: 1.35;
+/* Too narrow to scatter: the circles fall into a column under the title and
+   the necks are not drawn. */
+.attractor.stacked {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  gap: clamp(0.7rem, 3vw, 1.6rem);
+  padding: 1.5rem;
+}
+
+/* title and tagline take a row each; the three circles share the next one */
+.attractor.stacked .attractor-title,
+.attractor.stacked .attractor-tagline {
+  flex: 0 0 100%;
+  text-align: center;
+}
+
+.attractor.stacked .attractor-title,
+.attractor.stacked .attractor-tagline,
+.attractor.stacked .attractor-title span {
+  position: static;
+  transform: none;
+}
+
+.attractor.stacked .attractor-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.02;
+}
+
+.attractor.stacked .entry {
+  width: min(180px, 27vw);
+  aspect-ratio: 1;
+  animation: none;
+}
+
+.attractor.stacked .entry:hover,
+.attractor.stacked .entry:focus-visible {
+  transform: scale(1.05);
 }
 
 /* ---------- pannable canvas ---------- */
@@ -642,6 +722,17 @@ button {
   to {
     opacity: 1;
   }
+}
+
+/* Circles close enough to fuse are joined by a neck rather than a line. */
+.web-neck {
+  fill: rgba(209, 204, 190, 0.5);
+  opacity: 0;
+  animation: line-in 460ms ease forwards;
+}
+
+.web-neck.path {
+  fill: var(--gold);
 }
 
 .web-lines .link-end {
