@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Bubble from '../components/Bubble'
+import Ambient from '../components/Ambient'
 import PanCanvas from '../components/PanCanvas'
 import {
   ARTIFACTS,
@@ -15,7 +16,7 @@ import {
 } from '../data/content'
 import { t } from '../i18n'
 import { STORIES, storyTitle } from '../data/stories'
-import { ghostCircles, packCircles } from '../lib/layout'
+import { packCircles } from '../lib/layout'
 
 const WORLD = { width: 4200, height: 2800 }
 
@@ -77,7 +78,6 @@ export default function Discovery({ selection, onSelect, search }) {
   const [seed, setSeed] = useState(33)
 
   const nodes = useMemo(() => packCircles(ITEMS(), { ...WORLD, seed, padding: 34 }), [seed])
-  const ghosts = useMemo(() => ghostCircles(46, { ...WORLD, seed: 88 }), [])
 
   const recentre = useCallback(() => {
     controls.current?.centerOn(WORLD.width / 2, WORLD.height / 2)
@@ -95,27 +95,14 @@ export default function Discovery({ selection, onSelect, search }) {
 
   return (
     <>
+      <Ambient count={22} seed={88} />
+
       <div className="page-hint">
         <h1>{t('discoveryTitle')}</h1>
         <p>{t('discoveryHint')}</p>
       </div>
 
       <PanCanvas world={WORLD} offsetRef={controls}>
-        {ghosts.map((g) => (
-          <span
-            key={g.id}
-            className="world-ghost"
-            style={{
-              left: g.x,
-              top: g.y,
-              width: g.r * 2,
-              height: g.r * 2,
-              opacity: g.o,
-              background: g.c,
-              filter: `blur(${g.blur}px)`,
-            }}
-          />
-        ))}
         {nodes.map((node) => (
           <Bubble
             key={`${node.kind}-${node.id}`}

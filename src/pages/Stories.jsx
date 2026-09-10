@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef } from 'react'
 import Bubble from '../components/Bubble'
+import Ambient from '../components/Ambient'
 import PanCanvas from '../components/PanCanvas'
 import { THEMES, kindColor, themeLabel } from '../data/content'
 import { t } from '../i18n'
-import { ghostCircles, packCircles } from '../lib/layout'
+import { packCircles } from '../lib/layout'
 
 const WORLD = { width: 2900, height: 2050 }
 const RADIUS_BY_WEIGHT = { 1: 74, 2: 104, 3: 140 }
@@ -26,7 +27,6 @@ export default function Stories({ selection, onSelect }) {
     [],
   )
 
-  const ghosts = useMemo(() => ghostCircles(34, { ...WORLD, seed: 55 }), [])
 
   useEffect(() => {
     const node = nodes.find((n) => n.id === selection?.id)
@@ -39,26 +39,13 @@ export default function Stories({ selection, onSelect }) {
 
   return (
     <>
+      <Ambient count={22} seed={55} />
+
       <div className="page-hint">
         <h1>{t('storiesTitle')}</h1>
         <p>{t('storiesHint')}</p>
       </div>
       <PanCanvas world={WORLD} offsetRef={controls}>
-        {ghosts.map((g) => (
-          <span
-            key={g.id}
-            className="world-ghost"
-            style={{
-              left: g.x,
-              top: g.y,
-              width: g.r * 2,
-              height: g.r * 2,
-              opacity: g.o,
-              background: g.c,
-              filter: `blur(${g.blur}px)`,
-            }}
-          />
-        ))}
         {nodes.map((node) => (
           <Bubble
             key={node.id}

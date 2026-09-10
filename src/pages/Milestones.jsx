@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Bubble from '../components/Bubble'
+import Ambient from '../components/Ambient'
 import PanCanvas from '../components/PanCanvas'
 import Scrubber from '../components/Scrubber'
 import TimelineWeb, { yearOf } from '../components/TimelineWeb'
 import { MILESTONES, kindColor, milestoneTitle } from '../data/content'
 import { t } from '../i18n'
 import { nodeMeta, relatedTo } from '../lib/relations'
-import { ghostCircles } from '../lib/layout'
 import { DECADES, END_YEAR, PX_PER_YEAR, START_YEAR, WORLD, layoutByYear, yearToX } from '../lib/timeline'
 
 // Only key events sit on the timeline; the people who made them are reached by
@@ -33,13 +33,12 @@ export default function Milestones({ selection, onSelect }) {
           r: MILESTONE_RADIUS[m.weight] ?? 122,
           color: kindColor('milestone'),
         })),
-        // keep the band clear of the scrubber at the foot of the page
-        { seed: 9, top: 92, bottom: 648, padding: 26 },
+        // the band clears the name at the head of the page and the scrubber at its foot
+        { seed: 9, top: 158, bottom: 656, padding: 26 },
       ),
     [],
   )
 
-  const ghosts = useMemo(() => ghostCircles(40, { ...WORLD, seed: 71 }), [])
 
   const scrubTo = useCallback((nextYear) => {
     setYear(nextYear)
@@ -129,26 +128,13 @@ export default function Milestones({ selection, onSelect }) {
 
   return (
     <>
-      <div className="page-hint">
+      <Ambient count={20} seed={71} />
+
+      <div className="page-hint head">
         <h1>{t('milestonesTitle')}</h1>
         <p>{t('milestonesHint')}</p>
       </div>
       <PanCanvas world={WORLD} offsetRef={controls} onOffsetChange={handleOffset} lockY>
-        {ghosts.map((g) => (
-          <span
-            key={g.id}
-            className="world-ghost"
-            style={{
-              left: g.x,
-              top: g.y,
-              width: g.r * 2,
-              height: g.r * 2,
-              opacity: g.o,
-              background: g.c,
-              filter: `blur(${g.blur}px)`,
-            }}
-          />
-        ))}
         {DECADES.map((d) => (
           <span key={`rule-${d}`} className="year-rule" style={{ left: yearToX(d), top: 0, height: WORLD.height }} />
         ))}
