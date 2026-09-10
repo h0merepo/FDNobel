@@ -255,8 +255,13 @@ export default function NodeWeb({ selection, trail, mode, onSelect }) {
       const a = { x: link.x1, y: link.y1, r: link.r1 }
       const b = { x: link.x2, y: link.y2, r: link.r2 }
       if (!fusable(a, b)) continue
+      // A neck is a slim line whatever it joins: the width barely tracks the
+      // circles, or a large focal node drags every bar out with it.
       const thin = Math.min(a.r, b.r)
-      link.neck = neckPath(a, b, { width: thin * 0.3, fillet: thin * 0.3 })
+      link.neck = neckPath(a, b, {
+        width: clamp(thin * 0.085, 3.5, 8),
+        fillet: clamp(thin * 0.24, 9, 22),
+      })
     }
 
     return {

@@ -86,7 +86,7 @@ export default function Landing({ onNavigate }) {
               const d = neckPath(
                 { x: entry.cx, y: entry.cy, r: entry.cr },
                 hub,
-                { width: hub.r * 0.8, fillet: entry.cr * 0.34 },
+                { width: 4.5, fillet: entry.cr * 0.24 },
               )
               return d ? <path key={entry.id} d={d} fill={entry.color} /> : null
             })}
