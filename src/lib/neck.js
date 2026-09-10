@@ -65,19 +65,23 @@ export function neckPath(c1, c2, { width = 10, fillet = 24 } = {}) {
   const e1b = at(a1, -w)
   const s1b = at(a1 * k1, -(w + f) * k1)
 
-  const arc = (p, sweep) => `A${n(f)},${n(f)} 0 0 ${sweep} ${pt(p)}`
+  // All four corners are the same concave tuck, and the path walks the outline
+  // in one consistent direction — so every one of them sweeps the same way. Two
+  // of them mirrored looks right in the algebra and draws the arc the wrong way
+  // round, which is what put a lump on one side of every neck.
+  const arc = (p) => `A${n(f)},${n(f)} 0 0 1 ${pt(p)}`
 
   // Down one side and back along the other; the two chords across the circles
   // are hidden underneath them.
   return [
     `M${pt(s1a)}`,
-    arc(e1a, 1),
+    arc(e1a),
     `L${pt(e2a)}`,
-    arc(s2a, 1),
+    arc(s2a),
     `L${pt(s2b)}`,
-    arc(e2b, 0),
+    arc(e2b),
     `L${pt(e1b)}`,
-    arc(s1b, 0),
+    arc(s1b),
     'Z',
   ].join(' ')
 }
