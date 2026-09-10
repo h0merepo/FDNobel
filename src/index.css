@@ -1,7 +1,9 @@
+/* Alfred Sans ships one weight. Declaring it across the whole range means any
+   weight asked for anywhere resolves to this face instead of being faked. */
 @font-face {
   font-family: 'Alfred Sans';
   src: url('./assets/alfred-sans-regular.ttf') format('truetype');
-  font-weight: 400;
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
@@ -45,6 +47,14 @@
 
 * {
   box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+strong,
+b {
+  font-weight: 400;
 }
 
 html,
@@ -360,7 +370,6 @@ button {
 
 .dock .lang {
   font-size: 0.76rem;
-  font-weight: 500;
   letter-spacing: 0.12em;
   min-width: 3.2rem;
 }
@@ -561,7 +570,6 @@ button {
    does not draw itself. */
 .web-node.focal {
   font-size: 15px;
-  font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -856,7 +864,6 @@ button {
 
 .web-node .meta {
   font-size: 0.74em;
-  font-weight: 300;
   opacity: 0.8;
   margin-top: 0.3em;
   letter-spacing: 0.02em;
@@ -1048,7 +1055,6 @@ button {
   margin: 0;
   font-size: 0.92rem;
   line-height: 1.66;
-  font-weight: 300;
   color: var(--on-dark);
 }
 
@@ -1342,7 +1348,6 @@ button {
 
 .reader-count {
   font-size: 0.72rem;
-  font-weight: 300;
   letter-spacing: 0.17em;
   color: var(--on-dark-muted);
   font-variant-numeric: tabular-nums;
@@ -1364,7 +1369,6 @@ button {
   text-wrap: balance;
   color: var(--ink);
   font-size: clamp(1.15rem, 1.6vw, 1.5rem);
-  font-weight: 300;
   line-height: 1.32;
 }
 
@@ -1408,7 +1412,6 @@ button {
   gap: 0.6rem;
   width: 100%;
   font-size: 0.78rem;
-  font-weight: 700;
   letter-spacing: 0.13em;
   text-transform: uppercase;
 }
@@ -1553,7 +1556,6 @@ button {
   display: flex;
   justify-content: space-between;
   font-size: 0.88rem;
-  font-weight: 500;
   letter-spacing: 0.05em;
   margin-bottom: 0.7rem;
 }
