@@ -2,12 +2,12 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import Ambient from '../components/Ambient'
 import { PALETTE, textOn } from '../data/content'
 import { t } from '../i18n'
-import { metaballPath } from '../lib/metaball'
+import { neckPath } from '../lib/neck'
 
 // The three ways in, hung around the title. Positions are fractions of the
 // stage so the arrangement survives any window shape; the necks that join them
 // to the centre are drawn in pixels off the measured box, so they stay round.
-const HUB = { x: 0.487, y: 0.462, r: 0.004 }
+const HUB = { x: 0.487, y: 0.462, r: 0.006 }
 
 const ENTRIES = [
   {
@@ -71,7 +71,7 @@ export default function Landing({ onNavigate }) {
   }, [box])
 
   const hub = useMemo(
-    () => ({ x: HUB.x * box.w, y: HUB.y * box.h, r: Math.max(3, HUB.r * box.w) }),
+    () => ({ x: HUB.x * box.w, y: HUB.y * box.h, r: Math.max(5, HUB.r * box.w) }),
     [box],
   )
 
@@ -83,10 +83,10 @@ export default function Landing({ onNavigate }) {
         {scattered && (
           <svg className="attractor-necks" aria-hidden="true">
             {placed.map((entry) => {
-              const d = metaballPath(
+              const d = neckPath(
                 { x: entry.cx, y: entry.cy, r: entry.cr },
                 hub,
-                { spread: 0.15, handle: 2.6, maxDistance: Math.max(box.w, box.h) * 1.2 },
+                { width: hub.r * 0.8, fillet: entry.cr * 0.34 },
               )
               return d ? <path key={entry.id} d={d} fill={entry.color} /> : null
             })}

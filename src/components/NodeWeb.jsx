@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { kindLabel, textOn } from '../data/content'
 import { clamp, makeRng } from '../lib/layout'
-import { fusable, metaballPath } from '../lib/metaball'
+import { fusable, neckPath } from '../lib/neck'
 import { nodeMeta, relatedTo } from '../lib/relations'
 
 const FOCAL_MAX = 128
@@ -255,7 +255,8 @@ export default function NodeWeb({ selection, trail, mode, onSelect }) {
       const a = { x: link.x1, y: link.y1, r: link.r1 }
       const b = { x: link.x2, y: link.y2, r: link.r2 }
       if (!fusable(a, b)) continue
-      link.neck = metaballPath(a, b, { spread: 0.34, handle: 2.6 })
+      const thin = Math.min(a.r, b.r)
+      link.neck = neckPath(a, b, { width: thin * 0.3, fillet: thin * 0.3 })
     }
 
     return {
