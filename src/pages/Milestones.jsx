@@ -138,7 +138,15 @@ export default function Milestones({ selection, onSelect }) {
           <span
             key={g.id}
             className="world-ghost"
-            style={{ left: g.x, top: g.y, width: g.r * 2, height: g.r * 2, opacity: g.o }}
+            style={{
+              left: g.x,
+              top: g.y,
+              width: g.r * 2,
+              height: g.r * 2,
+              opacity: g.o,
+              background: g.c,
+              filter: `blur(${g.blur}px)`,
+            }}
           />
         ))}
         {DECADES.map((d) => (

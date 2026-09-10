@@ -1,18 +1,24 @@
 import { tr } from '../i18n'
 
 export const PALETTE = {
-  blue: '#7AA6C8',
-  green: '#A6BE6C',
-  gold: '#D8B45C',
-  sand: '#DCD4C0',
-  grey: '#C2C2C2',
-  peach: '#F2C4A9',
-  ink: '#141414',
+  // core
+  gold: '#CEA152',
+  black: '#2B2724',
+  pale: '#D1CCBE',
+  warmGrey: '#B0A8A1',
+  // secondary — one per prize, plus the pink that marks a theme
+  theme: '#F5318B',
+  physics: '#A6A6A6',
+  chemistry: '#0C3D51',
+  medicine: '#2C8293',
+  literature: '#C25F1B',
+  peace: '#BAC9D9',
+  economics: '#96AE7E',
+  ink: '#2B2724',
 }
 
-// The atlas is black and white: nothing about a circle's fill encodes what it
-// is. Type is carried by the tag on the focal node and by the labels, never by
-// colour. kindColor is kept as the single seam so a palette could return.
+// A circle's fill says what it is: pink for a theme, the prize colour for a
+// laureate, and the three core tones for the rest.
 export const KIND_LABELS = {
   theme: 'Theme',
   story: 'Story',
@@ -21,7 +27,43 @@ export const KIND_LABELS = {
   artifact: 'Artifact',
 }
 
-export const kindColor = () => PALETTE.ink
+const KIND_COLOR = {
+  story: PALETTE.gold,
+  milestone: PALETTE.pale,
+  artifact: PALETTE.warmGrey,
+}
+
+// Themes are the warm family, pink its brightest member. A cloud of forty-five
+// of them in one colour is a wall, so each theme keeps a stable tone drawn from
+// the family by its own name — the same wherever that theme appears.
+const THEME_TONES = [
+  PALETTE.theme,
+  PALETTE.gold,
+  PALETTE.theme,
+  PALETTE.literature,
+  PALETTE.pale,
+  PALETTE.theme,
+  PALETTE.warmGrey,
+  PALETTE.gold,
+]
+
+const toneIndex = (id) => {
+  let h = 2166136261
+  for (let i = 0; i < id.length; i += 1) {
+    h ^= id.charCodeAt(i)
+    h = Math.imul(h, 16777619)
+  }
+  return (h >>> 0) % THEME_TONES.length
+}
+
+export const kindColor = (kind, id) => {
+  if (kind === 'person') {
+    const field = LAUREATES.find((l) => l.id === id)?.field
+    return PALETTE[field] ?? PALETTE.warmGrey
+  }
+  if (kind === 'theme') return THEME_TONES[toneIndex(String(id))]
+  return KIND_COLOR[kind] ?? PALETTE.pale
+}
 
 export const FIELDS = [
   { id: 'physics', label: 'Physics' },
@@ -167,7 +209,29 @@ export const ARTIFACTS = [
   { id: 'banquet', label: 'The Banquet Menu', blurb: 'Stockholm City Hall, 10 December. The menu is kept secret until the day itself.', themes: ['storytelling'] },
 ]
 
-export const textOn = (background) => (background === PALETTE.ink ? '#ffffff' : PALETTE.ink)
+// Label colour is whichever of the two type colours actually reads better on
+// the fill, measured rather than listed — so a new swatch needs no registering.
+function luminance(hex) {
+  const h = String(hex).replace('#', '')
+  if (h.length !== 6) return 1
+  const channel = (i) => {
+    const c = parseInt(h.slice(i, i + 2), 16) / 255
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+  }
+  return 0.2126 * channel(0) + 0.7152 * channel(2) + 0.0722 * channel(4)
+}
+
+const contrast = (a, b) => {
+  const [hi, lo] = a > b ? [a, b] : [b, a]
+  return (hi + 0.05) / (lo + 0.05)
+}
+
+export function textOn(background) {
+  const l = luminance(background)
+  return contrast(l, luminance(PALETTE.ink)) >= contrast(l, luminance(PALETTE.pale))
+    ? PALETTE.ink
+    : PALETTE.pale
+}
 export const findTheme = (id) => THEMES.find((t) => t.id === id)
 export const findLaureate = (id) => LAUREATES.find((l) => l.id === id)
 export const findMilestone = (id) => MILESTONES.find((m) => m.id === id)

@@ -17,6 +17,8 @@ export default function Ambient({ count = 26, seed = 12 }) {
             width: c.r * 1.6,
             height: c.r * 1.6,
             opacity: c.o,
+            background: c.c,
+            filter: `blur(${c.blur}px)`,
           }}
         />
       ))}

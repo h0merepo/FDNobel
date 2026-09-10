@@ -208,11 +208,33 @@ export default function NodeWeb({ selection, trail, mode, onSelect }) {
     }
 
     const focalBody = { x: cx, y: cy, r: focalR }
+    // A connection ends on a point set just inside the circle it belongs to,
+    // rather than running blindly on to its centre.
+    const landing = (x1, y1, node) => {
+      const d = Math.hypot(node.x - x1, node.y - y1) || 1
+      const back = Math.max(6, node.r - 9)
+      return { ex: node.x - ((node.x - x1) / d) * back, ey: node.y - ((node.y - y1) / d) * back }
+    }
     const links = [
-      ...placed.map((n) => ({ key: `n-${n.key}`, x1: cx, y1: cy, x2: n.x, y2: n.y })),
+      ...placed.map((n) => ({
+        key: `n-${n.key}`,
+        x1: cx,
+        y1: cy,
+        x2: n.x,
+        y2: n.y,
+        ...landing(cx, cy, n),
+      })),
       ...laid.map((n, i) => {
         const from = i === 0 ? focalBody : laid[i - 1]
-        return { key: `c-${n.key}`, route: true, x1: from.x, y1: from.y, x2: n.x, y2: n.y }
+        return {
+          key: `c-${n.key}`,
+          route: true,
+          x1: from.x,
+          y1: from.y,
+          x2: n.x,
+          y2: n.y,
+          ...landing(from.x, from.y, n),
+        }
       }),
     ]
     // The panel is tethered to the focal node by the same hairline.
@@ -266,6 +288,20 @@ export default function NodeWeb({ selection, trail, mode, onSelect }) {
                 style={{ animationDelay: `${90 + i * 45}ms` }}
               />
             ))}
+            {/* Each connection lands on a small point rather than running
+                blindly into the circle it belongs to. */}
+            {geometry.links
+              .filter((link) => link.ex !== undefined)
+              .map((link, i) => (
+                <circle
+                  className={`link-end${link.route ? ' path' : ''}`}
+                  key={`${link.key}-end`}
+                  cx={link.ex}
+                  cy={link.ey}
+                  r="2.6"
+                  style={{ animationDelay: `${140 + i * 45}ms` }}
+                />
+              ))}
             {geometry.tag && (
               <line
                 className="leader"

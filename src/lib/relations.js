@@ -16,14 +16,14 @@ import {
 import { STORIES, findStory, storyTitle } from '../data/stories'
 import { mixFor } from './levels'
 
-const asTheme = (t) => ({ key: `theme:${t.id}`, kind: 'theme', id: t.id, label: themeLabel(t), color: kindColor('theme') })
+const asTheme = (t) => ({ key: `theme:${t.id}`, kind: 'theme', id: t.id, label: themeLabel(t), color: kindColor('theme', t.id) })
 const asPerson = (p) => ({
   key: `person:${p.id}`,
   kind: 'person',
   id: p.id,
   label: p.name,
   sub: String(p.year),
-  color: kindColor('person'),
+  color: kindColor('person', p.id),
 })
 const asMilestone = (m) => ({
   key: `milestone:${m.id}`,
@@ -205,7 +205,7 @@ export function nodeMeta(selection) {
   const { kind, id } = selection
   if (kind === 'theme') {
     const t = findTheme(id)
-    return t && { kicker: kindLabel('theme'), label: themeLabel(t), blurb: blurbFor('theme', id, t.blurb), color: kindColor('theme') }
+    return t && { kicker: kindLabel('theme'), label: themeLabel(t), blurb: blurbFor('theme', id, t.blurb), color: kindColor('theme', t.id) }
   }
   if (kind === 'person') {
     const p = findLaureate(id)
@@ -215,7 +215,7 @@ export function nodeMeta(selection) {
         label: p.name,
         sub: `${p.year} · ${countryName(p.country)}`,
         blurb: blurbFor('person', id, p.blurb),
-        color: kindColor('person'),
+        color: kindColor('person', id),
       }
     )
   }

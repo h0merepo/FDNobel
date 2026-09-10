@@ -69,6 +69,10 @@ export function packCircles(items, { width, height, seed = 7, padding = 26, atte
   return relax(placed, { width, height, padding, rng })
 }
 
+// Out-of-focus circles lying behind the plane. They carry the palette too, so
+// the depth behind the atlas is the same set of colours gone soft.
+const GHOST_TONES = ['#CEA152', '#D1CCBE', '#B0A8A1', '#F5318B', '#C25F1B', '#2C8293', '#BAC9D9']
+
 export function ghostCircles(count, { width, height, seed = 99 }) {
   const rng = makeRng(seed)
   return Array.from({ length: count }, (_, i) => ({
@@ -76,7 +80,9 @@ export function ghostCircles(count, { width, height, seed = 99 }) {
     x: rng() * width,
     y: rng() * height,
     r: 40 + rng() * 130,
-    o: 0.35 + rng() * 0.4,
+    o: 0.18 + rng() * 0.3,
+    c: GHOST_TONES[Math.floor(rng() * GHOST_TONES.length)],
+    blur: 26 + rng() * 46,
   }))
 }
 

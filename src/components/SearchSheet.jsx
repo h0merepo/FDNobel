@@ -28,7 +28,7 @@ const RECORDS = () => [
     label: themeLabel(t),
     title: themeLabel(t),
     body: blurbFor('theme', t.id, t.blurb),
-    color: kindColor('theme'),
+    color: kindColor('theme', t.id),
   })),
   ...LAUREATES.map((l) => ({
     kind: 'person',
@@ -36,7 +36,7 @@ const RECORDS = () => [
     label: l.name,
     title: l.name,
     body: `${countryName(l.country)} ${l.year} ${blurbFor('person', l.id, l.blurb)}`,
-    color: kindColor('person'),
+    color: kindColor('person', l.id),
   })),
   ...MILESTONES.map((m) => ({
     kind: 'milestone',

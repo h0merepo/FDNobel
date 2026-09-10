@@ -36,14 +36,14 @@ const ITEMS = () => [
     label: l.name,
     meta: `${fieldLabel(FIELDS.find((f) => f.id === l.field) ?? { id: l.field, label: l.field }).split(' ')[0]} ${l.year}`,
     r: 92,
-    color: kindColor('person'),
+    color: kindColor('person', l.id),
   })),
   ...THEMES.map((th) => ({
     id: th.id,
     kind: 'theme',
     label: themeLabel(th),
     r: th.weight === 3 ? 118 : th.weight === 2 ? 92 : 72,
-    color: kindColor('theme'),
+    color: kindColor('theme', th.id),
   })),
   ...MILESTONES.map((m) => ({
     id: m.id,
@@ -105,7 +105,15 @@ export default function Discovery({ selection, onSelect, search }) {
           <span
             key={g.id}
             className="world-ghost"
-            style={{ left: g.x, top: g.y, width: g.r * 2, height: g.r * 2, opacity: g.o }}
+            style={{
+              left: g.x,
+              top: g.y,
+              width: g.r * 2,
+              height: g.r * 2,
+              opacity: g.o,
+              background: g.c,
+              filter: `blur(${g.blur}px)`,
+            }}
           />
         ))}
         {nodes.map((node) => (

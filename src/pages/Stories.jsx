@@ -19,7 +19,7 @@ export default function Stories({ selection, onSelect }) {
           kind: 'theme',
           label: themeLabel(t),
           r: RADIUS_BY_WEIGHT[t.weight] ?? 100,
-          color: kindColor('theme'),
+          color: kindColor('theme', t.id),
         })),
         { ...WORLD, seed: 21, padding: 24 },
       ),
@@ -48,7 +48,15 @@ export default function Stories({ selection, onSelect }) {
           <span
             key={g.id}
             className="world-ghost"
-            style={{ left: g.x, top: g.y, width: g.r * 2, height: g.r * 2, opacity: g.o }}
+            style={{
+              left: g.x,
+              top: g.y,
+              width: g.r * 2,
+              height: g.r * 2,
+              opacity: g.o,
+              background: g.c,
+              filter: `blur(${g.blur}px)`,
+            }}
           />
         ))}
         {nodes.map((node) => (

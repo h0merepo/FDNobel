@@ -10,15 +10,15 @@ function hash(str) {
   return h >>> 0
 }
 
-// Stands in for the artwork: a smooth spectral wash in whites and light greys,
-// deterministic per node so a story always opens with the same plate. The hues
-// are barely there — enough for the light to bend across the surface without
-// the plate reading as coloured.
+// Stands in for the artwork: a smooth spectral wash, deterministic per node so
+// a story always opens with the same plate. It settles on Nobel pale rather
+// than white, and the hues that bend across it are drawn from the palette —
+// gold, pink, teal, rust — held far enough back to stay a light surface.
 const SWEEP = [
-  { h: 210, s: 22 },
-  { h: 268, s: 18 },
-  { h: 34, s: 24 },
-  { h: 168, s: 16 },
+  { h: 40, s: 34 },
+  { h: 330, s: 26 },
+  { h: 192, s: 24 },
+  { h: 22, s: 30 },
 ]
 
 export default function Plate({ seed, variant = 'hero', className = '' }) {
@@ -54,10 +54,10 @@ export default function Plate({ seed, variant = 'hero', className = '' }) {
     >
       <defs>
         <linearGradient id={`${id}b`} gradientTransform={`rotate(${tilt} 0.5 0.5)`}>
-          <stop offset="0%" stopColor="#ffffff" />
-          <stop offset="32%" stopColor={`hsl(220 16% ${96 - base * 0.3}%)`} />
-          <stop offset="64%" stopColor={`hsl(32 14% ${90 - base * 0.5}%)`} />
-          <stop offset="100%" stopColor={`hsl(214 16% ${85 - base * 0.7}%)`} />
+          <stop offset="0%" stopColor="#f7f4ec" />
+          <stop offset="32%" stopColor={`hsl(44 22% ${94 - base * 0.3}%)`} />
+          <stop offset="64%" stopColor={`hsl(38 20% ${88 - base * 0.5}%)`} />
+          <stop offset="100%" stopColor={`hsl(30 18% ${82 - base * 0.7}%)`} />
         </linearGradient>
 
         {blooms.map((bloom, i) => (

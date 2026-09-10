@@ -17,7 +17,7 @@ export default function Bubble({ node, selected, dimmed, onSelect }) {
         top: node.y,
         width: node.r * 2,
         height: node.r * 2,
-        background: node.color,
+        backgroundColor: node.color,
         color: textOn(node.color),
         fontSize,
       }}

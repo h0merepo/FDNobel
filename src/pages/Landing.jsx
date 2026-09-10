@@ -3,9 +3,9 @@ import { PALETTE, textOn } from '../data/content'
 import { t } from '../i18n'
 
 const ENTRIES = [
-  { id: 'stories', title: 'entryStory', copy: 'entryStoryBlurb' },
-  { id: 'milestones', title: 'entryMilestone', copy: 'entryMilestoneBlurb' },
-  { id: 'discovery', title: 'entryDiscovery', copy: 'entryDiscoveryBlurb' },
+  { id: 'stories', title: 'entryStory', copy: 'entryStoryBlurb', color: PALETTE.gold },
+  { id: 'milestones', title: 'entryMilestone', copy: 'entryMilestoneBlurb', color: PALETTE.pale },
+  { id: 'discovery', title: 'entryDiscovery', copy: 'entryDiscoveryBlurb', color: PALETTE.theme },
 ]
 
 export default function Landing({ onNavigate }) {
@@ -22,7 +22,7 @@ export default function Landing({ onNavigate }) {
             <button
               key={entry.id}
               className="entry"
-              style={{ background: PALETTE.ink, color: textOn(PALETTE.ink) }}
+              style={{ backgroundColor: entry.color, color: textOn(entry.color) }}
               onClick={() => onNavigate(entry.id)}
             >
               <h2>{t(entry.title)}</h2>

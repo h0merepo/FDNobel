@@ -1,26 +1,46 @@
-@import '@fontsource/lexend/latin-200.css';
-@import '@fontsource/lexend/latin-300.css';
-@import '@fontsource/lexend/latin-400.css';
-@import '@fontsource/lexend/latin-500.css';
-@import '@fontsource/lexend/latin-600.css';
+@font-face {
+  font-family: 'Alfred Sans';
+  src: url('./assets/alfred-sans-regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
-  --blue: #7aa6c8;
-  --sand: #dcd4c0;
-  --grey: #c2c2c2;
-  --peach: #f2c4a9;
-  --ink: #141414;
-  --muted: #6b6b6b;
-  --paper: #e8e8e8;
-  --ghost: #bcbcbc;
-  --panel: #171717;
-  --chrome: #1c1c1c;
+  /* core */
+  --gold: #cea152;
+  --black: #2b2724;
+  --pale: #d1ccbe;
+  --warm-grey: #b0a8a1;
+  /* secondary */
+  --pink: #f5318b;
+  --physics: #a6a6a6;
+  --chemistry: #0c3d51;
+  --medicine: #2c8293;
+  --literature: #c25f1b;
+  --peace: #bac9d9;
+  --economics: #96ae7e;
+
+  --ink: #2b2724;
+  --paper: #262320;
+  --muted: rgba(209, 204, 190, 0.56);
+  --ghost: #b0a8a1;
+  --panel: #1e1c1a;
+  --chrome: #1e1c1a;
   --rail-h: 48px;
-  --hairline: rgba(255, 255, 255, 0.88);
-  --on-dark: rgba(255, 255, 255, 0.82);
-  --on-dark-muted: rgba(255, 255, 255, 0.52);
-  font-family: 'Lexend', system-ui, sans-serif;
-  color: var(--ink);
+  --hairline: rgba(255, 255, 255, 0.7);
+  --on-dark: rgba(209, 204, 190, 0.92);
+  --on-dark-muted: rgba(209, 204, 190, 0.5);
+
+  /* The grain every circle is dusted with, and the light falling across it. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' preserveAspectRatio='none'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.8'/%3E%3C/svg%3E");
+  --sheen: radial-gradient(circle at 32% 20%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 60%),
+    radial-gradient(circle at 74% 90%, rgba(20, 14, 8, 0.34), rgba(20, 14, 8, 0) 64%);
+
+  font-family: 'Alfred Sans', system-ui, sans-serif;
+  /* one weight only, so nothing is faked into a bold that does not exist */
+  font-synthesis: none;
+  color: var(--on-dark);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -64,8 +84,6 @@ button {
 .ambient span {
   position: absolute;
   border-radius: 50%;
-  background: var(--ghost);
-  filter: blur(26px);
   transform: translate(-50%, -50%);
 }
 
@@ -85,17 +103,18 @@ button {
 }
 
 .landing h1 {
-  font-size: clamp(2.6rem, 7.6vw, 6.4rem);
-  font-weight: 200;
-  letter-spacing: 0.01em;
+  font-size: clamp(2.2rem, 6.4vw, 5.4rem);
+  letter-spacing: 0.16em;
   margin: 0;
   line-height: 1;
+  color: var(--pale);
 }
 
 .landing .tagline {
-  font-size: clamp(1rem, 1.7vw, 1.5rem);
-  font-weight: 400;
-  margin: 0.75rem 0 0;
+  font-size: clamp(0.95rem, 1.5vw, 1.35rem);
+  letter-spacing: 0.04em;
+  margin: 1rem 0 0;
+  color: var(--muted);
 }
 
 .entries {
@@ -116,20 +135,22 @@ button {
   gap: 0.9rem;
   padding: 2.4rem;
   transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 260ms ease;
+  background-image: var(--grain), var(--sheen);
+  background-blend-mode: soft-light, normal;
+  background-size: 100% 100%, 100% 100%;
 }
 
 .entry:hover,
 .entry:focus-visible {
   transform: scale(1.06);
-  box-shadow: 0 24px 60px rgba(20, 20, 20, 0.14);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.5);
   outline: none;
 }
 
 .entry h2 {
   margin: 0;
   font-size: clamp(1rem, 1.35vw, 1.3rem);
-  font-weight: 500;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.16em;
   /* the entry names were uppercase strings before they moved into the locale
      file, so the casing lives here now and holds for both languages */
   text-transform: uppercase;
@@ -138,8 +159,7 @@ button {
 .entry p {
   margin: 0;
   font-size: clamp(0.85rem, 1.05vw, 1.02rem);
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.72);
+  opacity: 0.78;
   line-height: 1.35;
 }
 
@@ -166,14 +186,17 @@ button {
   will-change: transform;
 }
 
+/* Depth behind the plane: the same palette, thrown out of focus. Colour and
+   blur radius come from the layout so no two sit at the same distance. */
 .world-ghost {
   position: absolute;
   border-radius: 50%;
   background: var(--ghost);
-  filter: blur(22px);
   transform: translate(-50%, -50%);
 }
 
+/* Every circle is a lit, grainy sphere rather than a flat disc: the fill
+   underneath, a fall of light across it, and film grain over the top. */
 .bubble {
   position: absolute;
   border-radius: 50%;
@@ -189,29 +212,30 @@ button {
   transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), opacity 240ms ease,
     box-shadow 240ms ease;
   overflow: hidden;
-  box-shadow: 0 0 0 2px #ffffff;
+  background-image: var(--grain), var(--sheen);
+  background-blend-mode: soft-light, normal;
+  background-size: 100% 100%, 100% 100%;
 }
 
 .bubble:hover {
   transform: translate(-50%, -50%) scale(1.05);
-  box-shadow: 0 0 0 2px #ffffff, 0 18px 46px rgba(20, 20, 20, 0.18);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.45);
   z-index: 3;
 }
 
 .bubble.selected {
   transform: translate(-50%, -50%) scale(1.08);
-  box-shadow: 0 0 0 4px #ffffff;
+  box-shadow: 0 0 0 2px rgba(209, 204, 190, 0.9), 0 22px 60px rgba(0, 0, 0, 0.5);
   z-index: 4;
 }
 
 .bubble.dimmed {
-  opacity: 0.15;
+  opacity: 0.22;
   pointer-events: none;
 }
 
 .bubble .label {
-  font-weight: 400;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   min-width: 0;
   max-width: 100%;
@@ -250,7 +274,7 @@ button {
   flex: none;
   background: var(--chrome);
   border-radius: 999px;
-  color: #fff;
+  color: var(--pale);
   overflow: hidden;
 }
 
@@ -265,7 +289,7 @@ button {
 
 .dock button:hover,
 .dock button.active {
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(209, 204, 190, 0.16);
 }
 
 .dock .lang {
@@ -289,11 +313,12 @@ button {
   left: 2rem;
   bottom: 6.2rem;
   width: min(380px, calc(100vw - 4rem));
-  background: rgba(255, 255, 255, 0.94);
+  background: var(--pale);
+  color: var(--ink);
   backdrop-filter: blur(18px);
-  border: 1px solid rgba(20, 20, 20, 0.22);
+  border: 1px solid rgba(43, 39, 36, 0.2);
   border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(20, 20, 20, 0.16);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   padding: 1rem;
 }
 
@@ -322,7 +347,7 @@ button {
   font: inherit;
   font-size: 0.95rem;
   padding: 0.65rem 0.85rem;
-  border: 1px solid rgba(20, 20, 20, 0.16);
+  border: 1px solid rgba(43, 39, 36, 0.28);
   border-radius: 12px;
   outline: none;
   background: transparent;
@@ -330,7 +355,7 @@ button {
 }
 
 .search-sheet input:focus {
-  border-color: rgba(20, 20, 20, 0.5);
+  border-color: rgba(43, 39, 36, 0.65);
 }
 
 .search-sheet.hero input {
@@ -338,10 +363,10 @@ button {
   font-weight: 300;
   padding: 1.05rem 1.5rem;
   border-radius: 999px;
-  border: 1.5px solid rgba(20, 20, 20, 0.5);
-  background: rgba(255, 255, 255, 0.9);
+  border: 1.5px solid rgba(43, 39, 36, 0.3);
+  background: var(--pale);
   backdrop-filter: blur(14px);
-  box-shadow: 0 16px 46px rgba(20, 20, 20, 0.12);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
   text-align: left;
   color: var(--ink);
 }
@@ -388,16 +413,17 @@ button {
   right: 0;
   margin-top: 0.7rem;
   max-height: 42vh;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--pale);
+  color: var(--ink);
   backdrop-filter: blur(18px);
-  border: 1px solid rgba(20, 20, 20, 0.16);
+  border: 1px solid rgba(43, 39, 36, 0.18);
   border-radius: 18px;
-  box-shadow: 0 18px 50px rgba(20, 20, 20, 0.16);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
   padding: 0.4rem;
 }
 
 .search-results button.active {
-  background: rgba(20, 20, 20, 0.09);
+  background: rgba(43, 39, 36, 0.14);
 }
 
 /* ---------- shuffle ---------- */
@@ -443,7 +469,7 @@ button {
 }
 
 .timeline-links line {
-  stroke: rgba(20, 20, 20, 0.55);
+  stroke: rgba(209, 204, 190, 0.5);
   stroke-width: 1.2;
 }
 
@@ -538,7 +564,7 @@ button {
 }
 
 .search-results button:hover {
-  background: rgba(20, 20, 20, 0.06);
+  background: rgba(43, 39, 36, 0.09);
 }
 
 .search-results .kind {
@@ -601,14 +627,14 @@ button {
 }
 
 .web-lines line {
-  stroke: rgba(20, 20, 20, 0.55);
+  stroke: rgba(209, 204, 190, 0.45);
   stroke-width: 1;
   opacity: 0;
   animation: line-in 460ms ease forwards;
 }
 
 .web-lines line.path {
-  stroke: rgba(20, 20, 20, 0.75);
+  stroke: rgba(209, 204, 190, 0.72);
   stroke-width: 1.2;
 }
 
@@ -616,6 +642,16 @@ button {
   to {
     opacity: 1;
   }
+}
+
+.web-lines .link-end {
+  fill: var(--pale);
+  opacity: 0;
+  animation: line-in 460ms ease forwards;
+}
+
+.web-lines .link-end.path {
+  fill: var(--gold);
 }
 
 .web-focal,
@@ -636,8 +672,14 @@ button {
    ground — no ring, no bevel, no halo. */
 .web-focal {
   padding: 0;
-  box-shadow: 0 0 0 2px #ffffff;
   animation: focal-in 460ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.web-focal,
+.web-node {
+  background-image: var(--grain), var(--sheen);
+  background-blend-mode: soft-light, normal;
+  background-size: 100% 100%, 100% 100%;
 }
 
 @keyframes focal-in {
@@ -655,8 +697,7 @@ button {
   align-items: center;
   justify-content: center;
   padding: 0.9em;
-  font-weight: 400;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -667,7 +708,6 @@ button {
      hyphen rather than splitting the word wherever it happens to land. */
   overflow-wrap: break-word;
   hyphens: auto;
-  box-shadow: 0 0 0 2px #ffffff;
   opacity: 0;
   animation: node-in 460ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
   transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms ease;
@@ -702,21 +742,20 @@ button {
 }
 
 .web-lines line.path {
-  stroke: rgba(20, 20, 20, 0.6);
+  stroke: var(--gold);
   stroke-width: 1.4;
 }
 
 .web-node:hover,
 .web-node:focus-visible {
   transform: translate(-50%, -50%) scale(1.07);
-  box-shadow: 0 0 0 2px #ffffff, 0 16px 38px rgba(20, 20, 20, 0.22);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
   outline: none;
   z-index: 3;
 }
 
 .web-node .label {
-  font-weight: 400;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   min-width: 0;
   max-width: 100%;
@@ -733,7 +772,7 @@ button {
 /* --- the type tag: hollow ring on a leader line --- */
 
 .web-lines line.leader {
-  stroke: rgba(20, 20, 20, 0.75);
+  stroke: rgba(209, 204, 190, 0.62);
   stroke-width: 1;
 }
 
@@ -791,12 +830,12 @@ button {
   height: 100%;
   display: flex;
   flex-direction: column;
-  color: #ffffff;
+  color: var(--pale);
   background: var(--panel);
   /* A very large disc cropped by the viewport: the top reads as an arc rather
      than a card edge, and the bottom closes with a shallower one. */
   border-radius: 46px 96px 28px 96px;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 34px 90px rgba(20, 20, 20, 0.26);
+  box-shadow: 0 0 0 1px rgba(209, 204, 190, 0.22), 0 34px 90px rgba(0, 0, 0, 0.55);
   overflow: hidden;
 }
 
@@ -832,8 +871,8 @@ button {
   align-items: center;
   justify-content: center;
   color: var(--ink);
-  background: var(--paper);
-  border: 1.5px solid var(--ink);
+  background: var(--pale);
+  border: 1.5px solid rgba(43, 39, 36, 0.35);
   transition: background 160ms ease, color 160ms ease;
 }
 
@@ -870,9 +909,9 @@ button {
   background: linear-gradient(
     to top,
     var(--panel) 3%,
-    rgba(23, 23, 23, 0.88) 28%,
-    rgba(23, 23, 23, 0.3) 56%,
-    rgba(23, 23, 23, 0) 82%
+    rgba(30, 28, 26, 0.88) 28%,
+    rgba(30, 28, 26, 0.3) 56%,
+    rgba(30, 28, 26, 0) 82%
   );
 }
 
@@ -882,7 +921,7 @@ button {
   right: 1.6rem;
   bottom: 1.3rem;
   z-index: 1;
-  color: #fff;
+  color: var(--pale);
 }
 
 .story-hero-text .kicker {
@@ -901,7 +940,7 @@ button {
 .story-hero-text h2 {
   margin: 0.45rem 0 0;
   font-size: clamp(1.6rem, 2.4vw, 2.15rem);
-  font-weight: 200;
+  letter-spacing: 0.01em;
   line-height: 1.06;
   text-wrap: balance;
 }
@@ -923,8 +962,7 @@ button {
 .story-body .standfirst {
   font-size: 1.04rem;
   line-height: 1.52;
-  font-weight: 300;
-  color: #ffffff;
+  color: var(--pale);
 }
 
 .para-row {
@@ -960,7 +998,7 @@ button {
 .story-credit {
   margin-top: 1.8rem;
   padding-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.28);
+  border-top: 1px solid rgba(209, 204, 190, 0.22);
   font-size: 0.7rem;
   line-height: 1.45;
   color: var(--on-dark-muted);
@@ -1031,7 +1069,7 @@ button {
   height: 4px;
   margin: 0 0.6rem;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.45);
+  background: rgba(209, 204, 190, 0.5);
 }
 
 .trail-step {
@@ -1049,18 +1087,17 @@ button {
   font-weight: 400;
   letter-spacing: 0.13em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(209, 204, 190, 0.72);
   transition: background 160ms ease, color 160ms ease;
 }
 
 .trail-step:hover {
-  background: rgba(255, 255, 255, 0.14);
-  color: #fff;
+  background: rgba(209, 204, 190, 0.16);
 }
 
 /* The step you are on is cut out of the pill rather than filled into it. */
 .trail-step.here {
-  background: var(--paper);
+  background: var(--gold);
   color: var(--ink);
   cursor: default;
 }
@@ -1087,7 +1124,7 @@ button {
   width: 3px;
   height: 13px;
   border-radius: 2px;
-  background: rgba(20, 20, 20, 0.24);
+  background: rgba(209, 204, 190, 0.28);
   transition: background 200ms ease;
 }
 
@@ -1113,13 +1150,13 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: var(--pale);
+  border: 1px solid rgba(209, 204, 190, 0.42);
   transition: background 160ms ease, opacity 160ms ease;
 }
 
 .reader-nav button:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(209, 204, 190, 0.18);
 }
 
 .reader-nav button:disabled {
@@ -1365,7 +1402,7 @@ button {
 .scrubber-track {
   position: relative;
   height: 1.5px;
-  background: rgba(20, 20, 20, 0.3);
+  background: rgba(209, 204, 190, 0.24);
   cursor: pointer;
 }
 
@@ -1382,31 +1419,34 @@ button {
 
 /* ---------- misc ---------- */
 
+/* The mode's name rides a dark pill at the head of the plane. */
 .page-hint {
   position: absolute;
-  top: 1.6rem;
-  right: 1.8rem;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 12;
-  text-align: right;
+  text-align: center;
   pointer-events: none;
-  padding: 0.7rem 1.1rem;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.7);
+  padding: 0.6rem 2.4rem;
+  border-radius: 999px;
+  background: rgba(30, 28, 26, 0.86);
   backdrop-filter: blur(10px);
 }
 
 .page-hint h1 {
   margin: 0;
-  font-size: 1.2rem;
-  font-weight: 300;
-  letter-spacing: 0.2em;
+  font-size: 0.78rem;
+  letter-spacing: 0.34em;
   text-transform: uppercase;
+  color: var(--pale);
 }
 
 .page-hint p {
-  margin: 0.35rem 0 0;
-  font-size: 0.84rem;
-  color: var(--muted);
+  margin: 0.3rem 0 0;
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  color: var(--on-dark-muted);
 }
 
 .year-marker {
@@ -1414,14 +1454,14 @@ button {
   transform: translateX(-50%);
   font-size: 0.82rem;
   letter-spacing: 0.1em;
-  color: rgba(20, 20, 20, 0.32);
+  color: rgba(209, 204, 190, 0.34);
   pointer-events: none;
 }
 
 .year-rule {
   position: absolute;
   width: 1px;
-  background: rgba(20, 20, 20, 0.07);
+  background: rgba(209, 204, 190, 0.07);
   pointer-events: none;
 }
 
