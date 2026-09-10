@@ -164,18 +164,17 @@ export default function StoryPanel({ selection, onClose }) {
 
   return (
     <div className="story-holder" key={seed}>
-      <article className="story-panel">
+      {/* Name first, then the writing on its own card, then the picture at the
+          foot — the reader meets what a thing is before what it looks like. */}
+      <article className="story-panel prose">
         <ScrollRail targetRef={bodyRef} />
 
-        <header className="story-hero">
-          <Plate seed={seed} />
-          <div className="story-hero-text">
-            <span className="kicker">
-              {meta.kicker}
-              {meta.sub && <span className="sub"> · {meta.sub}</span>}
-            </span>
-            <h2>{meta.label}</h2>
-          </div>
+        <header className="story-head">
+          <h2>{meta.label}</h2>
+          <p className="story-tags">
+            <span className="chip">{meta.kicker}</span>
+            {meta.sub && <span className="sub">· {meta.sub}</span>}
+          </p>
         </header>
 
         <div className="story-body" ref={bodyRef}>
@@ -183,18 +182,17 @@ export default function StoryPanel({ selection, onClose }) {
 
           {body.map((paragraph, i) => (
             <div key={i} className="para-row">
-              {i === 1 && (
-                <figure className="inset">
-                  <Plate seed={seed} variant="inset" />
-                  {caption && <figcaption>{caption}</figcaption>}
-                </figure>
-              )}
               <p>{paragraph}</p>
             </div>
           ))}
 
           <footer className="story-credit">{credit}</footer>
         </div>
+
+        <figure className="story-plate">
+          <Plate seed={seed} />
+          {caption && <figcaption>{caption}</figcaption>}
+        </figure>
       </article>
       <button className="close" onClick={onClose} aria-label={t('close')}>
         <CloseIcon />

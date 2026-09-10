@@ -3,6 +3,7 @@ import { textOn } from '../data/content'
 import { t } from '../i18n'
 import { LAUREATES, MILESTONES } from '../data/content'
 import { STORIES } from '../data/stories'
+import { fusable, neckPath } from '../lib/neck'
 import { yearToX } from '../lib/timeline'
 
 // Where a related node belongs in time. Laureates sit at their prize year and
@@ -139,9 +140,24 @@ export default function TimelineWeb({ related, focal, viewport, page = [], onSel
   return (
     <>
       <svg className="timeline-links" aria-hidden="true">
-        {placed.map((n) => (
-          <line key={n.key} x1={focal.x} y1={focal.y} x2={n.x} y2={n.y} />
-        ))}
+        {placed.map((n) => {
+          // Close enough to fuse, and the connection becomes a neck like every
+          // other in the atlas; otherwise it stays a hairline across the years.
+          const a = { x: focal.x, y: focal.y, r: focal.r }
+          const b = { x: n.x, y: n.y, r: n.r }
+          const thin = Math.min(a.r, b.r)
+          const neck = fusable(a, b)
+            ? neckPath(a, b, {
+                width: Math.min(8, Math.max(3.5, thin * 0.085)),
+                fillet: Math.min(22, Math.max(9, thin * 0.24)),
+              })
+            : null
+          return neck ? (
+            <path key={n.key} className="timeline-neck" d={neck} style={{ fill: n.color }} />
+          ) : (
+            <line key={n.key} x1={focal.x} y1={focal.y} x2={n.x} y2={n.y} />
+          )
+        })}
       </svg>
 
       {/* A laureate or story reached from an event is not one of the page's own

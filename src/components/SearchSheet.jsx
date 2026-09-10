@@ -115,6 +115,12 @@ export default function SearchSheet({ query, onQuery, onSelect, variant = 'dock'
   return (
     <div className={`search-sheet ${variant}`}>
       <div className="search-field">
+        {variant === 'hero' && (
+          <svg className="search-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.4" stroke="currentColor" strokeWidth="1.6" />
+            <path d="m16 16 4.4 4.4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
+        )}
         {/* the query is echoed invisibly so the ghost sits exactly after it */}
         <span className="search-ghost" aria-hidden="true">
           <i>{query}</i>

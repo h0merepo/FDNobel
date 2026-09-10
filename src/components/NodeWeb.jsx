@@ -168,7 +168,7 @@ export default function NodeWeb({ selection, trail, mode, onSelect }) {
     const start = chain.length ? chain[0].angle + CHAIN_CLEARANCE : -Math.PI / 2
     const step = arc / Math.max(satellites.length - (chain.length ? 1 : 0), 1)
 
-    const placed = buildNodes()
+    const { placed, cross } = buildNodes()
     // Visited steps carry their own name, at a size their radius guarantees.
     const laid = chain.map((node) => ({
       ...node,
@@ -217,17 +217,35 @@ export default function NodeWeb({ selection, trail, mode, onSelect }) {
       return { ex: node.x - ((node.x - x1) / d) * back, ey: node.y - ((node.y - y1) / d) * back }
     }
     const links = [
-      ...placed.map((n) => ({
-        key: `n-${n.key}`,
-        x1: cx,
-        y1: cy,
-        r1: focalR,
-        x2: n.x,
-        y2: n.y,
-        r2: n.r,
-        color: n.color,
-        ...landing(cx, cy, n),
-      })),
+      ...placed.map((n) => {
+        const from = n.parent ?? focalBody
+        return {
+          key: `n-${n.key}`,
+          x1: from.x,
+          y1: from.y,
+          r1: from.r,
+          x2: n.x,
+          y2: n.y,
+          r2: n.r,
+          color: n.color,
+          ...landing(from.x, from.y, n),
+        }
+      }),
+      ...cross.map(([i, j]) => {
+        const a = placed[i]
+        const b = placed[j]
+        return {
+          key: `x-${a.key}-${b.key}`,
+          x1: a.x,
+          y1: a.y,
+          r1: a.r,
+          x2: b.x,
+          y2: b.y,
+          r2: b.r,
+          color: b.color,
+          ...landing(a.x, a.y, b),
+        }
+      }),
       ...laid.map((n, i) => {
         const from = i === 0 ? focalBody : laid[i - 1]
         return {
@@ -274,21 +292,97 @@ export default function NodeWeb({ selection, trail, mode, onSelect }) {
       tag,
     }
 
+    // A web rather than a wheel: most of the related nodes ring the focal, and
+    // the rest hang off one of those instead of taking a spoke of their own, so
+    // the shape branches outwards. Neighbours that end up close are tied to each
+    // other as well, which is what stops it reading as a diagram of a hub.
     function buildNodes() {
-      return satellites.map((s, i) => {
-        const angle = start + step * i + (rng() - 0.5) * step * 0.12
-        const dist = ring * (0.9 + rng() * 0.18)
-        // Long names get a proportionally larger circle so "Microorganisms and
-        // Diseases" is not set at half the size of "Genes".
-        const grow = clamp(s.label.length / 20, 0.86, 1.2)
-        return {
+      const out = []
+      const cross = []
+      if (!satellites.length) return { placed: out, cross }
+
+      // Long names get a proportionally larger circle so "Microorganisms and
+      // Diseases" is not set at half the size of "Genes".
+      const radiusOf = (s) =>
+        satR * clamp(s.label.length / 20, 0.86, 1.2) * (s.kind === 'theme' ? 1 : 0.92)
+
+      const branchCount = clamp(Math.ceil(satellites.length * 0.62), 3, satellites.length)
+      const branches = satellites.slice(0, branchCount)
+      const leaves = satellites.slice(branchCount)
+
+      const branchStep = arc / Math.max(branches.length - (chain.length ? 1 : 0), 1)
+      branches.forEach((s, i) => {
+        const angle = start + branchStep * i + (rng() - 0.5) * branchStep * 0.1
+        const dist = ring * (0.82 + rng() * 0.2)
+        out.push({
           ...s,
           angle,
-          r: satR * grow * (s.kind === 'theme' ? 1 : 0.92),
+          dist,
+          r: radiusOf(s),
           x: cx + Math.cos(angle) * dist,
           y: cy + Math.sin(angle) * dist,
-        }
+          parent: null,
+        })
       })
+
+      const clearOf = (x, y, r) =>
+        out.every((o) => Math.hypot(o.x - x, o.y - y) > o.r + r + 16)
+
+      // Each remaining node is hung off whichever branch still has room beyond
+      // it, tried to either side before giving up and taking a spoke instead.
+      for (const s of leaves) {
+        const r = radiusOf(s)
+        const hosts = [...out]
+          .filter((o) => o.parent === null)
+          .sort((a, b) => roomAt(b.angle) - b.dist - (roomAt(a.angle) - a.dist))
+        let hung = null
+        for (const host of hosts) {
+          const dist = host.dist + host.r + r + 30
+          for (const swing of [0.26, -0.26, 0.44, -0.44, 0.1, -0.1]) {
+            const angle = host.angle + swing
+            const x = cx + Math.cos(angle) * dist
+            const y = cy + Math.sin(angle) * dist
+            if (dist + r + 8 > roomAt(angle)) continue
+            if (!clearOf(x, y, r)) continue
+            hung = { ...s, angle, dist, r, x, y, parent: host }
+            break
+          }
+          if (hung) break
+        }
+        if (hung) {
+          out.push(hung)
+          continue
+        }
+        // No branch could take it, so it rings the focal like the rest.
+        const angle = start + arc * (0.5 + (rng() - 0.5) * 0.9)
+        const dist = ring * (0.82 + rng() * 0.2)
+        out.push({
+          ...s,
+          angle,
+          dist,
+          r,
+          x: cx + Math.cos(angle) * dist,
+          y: cy + Math.sin(angle) * dist,
+          parent: null,
+        })
+      }
+
+      // Two neighbouring branches that finished up close get tied together.
+      const ties = []
+      for (let i = 0; i < out.length; i += 1) {
+        for (let j = i + 1; j < out.length; j += 1) {
+          const a = out[i]
+          const b = out[j]
+          if (a.parent === b || b.parent === a) continue
+          const d = Math.hypot(a.x - b.x, a.y - b.y)
+          if (d - a.r - b.r > (a.r + b.r) * 1.1) continue
+          ties.push({ i, j, d })
+        }
+      }
+      ties.sort((p, q) => p.d - q.d)
+      for (const tie of ties.slice(0, 2)) cross.push([tie.i, tie.j])
+
+      return { placed: out, cross }
     }
   }, [box, satellites, history, selection])
 

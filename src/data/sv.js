@@ -31,7 +31,7 @@ const ui = {
     en: 'Move through moments that changed the world',
     sv: 'Vandra genom ögonblick som förändrade världen',
   },
-  entryDiscovery: { en: 'Discovery', sv: 'Upptäck' },
+  entryDiscovery: { en: 'Explore', sv: 'Utforska' },
   entryDiscoveryBlurb: {
     en: 'Follow your curiosity and explore your own path',
     sv: 'Följ din nyfikenhet och gå din egen väg',
@@ -44,7 +44,7 @@ const ui = {
     en: 'Key events across the century · open one to meet its laureates',
     sv: 'Seklets viktigaste händelser · öppna en för att möta dess pristagare',
   },
-  discoveryTitle: { en: 'Discovery', sv: 'Upptäck' },
+  discoveryTitle: { en: 'Explore', sv: 'Utforska' },
   discoveryHint: { en: 'Search, shuffle or drag to explore', sv: 'Sök, blanda eller dra för att utforska' },
   nothingHere: { en: 'Nothing matches these filters', sv: 'Inget matchar dessa filter' },
 

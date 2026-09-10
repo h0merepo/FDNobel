@@ -395,7 +395,7 @@ button {
   top: 50%;
   bottom: auto;
   transform: translateY(-50%);
-  width: min(560px, calc(100vw - 4rem));
+  width: min(460px, calc(100vw - 4rem));
   padding: 0;
   background: none;
   border: none;
@@ -424,21 +424,34 @@ button {
   border-color: rgba(43, 39, 36, 0.65);
 }
 
+/* On the plane the field is a dark lozenge with the glass at its head and the
+   query set in the middle of it. */
 .search-sheet.hero input {
   font-size: 1.15rem;
-  font-weight: 300;
-  padding: 1.05rem 1.5rem;
+  padding: 1.1rem 3.6rem;
   border-radius: 999px;
-  border: 1.5px solid rgba(43, 39, 36, 0.3);
-  background: var(--pale);
+  border: none;
+  background: rgba(30, 28, 26, 0.92);
   backdrop-filter: blur(14px);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
-  text-align: left;
-  color: var(--ink);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  color: var(--pale);
 }
 
 .search-sheet.hero input::placeholder {
-  color: rgba(20, 20, 20, 0.45);
+  color: rgba(209, 204, 190, 0.6);
+}
+
+.search-mark {
+  position: absolute;
+  left: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 22px;
+  height: 22px;
+  color: rgba(209, 204, 190, 0.72);
+  pointer-events: none;
 }
 
 /* The typed text is repeated invisibly so the suggested ending lines up
@@ -460,9 +473,10 @@ button {
 }
 
 .search-sheet.hero .search-ghost {
-  padding: 1.05rem 1.5rem;
+  justify-content: center;
+  padding: 1.1rem 3.6rem;
   font-size: 1.15rem;
-  font-weight: 300;
+  color: rgba(209, 204, 190, 0.42);
 }
 
 .search-ghost i {
@@ -537,6 +551,10 @@ button {
 .timeline-links line {
   stroke: rgba(209, 204, 190, 0.5);
   stroke-width: 1.2;
+}
+
+.timeline-neck {
+  fill: rgba(209, 204, 190, 0.5);
 }
 
 /* The web's own anchor when the reader has stepped onto something the page
@@ -1077,6 +1095,84 @@ button {
   font-size: 0.7rem;
   line-height: 1.45;
   color: var(--on-dark-muted);
+}
+
+/* --- prose panel: name, then the writing, then the picture --- */
+
+.story-panel.prose {
+  padding: 2.4rem 1.5rem 1.5rem;
+  gap: 1.4rem;
+}
+
+.story-head {
+  flex: none;
+  text-align: center;
+  padding: 0 0.8rem;
+}
+
+.story-head h2 {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--pale);
+  text-wrap: balance;
+}
+
+.story-tags {
+  margin: 1rem 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-size: 0.72rem;
+  color: var(--on-dark-muted);
+}
+
+.story-tags .chip {
+  padding: 0.34rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(209, 204, 190, 0.12);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--on-dark);
+}
+
+/* The writing sits on its own slightly lifted card. */
+.story-panel.prose .story-body {
+  border-radius: 26px;
+  background: rgba(209, 204, 190, 0.05);
+  padding: 1.5rem 1.5rem 1.8rem;
+}
+
+.story-panel.prose .standfirst {
+  text-align: center;
+  padding-bottom: 1.3rem;
+  margin-bottom: 0.2rem;
+  border-bottom: 1px solid rgba(209, 204, 190, 0.18);
+}
+
+.story-plate {
+  flex: none;
+  position: relative;
+  margin: 0;
+  height: 34%;
+  min-height: 150px;
+  border-radius: 22px;
+  overflow: hidden;
+}
+
+.story-plate figcaption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 2.2rem 1rem 0.8rem;
+  font-size: 0.68rem;
+  line-height: 1.35;
+  color: var(--on-dark);
+  background: linear-gradient(to top, rgba(24, 22, 20, 0.92), rgba(24, 22, 20, 0));
 }
 
 /* --- the route, as one continuous pill --- */
