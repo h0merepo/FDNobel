@@ -1736,21 +1736,72 @@ button {
   color: var(--on-dark-muted);
 }
 
-.year-marker {
+/* ---------- the timeline, set as ground ---------- */
+
+/* Behind every circle and every neck, so panning carries the network across
+   the years rather than over a backdrop that moves with it. */
+.timeline-bed {
   position: absolute;
-  transform: translateX(-50%);
-  font-size: 0.82rem;
-  letter-spacing: 0.1em;
-  color: rgba(209, 204, 190, 0.34);
+  inset: 0;
+  z-index: 0;
   pointer-events: none;
 }
 
+/* The decade at the size of a wall, not a label. It is the only thing on the
+   plane allowed to be this big, which is what makes it read as the ground. */
+.era {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: 280px;
+  line-height: 0.8;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+  color: rgba(209, 204, 190, 0.085);
+  transition: color 420ms ease;
+}
+
+/* The decade the reader is standing in comes forward a little as they travel. */
+.era.near {
+  color: rgba(209, 204, 190, 0.19);
+}
+
+/* Fades away across the numeral so the rule marks the decade without cutting
+   through the middle of its digits. */
 .year-rule {
   position: absolute;
   width: 1px;
-  background: rgba(209, 204, 190, 0.07);
+  background: linear-gradient(
+    180deg,
+    rgba(209, 204, 190, 0.1) 0%,
+    rgba(209, 204, 190, 0.1) 24%,
+    rgba(209, 204, 190, 0) 36%,
+    rgba(209, 204, 190, 0) 64%,
+    rgba(209, 204, 190, 0.1) 76%,
+    rgba(209, 204, 190, 0.1) 100%
+  );
   pointer-events: none;
 }
+
+/* A measured edge under the circles: every year gets a tick whether or not
+   anything happened in it, which is what makes the empty stretches legible. */
+.ruler-line {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(209, 204, 190, 0) 0%,
+    rgba(209, 204, 190, 0.2) 3%,
+    rgba(209, 204, 190, 0.2) 97%,
+    rgba(209, 204, 190, 0) 100%
+  );
+}
+
+.ruler-tick {
+  position: absolute;
+  width: 1px;
+  background: rgba(209, 204, 190, 0.22);
+}
+
 
 .empty-state {
   position: absolute;

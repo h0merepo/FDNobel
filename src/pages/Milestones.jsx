@@ -3,6 +3,7 @@ import Bubble from '../components/Bubble'
 import Ambient from '../components/Ambient'
 import PanCanvas from '../components/PanCanvas'
 import Scrubber from '../components/Scrubber'
+import TimelineBackdrop from '../components/TimelineBackdrop'
 import TimelineWeb, { yearOf } from '../components/TimelineWeb'
 import { MILESTONES, kindColor, milestoneTitle } from '../data/content'
 import { t } from '../i18n'
@@ -135,14 +136,7 @@ export default function Milestones({ selection, onSelect }) {
         <p>{t('milestonesHint')}</p>
       </div>
       <PanCanvas world={WORLD} offsetRef={controls} onOffsetChange={handleOffset} lockY>
-        {DECADES.map((d) => (
-          <span key={`rule-${d}`} className="year-rule" style={{ left: yearToX(d), top: 0, height: WORLD.height }} />
-        ))}
-        {DECADES.map((d) => (
-          <span key={`mark-${d}`} className="year-marker" style={{ left: yearToX(d), top: 28 }}>
-            {d}
-          </span>
-        ))}
+        <TimelineBackdrop year={year} />
         {nodes.map((node) => (
           <Bubble
             key={`${node.kind}-${node.id}`}
