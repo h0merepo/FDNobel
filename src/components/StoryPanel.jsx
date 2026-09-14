@@ -15,8 +15,18 @@ import mandelaHtml from '../embeds/nelson-mandela.html?raw'
 // whole composition scale to whatever width the box gives it, which is what rem
 // is for — nothing in the piece itself is touched.
 const LONG_FORM = {
-  'person:curie': { html: curieHtml, title: 'Marie Curie', fit: 845 },
-  'person:mandela': { html: mandelaHtml, title: 'Nelson Mandela', scale: 910 },
+  'person:curie': {
+    html: curieHtml,
+    title: 'Marie Curie',
+    fit: 845,
+    full: 'https://claude.ai/code/artifact/498a6a7c-7ae0-4d65-9c44-475f35ab18db',
+  },
+  'person:mandela': {
+    html: mandelaHtml,
+    title: 'Nelson Mandela',
+    scale: 910,
+    full: 'https://claude.ai/code/artifact/208dce58-464c-4d5c-9c92-4f9290663df6',
+  },
 }
 
 const fitTo = (html, design) => {
@@ -173,7 +183,22 @@ function Piece({ piece }) {
     return () => ro.disconnect()
   }, [piece])
 
-  return <iframe className="story-embed" title={piece.title} ref={frame} />
+  return (
+    <>
+      <iframe className="story-embed" title={piece.title} ref={frame} />
+      {/* Written into the box a piece reads in context; opened on its own it
+          gets a real document load, which is the only way some of this work
+          starts its own motion. */}
+      {piece.full && (
+        <a className="piece-full" href={piece.full} target="_blank" rel="noreferrer">
+          {t('openFull')}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+            <path d="M8 16 16 8M9 8h7v7" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </a>
+      )}
+    </>
+  )
 }
 
 export default function StoryPanel({ selection, onClose }) {
