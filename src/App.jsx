@@ -106,18 +106,18 @@ export default function App() {
         </div>
       )}
 
-      <div className="chrome-bar">
-        {/* The landing carries the choice in full, so the dock does not
-            repeat it in code form there. */}
-        <NavDock
-          searchOpen={searchOpen}
-          onSearch={() => setSearchOpen((o) => !o)}
-          onLanguage={page === 'landing' ? null : () => setLocaleState(otherLocale())}
-        />
-        {page !== 'landing' && (
+      {/* The way in offers three ways in and the choice of language, and
+          nothing else: no tools until you have picked a direction. */}
+      {page !== 'landing' && (
+        <div className="chrome-bar">
+          <NavDock
+            searchOpen={searchOpen}
+            onSearch={() => setSearchOpen((o) => !o)}
+            onLanguage={() => setLocaleState(otherLocale())}
+          />
           <Trail trail={trail} selection={selection} onSelect={select} onHome={goHome} />
-        )}
-      </div>
+        </div>
+      )}
 
       {searchOpen && page !== 'discovery' && (
         <SearchSheet query={query} onQuery={setQuery} onSelect={select} />

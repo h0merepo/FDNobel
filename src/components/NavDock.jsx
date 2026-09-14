@@ -11,11 +11,9 @@ export default function NavDock({ onSearch, searchOpen, onLanguage }) {
   return (
     <nav className="dock">
       {/* the code of the language you would switch to, not the one you are in */}
-      {onLanguage && (
-        <button className="lang" onClick={onLanguage} aria-label={t('language')}>
-          {LOCALE_LABEL[otherLocale()]}
-        </button>
-      )}
+      <button className="lang" onClick={onLanguage} aria-label={t('language')}>
+        {LOCALE_LABEL[otherLocale()]}
+      </button>
       <button
         onClick={onSearch}
         className={searchOpen ? 'active' : ''}
