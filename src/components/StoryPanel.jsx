@@ -4,6 +4,16 @@ import { ctaFor, narrativeFor } from '../data/narrative'
 import { findStory, storyScreens, storyTitle } from '../data/stories'
 import { nodeMeta } from '../lib/relations'
 import { t } from '../i18n'
+import curieHtml from '../embeds/marie-curie.html?raw'
+import mandelaHtml from '../embeds/nelson-mandela.html?raw'
+
+// Two laureates open a long-form piece of their own rather than the prose card.
+// Each is a whole document with its own type and palette, so it is given a
+// frame of its own inside the box instead of being merged into ours.
+const LONG_FORM = {
+  'person:curie': { html: curieHtml, title: 'Marie Curie' },
+  'person:mandela': { html: mandelaHtml, title: 'Nelson Mandela' },
+}
 
 // Reading position on the left edge: a solid run for what is on screen, dashes
 // for what is still below.
@@ -129,6 +139,26 @@ export default function StoryPanel({ selection, onClose }) {
   if (!meta) return null
 
   const seed = `${selection.kind}:${selection.id}`
+
+  const longForm = LONG_FORM[seed]
+  if (longForm) {
+    return (
+      <div className="story-holder wide" key={seed}>
+        <article className="story-panel piece">
+          <iframe
+            className="story-embed"
+            title={longForm.title}
+            srcDoc={longForm.html}
+            sandbox="allow-scripts"
+            loading="lazy"
+          />
+        </article>
+        <button className="close" onClick={onClose} aria-label={t('close')}>
+          <CloseIcon />
+        </button>
+      </div>
+    )
+  }
 
   // A theme is an invitation, not an article: the box carries a line telling you
   // what following it would give you.

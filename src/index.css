@@ -941,10 +941,11 @@ button {
   flex-direction: column;
   color: var(--pale);
   background: var(--panel);
-  /* A very large disc cropped by the viewport: the top reads as an arc rather
-     than a card edge, and the bottom closes with a shallower one. */
-  border-radius: 46px 96px 28px 96px;
-  box-shadow: 0 0 0 1px rgba(209, 204, 190, 0.22), 0 34px 90px rgba(0, 0, 0, 0.55);
+  /* Both long-form pieces round their own frame generously and evenly — a
+     calm slab rather than a cropped disc — so the box that holds them, and
+     every other box, is shaped the same way. */
+  border-radius: 44px;
+  box-shadow: 0 0 0 1px rgba(209, 204, 190, 0.16), 0 34px 90px rgba(0, 0, 0, 0.55);
   overflow: hidden;
 }
 
@@ -1110,6 +1111,29 @@ button {
   font-size: 0.7rem;
   line-height: 1.45;
   color: var(--on-dark-muted);
+}
+
+/* --- a long-form piece, given the width it was drawn for --- */
+
+.story-holder.wide {
+  width: min(880px, calc(100vw - 3.8rem));
+  top: 1.6rem;
+  bottom: 1.6rem;
+}
+
+.story-panel.piece {
+  padding: 0;
+  overflow: hidden;
+  /* the piece brings its own ground, so the box gets out of its way */
+  background: #14120f;
+}
+
+.story-embed {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  border-radius: inherit;
 }
 
 /* --- prose panel: name, then the writing, then the picture --- */

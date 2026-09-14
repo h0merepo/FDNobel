@@ -414,6 +414,13 @@ const laureates = {
       'Sedan ägnade han tjugo år åt att motarbeta det program han byggt upp, fråntogs sina utmärkelser och förvisades internt till Gorkij. Hans hustru tog emot priset i Stockholm; han nekades pass.',
     ],
   },
+  mandela: {
+    blurb: 'Tjugosju år i fängelse, sedan ett förhandlat slut på apartheid — delat med mannen som hållit honom där.',
+    narrative: [
+      'Han dömdes till livstids fängelse 1964 och satt tjugosju år, de första arton på Robben Island. Namnet fick inte tryckas i sydafrikansk press, och inga fotografier av honom publicerades under hela den tiden.',
+      'Fredspriset 1993 delades med F.W. de Klerk, presidenten vars regering hade hållit honom fängslad. Året därpå valdes han till landets förste svarte president i ett val där de flesta röstande röstade för första gången.',
+    ],
+  },
   'suu-kyi': {
     blurb: 'Belönad i husarrest — och en påminnelse om att ett pris ges i ett ögonblick, inte för all framtid.',
     narrative: [

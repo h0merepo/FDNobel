@@ -499,6 +499,10 @@ const people = {
     'He was the principal designer of the Soviet hydrogen bomb and, for a period, among the most privileged scientists in the Union.',
     'He then spent twenty years opposing the programme he had built, was stripped of his honours and internally exiled to Gorky. His wife collected the prize in Stockholm; he was refused a passport.',
   ],
+  mandela: [
+    'He was sentenced to life in 1964 and served twenty-seven years, the first eighteen on Robben Island. His name could not be printed in the South African press, and no photograph of him was published for the whole of that time.',
+    'The 1993 peace prize was shared with F.W. de Klerk, the president whose government had held him. The following year he was elected the country\'s first black president, in a vote where most of those voting were voting for the first time.',
+  ],
   'suu-kyi': [
     'She was awarded in 1991 while under house arrest in Rangoon, and her sons accepted on her behalf. She delivered her Nobel lecture twenty-one years later.',
     'Her later position in government, and her defence of the state against genocide allegations at The Hague, has made her the clearest case in the prize\'s history of an award given at one moment rather than for all time.',
