@@ -6,15 +6,23 @@ import { nodeMeta } from '../lib/relations'
 import { t } from '../i18n'
 import curieHtml from '../embeds/marie-curie.html?raw'
 import mandelaHtml from '../embeds/nelson-mandela.html?raw'
+import { PIECES } from '../data/pieces'
+import { buildPiece } from '../lib/scrollpiece'
 
-// Two laureates open a long-form piece of their own rather than the prose card.
+// A shortlisted laureate opens a long-form piece rather than the prose card.
 // Each is a whole document with its own type and palette, so it is given a
 // frame of its own inside the box instead of being merged into ours.
-// `fit` is the width the piece was drawn at, for the ones built on rem rather
-// than on a scaler of their own. Setting the root size against it makes the
-// whole composition scale to whatever width the box gives it, which is what rem
-// is for — nothing in the piece itself is touched.
-const LONG_FORM = {
+//
+// Curie and Mandela arrived as finished documents and are embedded exactly as
+// supplied. The rest are built from their scripts by the scroll-piece engine,
+// which is the Mandela sequence's own mechanics — so they are siblings of it
+// rather than a different kind of thing sharing a box with it.
+//
+// `fit` is the width a piece was drawn at, for one built on rem rather than on
+// a scaler of its own. Setting the root size against it makes the composition
+// scale to whatever width the box gives it, which is what rem is for — nothing
+// inside the piece is touched.
+const SUPPLIED = {
   'person:curie': {
     html: curieHtml,
     title: 'Marie Curie',
@@ -27,6 +35,17 @@ const LONG_FORM = {
     scale: 910,
     full: 'https://claude.ai/code/artifact/208dce58-464c-4d5c-9c92-4f9290663df6',
   },
+}
+
+const LONG_FORM = {
+  ...Object.fromEntries(
+    PIECES.map((script) => [
+      `person:${script.id}`,
+      { html: buildPiece(script), title: script.name, scale: 910 },
+    ]),
+  ),
+  // supplied last: a document the client sent is never overwritten by a built one
+  ...SUPPLIED,
 }
 
 const fitTo = (html, design) => {

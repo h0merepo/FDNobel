@@ -1,9 +1,10 @@
 import { tr } from '../i18n'
+import { inEdition } from './edition'
 // Long-form narratives. Each one is a bubble in the web that opens as a
 // seven-screen read inside the content panel. `sub` is the name shown under the
 // title on the bubble, matching the way the design labels them.
 
-export const STORIES = [
+const ALL_STORIES = [
   {
     id: 'helgoland',
     title: 'Seeing the Invisible',
@@ -233,6 +234,11 @@ export const STORIES = [
     ],
   },
 ]
+
+// A story belongs to the edition when at least one of the laureates it is about
+// is still in it. Nothing is rewritten to fit — a story with no one left in it
+// is simply not in this edition.
+export const STORIES = ALL_STORIES.filter((n) => n.laureates.some(inEdition))
 
 export const findStory = (id) => STORIES.find((s) => s.id === id)
 export const storyTitle = (story) => tr(story.title, 'stories', story.id, 'title')
