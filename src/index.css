@@ -1115,8 +1115,10 @@ button {
 
 /* --- a long-form piece, given the width it was drawn for --- */
 
+/* Narrower than the width each piece was drawn at, so both scale down into it
+   rather than filling the screen. */
 .story-holder.wide {
-  width: min(880px, calc(100vw - 3.8rem));
+  width: min(590px, calc(100vw - 3.8rem));
   top: 1.6rem;
   bottom: 1.6rem;
 }

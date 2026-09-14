@@ -10,9 +10,19 @@ import mandelaHtml from '../embeds/nelson-mandela.html?raw'
 // Two laureates open a long-form piece of their own rather than the prose card.
 // Each is a whole document with its own type and palette, so it is given a
 // frame of its own inside the box instead of being merged into ours.
+// `fit` is the width the piece was drawn at, for the ones built on rem rather
+// than on a scaler of their own. Setting the root size against it makes the
+// whole composition scale to whatever width the box gives it, which is what rem
+// is for — nothing in the piece itself is touched.
 const LONG_FORM = {
-  'person:curie': { html: curieHtml, title: 'Marie Curie' },
-  'person:mandela': { html: mandelaHtml, title: 'Nelson Mandela' },
+  'person:curie': { html: curieHtml, title: 'Marie Curie', fit: 845 },
+  'person:mandela': { html: mandelaHtml, title: 'Nelson Mandela', scale: 910 },
+}
+
+const fitTo = (html, design) => {
+  if (!design) return html
+  const shim = `<script>(function(){var d=${design};function f(){document.documentElement.style.fontSize=Math.min(16,innerWidth/d*16)+'px'}f();addEventListener('resize',f)})()<\/script>`
+  return html.includes('</body>') ? html.replace('</body>', `${shim}</body>`) : html + shim
 }
 
 // Reading position on the left edge: a solid run for what is on screen, dashes
@@ -133,6 +143,39 @@ function StoryReader({ story, seed }) {
   )
 }
 
+// Half a megabyte of markup does not survive a srcdoc attribute — the document
+// arrives whole but its scripts never run — so each piece is served to the
+// frame as a real document from a blob instead.
+function Piece({ piece }) {
+  const frame = useRef(null)
+
+  useEffect(() => {
+    const doc = frame.current?.contentDocument
+    if (!doc) return
+    // Written into the frame rather than handed over as an attribute or a blob:
+    // a document half a megabyte long parses either way, but only a real parse
+    // runs the scripts these pieces are built on.
+    doc.open()
+    doc.write(fitTo(piece.html, piece.fit))
+    doc.close()
+
+    // A piece that scales itself off a design width is handed that scale
+    // directly, so it fits the box it has been given whatever else happens.
+    if (!piece.scale) return undefined
+    const apply = () => {
+      const width = frame.current?.clientWidth
+      if (!width) return
+      doc.documentElement.style.setProperty('--s', Math.min(1, width / piece.scale).toFixed(4))
+    }
+    apply()
+    const ro = new ResizeObserver(apply)
+    ro.observe(frame.current)
+    return () => ro.disconnect()
+  }, [piece])
+
+  return <iframe className="story-embed" title={piece.title} ref={frame} />
+}
+
 export default function StoryPanel({ selection, onClose }) {
   const bodyRef = useRef(null)
   const meta = nodeMeta(selection)
@@ -145,13 +188,7 @@ export default function StoryPanel({ selection, onClose }) {
     return (
       <div className="story-holder wide" key={seed}>
         <article className="story-panel piece">
-          <iframe
-            className="story-embed"
-            title={longForm.title}
-            srcDoc={longForm.html}
-            sandbox="allow-scripts"
-            loading="lazy"
-          />
+          <Piece piece={longForm} />
         </article>
         <button className="close" onClick={onClose} aria-label={t('close')}>
           <CloseIcon />
