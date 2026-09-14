@@ -1117,10 +1117,12 @@ button {
 
 /* Narrower than the width each piece was drawn at, so both scale down into it
    rather than filling the screen. */
+/* Wider than the prose box, but it stops where that one stops: the chrome bar
+   owns the foot of the window, and a box that runs under it is a box with a
+   row of buttons parked across its last inch. */
 .story-holder.wide {
   width: min(590px, calc(100vw - 3.8rem));
   top: 1.6rem;
-  bottom: 1.6rem;
 }
 
 .story-panel.piece {
@@ -1139,11 +1141,10 @@ button {
 }
 
 /* The way out to the piece on its own, sitting over the frame's foot. */
-/* Sat clear of the dock band, which rides over the foot of the panel. */
 .piece-full {
   position: absolute;
   right: 1rem;
-  bottom: 3.6rem;
+  bottom: 1rem;
   z-index: 2;
   display: inline-flex;
   align-items: center;
