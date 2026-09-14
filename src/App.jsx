@@ -80,7 +80,9 @@ export default function App() {
         className={`page-layer${focused && page !== 'milestones' ? ' behind' : ''}`}
         aria-hidden={focused && page !== 'milestones'}
       >
-        {page === 'landing' && <Landing onNavigate={setPage} />}
+        {page === 'landing' && (
+          <Landing onNavigate={setPage} onLanguage={() => setLocaleState(otherLocale())} />
+        )}
         {page === 'stories' && <Stories selection={selection} onSelect={select} />}
         {page === 'milestones' && <Milestones selection={selection} onSelect={select} />}
         {page === 'discovery' && (
@@ -105,10 +107,12 @@ export default function App() {
       )}
 
       <div className="chrome-bar">
+        {/* The landing carries the choice in full, so the dock does not
+            repeat it in code form there. */}
         <NavDock
           searchOpen={searchOpen}
           onSearch={() => setSearchOpen((o) => !o)}
-          onLanguage={() => setLocaleState(otherLocale())}
+          onLanguage={page === 'landing' ? null : () => setLocaleState(otherLocale())}
         />
         {page !== 'landing' && (
           <Trail trail={trail} selection={selection} onSelect={select} onHome={goHome} />

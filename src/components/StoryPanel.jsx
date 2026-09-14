@@ -48,10 +48,25 @@ const LONG_FORM = {
   ...SUPPLIED,
 }
 
-const fitTo = (html, design) => {
+const framed = (html, design) => {
   if (!design) return html
   const shim = `<script>(function(){var d=${design};function f(){document.documentElement.style.fontSize=Math.min(16,innerWidth/d*16)+'px'}f();addEventListener('resize',f)})()<\/script>`
   return html.includes('</body>') ? html.replace('</body>', `${shim}</body>`) : html + shim
+}
+
+// A piece opened on its own page rounds its own column, and should: there is
+// nothing else on the screen to round it. Inside our box that corner lands a
+// few pixels in from the box's own, and the two read as a mistake, so the inner
+// one is dropped — but only here, at the point of embedding, never in the
+// documents themselves.
+//
+// Added to the frame's own head afterwards rather than appended to the markup:
+// the tail of the longest of these documents does not survive the write, which
+// is the same reason its scripts never start in here.
+const unround = (doc) => {
+  const style = doc.createElement('style')
+  style.textContent = '.column,.track,.layer{border-radius:0 !important}'
+  doc.head.appendChild(style)
 }
 
 // Reading position on the left edge: a solid run for what is on screen, dashes
@@ -185,8 +200,9 @@ function Piece({ piece }) {
     // a document half a megabyte long parses either way, but only a real parse
     // runs the scripts these pieces are built on.
     doc.open()
-    doc.write(fitTo(piece.html, piece.fit))
+    doc.write(framed(piece.html, piece.fit))
     doc.close()
+    unround(doc)
 
     // A piece that scales itself off a design width is handed that scale
     // directly, so it fits the box it has been given whatever else happens.

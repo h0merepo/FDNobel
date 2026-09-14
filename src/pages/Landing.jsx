@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Ambient from '../components/Ambient'
+import LanguageToggle from '../components/LanguageToggle'
 import { PALETTE, textOn } from '../data/content'
 import { t } from '../i18n'
 import { neckPath } from '../lib/neck'
@@ -40,7 +41,7 @@ const ENTRIES = [
 // a plain stack, so the necks are not drawn at all.
 const MIN_STAGE = 820
 
-export default function Landing({ onNavigate }) {
+export default function Landing({ onNavigate, onLanguage }) {
   const stage = useRef(null)
   const [box, setBox] = useState({ w: 0, h: 0 })
 
@@ -125,6 +126,8 @@ export default function Landing({ onNavigate }) {
             <span className="entry-name">{t(entry.title)}</span>
           </button>
         ))}
+
+        <LanguageToggle onSelect={onLanguage} />
       </div>
     </>
   )

@@ -1,7 +1,9 @@
 import { SV } from './data/sv'
 
 export const LOCALES = ['en', 'sv']
-export const LOCALE_LABEL = { en: 'EN', sv: 'SE' }
+export const LOCALE_LABEL = { en: 'EN', sv: 'SV' }
+// The language in its own language, for the toggle that has room to say it.
+export const LOCALE_NAME = { en: 'English', sv: 'Svenska' }
 
 // The locale is held in a module rather than threaded through every call,
 // because the content accessors (nodeMeta, relatedTo, narrativeFor) are plain
