@@ -57,6 +57,11 @@ b {
   font-weight: 400;
 }
 
+/* The family, colour and size are repeated here rather than left to inherit
+   from :root. A host page that wraps this one can set `font` and `color` on
+   body directly, and a direct rule beats anything inherited — which is exactly
+   how the published build ended up in the system face while the same file
+   opened from disk was correct. */
 html,
 body,
 #root {
@@ -64,6 +69,10 @@ body,
   margin: 0;
   overflow: hidden;
   background: var(--paper);
+  font-family: 'Alfred Sans', system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--on-dark);
 }
 
 button {
