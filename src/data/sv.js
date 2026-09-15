@@ -60,8 +60,8 @@ const ui = {
   nextScreen: { en: 'Next screen', sv: 'Nästa sida' },
   storyScreens: { en: 'Story screens', sv: 'Berättelsens sidor' },
   credit: {
-    en: 'Imagery generated for this prototype. Text drawn from Nobel Prize history.',
-    sv: 'Bilderna är genererade för denna prototyp. Texten bygger på Nobelprisets historia.',
+    en: 'Text drawn from Nobel Prize history.',
+    sv: 'Texten bygger på Nobelprisets historia.',
   },
 }
 

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import Plate from './Plate'
 import { ctaFor, narrativeFor } from '../data/narrative'
 import { findStory, storyScreens, storyTitle } from '../data/stories'
 import { nodeMeta } from '../lib/relations'
@@ -100,6 +99,16 @@ function ScrollRail({ targetRef, dependency }) {
   )
 }
 
+// The pale box carries one tinted disc, and the lead of whatever is in the box
+// is set inside it. The tint is the node's own colour, laid over the pale ground
+// at low strength so a gold theme and a teal laureate are the same weight of
+// mark — the colour identifies, it does not shout.
+const Disc = ({ color, className = '', children }) => (
+  <div className={`node-disc ${className}`} style={{ '--node': color }}>
+    <span className="node-disc-copy">{children}</span>
+  </div>
+)
+
 const CloseIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
     <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
@@ -118,7 +127,7 @@ const Chevron = ({ back }) => (
 
 // A narrative read as a fixed sequence of screens rather than one long scroll,
 // so each beat of the story lands on its own.
-function StoryReader({ story, seed }) {
+function StoryReader({ story, color }) {
   const [screen, setScreen] = useState(0)
   const bodyRef = useRef(null)
   const screens = storyScreens(story)
@@ -151,15 +160,12 @@ function StoryReader({ story, seed }) {
         ))}
       </span>
 
-      <header className="story-hero">
-        <Plate seed={`${seed}:${screen}`} />
-        <div className="story-hero-text">
-          <span className="kicker">
-            {t('storyKicker')} · {screen + 1} {t('of')} {total}
-          </span>
-          <h2>{screen === 0 ? storyTitle(story) : current.heading}</h2>
-        </div>
-      </header>
+      <Disc color={color}>
+        <span className="node-name">{screen === 0 ? storyTitle(story) : current.heading}</span>
+        <span className="node-sub">
+          {t('storyKicker')} · {screen + 1} {t('of')} {total}
+        </span>
+      </Disc>
 
       <div className="story-body" ref={bodyRef}>
         {screen === 0 && <p className="standfirst">{current.heading}</p>}
@@ -263,8 +269,9 @@ export default function StoryPanel({ selection, onClose }) {
     return (
       <div className="story-holder" key={seed}>
         <article className="story-panel placeholder">
-          <Plate seed={seed} />
-          <span className="placeholder-label">{ctaFor(selection.id)}</span>
+          <Disc color={meta.color} className="lead">
+            {ctaFor(selection.id)}
+          </Disc>
         </article>
         <button className="close" onClick={onClose} aria-label={t('close')}>
           <CloseIcon />
@@ -278,7 +285,7 @@ export default function StoryPanel({ selection, onClose }) {
     return (
       <div className="story-holder" key={seed}>
         <article className="story-panel reader">
-          {story && <StoryReader story={story} seed={seed} />}
+          {story && <StoryReader story={story} color={meta.color} />}
         </article>
         <button className="close" onClick={onClose} aria-label={t('close')}>
           <CloseIcon />
@@ -287,22 +294,19 @@ export default function StoryPanel({ selection, onClose }) {
     )
   }
 
-  const { standfirst, body, caption, credit } = narrativeFor(selection.kind, selection.id, meta.blurb)
+  const { standfirst, body, credit } = narrativeFor(selection.kind, selection.id, meta.blurb)
 
   return (
     <div className="story-holder" key={seed}>
-      {/* Name first, then the writing on its own card, then the picture at the
-          foot — the reader meets what a thing is before what it looks like. */}
+      {/* The name in the disc, then the writing under it. The disc does the
+          work the picture used to do, so there is no picture. */}
       <article className="story-panel prose">
         <ScrollRail targetRef={bodyRef} />
 
-        <header className="story-head">
-          <h2>{meta.label}</h2>
-          <p className="story-tags">
-            <span className="chip">{meta.kicker}</span>
-            {meta.sub && <span className="sub">· {meta.sub}</span>}
-          </p>
-        </header>
+        <Disc color={meta.color}>
+          <span className="node-name">{meta.label}</span>
+          {meta.sub && <span className="node-sub">{meta.sub}</span>}
+        </Disc>
 
         <div className="story-body" ref={bodyRef}>
           <p className="standfirst">{standfirst}</p>
@@ -315,11 +319,6 @@ export default function StoryPanel({ selection, onClose }) {
 
           <footer className="story-credit">{credit}</footer>
         </div>
-
-        <figure className="story-plate">
-          <Plate seed={seed} />
-          {caption && <figcaption>{caption}</figcaption>}
-        </figure>
       </article>
       <button className="close" onClick={onClose} aria-label={t('close')}>
         <CloseIcon />
