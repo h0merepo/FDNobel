@@ -3,25 +3,27 @@ import { DECADES, END_YEAR, START_YEAR, WORLD, yearToX } from '../lib/timeline'
 
 // The decade the reader is standing in is set large enough to be read as
 // ground rather than as a label — the years behind the network, not beside it.
-const ERA_Y = 392
+// Placed against the window rather than at a fixed depth, so on a wall it sits
+// in the middle of the glass instead of near the top of it.
+const eraY = (height) => Math.round(height * 0.45)
 // The ruler runs under the circles and over the foot of the plane, so the
-// timeline reads as a measured thing even where no event happens to fall. The
-// plane is taller than a short window, and the scrubber is fixed to the foot of
-// the window rather than to the plane, so the ruler is placed against the
-// window instead: on a short screen it rides up through the circles rather than
-// disappearing behind the scrubber.
-const RULER_Y = 712
-const rulerY = (height) => Math.min(RULER_Y, height - 164)
+// timeline reads as a measured thing even where no event happens to fall. It is
+// measured off the window rather than the plane, because the scrubber is fixed
+// to the foot of the window: this keeps the ruler clear of it on a short screen
+// and carries it all the way down on a tall one, instead of stranding it a
+// third of the way up a 55-inch panel.
+const rulerY = (height) => height - 164
 
 const YEARS = Array.from({ length: END_YEAR - START_YEAR + 1 }, (_, i) => START_YEAR + i)
 const tickHeight = (year) => (year % 10 === 0 ? 22 : year % 5 === 0 ? 12 : 6)
 
 export default function TimelineBackdrop({ year }) {
   const near = Math.floor(year / 10) * 10
-  const [ruler, setRuler] = useState(() => rulerY(window.innerHeight))
+  const [bed, setBed] = useState(() => ({ ruler: rulerY(innerHeight), era: eraY(innerHeight) }))
+  const { ruler, era } = bed
 
   useEffect(() => {
-    const measure = () => setRuler(rulerY(window.innerHeight))
+    const measure = () => setBed({ ruler: rulerY(innerHeight), era: eraY(innerHeight) })
     measure()
     window.addEventListener('resize', measure)
     return () => window.removeEventListener('resize', measure)
@@ -38,7 +40,7 @@ export default function TimelineBackdrop({ year }) {
         <span
           key={`era-${d}`}
           className={`era${d === near ? ' near' : ''}`}
-          style={{ left: yearToX(d), top: ERA_Y }}
+          style={{ left: yearToX(d), top: era }}
         >
           {d}
         </span>

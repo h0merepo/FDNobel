@@ -22,6 +22,17 @@ export default function Milestones({ selection, onSelect }) {
   // out of view as anything past the edge.
   const [inset, setInset] = useState(0)
 
+  // The band the events are packed into runs the height of the glass rather
+  // than a height fixed for a laptop window: on a 55-inch panel that left the
+  // whole timeline in the top third with two thirds of empty plane under it.
+  const [glass, setGlass] = useState(() => window.innerHeight)
+
+  useEffect(() => {
+    const measure = () => setGlass(window.innerHeight)
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [])
+
   const nodes = useMemo(
     () =>
       layoutByYear(
@@ -34,10 +45,11 @@ export default function Milestones({ selection, onSelect }) {
           r: MILESTONE_RADIUS[m.weight] ?? 122,
           color: kindColor('milestone'),
         })),
-        // the band clears the name at the head of the page and the scrubber at its foot
-        { seed: 9, top: 158, bottom: 656, padding: 26 },
+        // Clear of the top edge, and stopping short of the ruler and the
+        // scrubber that sit at the foot of the window.
+        { seed: 9, top: 158, bottom: Math.max(520, glass - 200), padding: 26 },
       ),
-    [],
+    [glass],
   )
 
 
@@ -131,10 +143,13 @@ export default function Milestones({ selection, onSelect }) {
     <>
       <Ambient count={20} seed={71} />
 
-      <div className="page-hint head">
-        <h1>{t('milestonesTitle')}</h1>
-        <p>{t('milestonesHint')}</p>
+      <div className="reach">
+        <div className="page-hint head">
+          <h1>{t('milestonesTitle')}</h1>
+          <p>{t('milestonesHint')}</p>
+        </div>
       </div>
+
       <PanCanvas world={WORLD} offsetRef={controls} onOffsetChange={handleOffset} lockY>
         <TimelineBackdrop year={year} />
         {nodes.map((node) => (
@@ -157,7 +172,10 @@ export default function Milestones({ selection, onSelect }) {
           />
         )}
       </PanCanvas>
-      <Scrubber year={year} min={START_YEAR} max={END_YEAR} ticks={DECADES} onScrub={scrubTo} />
+
+      <div className="reach">
+        <Scrubber year={year} min={START_YEAR} max={END_YEAR} ticks={DECADES} onScrub={scrubTo} />
+      </div>
     </>
   )
 }

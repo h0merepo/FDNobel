@@ -30,6 +30,10 @@
   --panel: #1e1c1a;
   --chrome: #1e1c1a;
   --rail-h: 48px;
+  /* The size the chrome is drawn at, before it is scaled into the reach.
+     Kept in step with STAGE in lib/reach.js. */
+  --stage-w: 1440px;
+  --stage-h: 810px;
   --hairline: rgba(255, 255, 255, 0.7);
   --on-dark: rgba(209, 204, 190, 0.92);
   --on-dark-muted: rgba(209, 204, 190, 0.5);
@@ -113,6 +117,54 @@ html.on-surface .canvas {
   -webkit-mask-composite: source-in;
   mask-image: var(--seam-y), var(--seam-x);
   mask-composite: intersect;
+}
+
+/* ---------- the reach ----------
+   Everything you operate sits inside one of these: a stage of a fixed size,
+   scaled as a whole and set down in the bottom middle of the glass, where the
+   hands are. See lib/reach.js for why it is that size and that fraction.
+
+   The field of circles and the plane they sit on are deliberately outside it,
+   and answer to the whole panel. That split is the design: content to the
+   glass, controls to the person.
+
+   Laid out at the stage's own size and then scaled, rather than sized in
+   per cent, so the composition inside is the one it was drawn as — it does not
+   restack or re-space itself because the panel it landed on is large. */
+.reach {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: var(--stage-w);
+  height: var(--stage-h);
+  transform: translateX(-50%) scale(var(--reach-k, 1));
+  transform-origin: bottom center;
+  /* Scaling makes each stage its own stacking context, so the levels the
+     chrome used to keep against the plane now belong to the stage. Above the
+     plane of circles by default; `over` is for the dock and the search, which
+     stay above the focus layer as well. */
+  z-index: 12;
+  /* The stage is bigger than the things on it; the gaps belong to the plane
+     behind, which is still being dragged. */
+  pointer-events: none;
+}
+
+.reach > * {
+  pointer-events: auto;
+}
+
+.reach.over {
+  z-index: 40;
+}
+
+/* A station on the table is sized to one person already. There the reach is
+   nothing but a wrapper, and the page lays out as it always did. */
+html.on-surface .reach {
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: auto;
+  transform: none;
 }
 
 button {

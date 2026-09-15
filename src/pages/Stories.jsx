@@ -41,10 +41,13 @@ export default function Stories({ selection, onSelect }) {
     <>
       <Ambient count={22} seed={55} />
 
-      <div className="page-hint">
-        <h1>{t('storiesTitle')}</h1>
-        <p>{t('storiesHint')}</p>
+      <div className="reach">
+        <div className="page-hint">
+          <h1>{t('storiesTitle')}</h1>
+          <p>{t('storiesHint')}</p>
+        </div>
       </div>
+
       <PanCanvas world={WORLD} offsetRef={controls}>
         {nodes.map((node) => (
           <Bubble

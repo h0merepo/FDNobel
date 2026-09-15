@@ -102,25 +102,33 @@ export default function App() {
           {page !== 'milestones' && (
             <NodeWeb selection={selection} trail={trail} mode={page} onSelect={select} />
           )}
-          <StoryPanel selection={selection} onClose={closeFocus} />
+          {/* The web around a selection is circles, so it keeps the glass;
+              what you read and close comes back into the reach. */}
+          <div className="reach">
+            <StoryPanel selection={selection} onClose={closeFocus} />
+          </div>
         </div>
       )}
 
       {/* The way in offers three ways in and the choice of language, and
           nothing else: no tools until you have picked a direction. */}
       {page !== 'landing' && (
-        <div className="chrome-bar">
-          <NavDock
-            searchOpen={searchOpen}
-            onSearch={() => setSearchOpen((o) => !o)}
-            onLanguage={() => setLocaleState(otherLocale())}
-          />
-          <Trail trail={trail} selection={selection} onSelect={select} onHome={goHome} />
+        <div className="reach over">
+          <div className="chrome-bar">
+            <NavDock
+              searchOpen={searchOpen}
+              onSearch={() => setSearchOpen((o) => !o)}
+              onLanguage={() => setLocaleState(otherLocale())}
+            />
+            <Trail trail={trail} selection={selection} onSelect={select} onHome={goHome} />
+          </div>
         </div>
       )}
 
       {searchOpen && page !== 'discovery' && (
-        <SearchSheet query={query} onQuery={setQuery} onSelect={select} />
+        <div className="reach over">
+          <SearchSheet query={query} onQuery={setQuery} onSelect={select} />
+        </div>
       )}
     </div>
   )

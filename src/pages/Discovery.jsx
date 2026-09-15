@@ -100,9 +100,11 @@ export default function Discovery({ selection, onSelect, search }) {
     <>
       <Ambient count={22} seed={88} />
 
-      <div className="page-hint">
-        <h1>{t('discoveryTitle')}</h1>
-        <p>{t('discoveryHint')}</p>
+      <div className="reach">
+        <div className="page-hint">
+          <h1>{t('discoveryTitle')}</h1>
+          <p>{t('discoveryHint')}</p>
+        </div>
       </div>
 
       <PanCanvas world={WORLD} offsetRef={controls}>
@@ -116,18 +118,20 @@ export default function Discovery({ selection, onSelect, search }) {
         ))}
       </PanCanvas>
 
-      {search}
+      <div className="reach">
+        {search}
 
-      <button
-        className="shuffle"
-        onClick={() => {
-          setSeed((s) => s + 1)
-          recentre()
-        }}
-      >
-        <ShuffleIcon />
-        {t('shuffle')}
-      </button>
+        <button
+          className="shuffle"
+          onClick={() => {
+            setSeed((s) => s + 1)
+            recentre()
+          }}
+        >
+          <ShuffleIcon />
+          {t('shuffle')}
+        </button>
+      </div>
     </>
   )
 }

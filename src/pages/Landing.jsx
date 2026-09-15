@@ -80,54 +80,59 @@ export default function Landing({ onNavigate, onLanguage }) {
     <>
       <Ambient count={26} seed={4} />
 
-      <div className={`attractor${scattered ? '' : ' stacked'}`} ref={stage}>
-        {scattered && (
-          <svg className="attractor-necks" aria-hidden="true">
-            {placed.map((entry) => {
-              const d = neckPath(
-                { x: entry.cx, y: entry.cy, r: entry.cr },
-                hub,
-                { width: 4.5, fillet: entry.cr * 0.24 },
-              )
-              return d ? <path key={entry.id} d={d} fill={entry.color} /> : null
-            })}
-          </svg>
-        )}
+      {/* The way in is the one page with no plane behind it, and the three
+          circles are the whole of it — so it lives in the reach entire. On a
+          wall you cannot open what you cannot touch. */}
+      <div className="reach">
+        <div className={`attractor${scattered ? '' : ' stacked'}`} ref={stage}>
+          {scattered && (
+            <svg className="attractor-necks" aria-hidden="true">
+              {placed.map((entry) => {
+                const d = neckPath(
+                  { x: entry.cx, y: entry.cy, r: entry.cr },
+                  hub,
+                  { width: 4.5, fillet: entry.cr * 0.24 },
+                )
+                return d ? <path key={entry.id} d={d} fill={entry.color} /> : null
+              })}
+            </svg>
+          )}
 
-        <h1 className="attractor-title">
-          <span className="line-one">Nobel</span>
-          <span className="line-two">Atlas</span>
-        </h1>
+          <h1 className="attractor-title">
+            <span className="line-one">Nobel</span>
+            <span className="line-two">Atlas</span>
+          </h1>
 
-        <p className="attractor-tagline">{t('landingTagline')}</p>
+          <p className="attractor-tagline">{t('landingTagline')}</p>
 
-        {placed.map((entry) => (
-          <button
-            key={entry.id}
-            className="entry"
-            style={
-              scattered
-                ? {
-                    position: 'absolute',
-                    left: entry.cx,
-                    top: entry.cy,
-                    width: entry.cr * 2,
-                    height: entry.cr * 2,
-                    transform: 'translate(-50%, -50%)',
-                    backgroundColor: entry.color,
-                    color: textOn(entry.color),
-                  }
-                : { backgroundColor: entry.color, color: textOn(entry.color) }
-            }
-            onClick={() => onNavigate(entry.id)}
-            title={t(entry.copy)}
-            aria-label={`${t(entry.title)} — ${t(entry.copy)}`}
-          >
-            <span className="entry-name">{t(entry.title)}</span>
-          </button>
-        ))}
+          {placed.map((entry) => (
+            <button
+              key={entry.id}
+              className="entry"
+              style={
+                scattered
+                  ? {
+                      position: 'absolute',
+                      left: entry.cx,
+                      top: entry.cy,
+                      width: entry.cr * 2,
+                      height: entry.cr * 2,
+                      transform: 'translate(-50%, -50%)',
+                      backgroundColor: entry.color,
+                      color: textOn(entry.color),
+                    }
+                  : { backgroundColor: entry.color, color: textOn(entry.color) }
+              }
+              onClick={() => onNavigate(entry.id)}
+              title={t(entry.copy)}
+              aria-label={`${t(entry.title)} — ${t(entry.copy)}`}
+            >
+              <span className="entry-name">{t(entry.title)}</span>
+            </button>
+          ))}
 
-        <LanguageToggle onSelect={onLanguage} />
+          <LanguageToggle onSelect={onLanguage} />
+        </div>
       </div>
     </>
   )
