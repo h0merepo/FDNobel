@@ -597,7 +597,12 @@ button {
   background: rgba(30, 28, 26, 0.92);
   backdrop-filter: blur(14px);
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
-  text-align: center;
+  /* Left, like the sheet in the dock. A centred field moves the words you have
+     already typed every time you type another one, which on a wall you are
+     reading at arm's length is a thing to watch rather than read. The left
+     padding clears the mark; the right is kept so a long suggestion does not
+     run to the edge. */
+  text-align: left;
   color: var(--pale);
 }
 
@@ -636,7 +641,8 @@ button {
 }
 
 .search-sheet.is-hero .search-ghost {
-  justify-content: center;
+  /* Follows the field: the echo has to start where the text starts. */
+  justify-content: flex-start;
   padding: 1.1rem 3.6rem;
   font-size: 1.15rem;
   color: rgba(209, 204, 190, 0.42);
