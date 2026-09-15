@@ -642,9 +642,23 @@ button {
   color: rgba(209, 204, 190, 0.42);
 }
 
+/* Hidden rather than transparent, so the suggestion inside it can turn itself
+   back on and still inherit the ghost's own colour. */
 .search-ghost i {
+  position: relative;
   font-style: normal;
-  color: transparent;
+  visibility: hidden;
+}
+
+/* Anchored to the end of the echo, so what the field's centring acts on is the
+   echo alone — the same width as the text actually in the field — and the
+   suggestion continues from the caret instead of being centred with it. */
+.search-ghost i em {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  font-style: normal;
+  visibility: visible;
 }
 
 /* Hung below the field rather than stacked under it, so the sheet's own height

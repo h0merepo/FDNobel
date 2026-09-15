@@ -125,10 +125,15 @@ export default function SearchSheet({ query, onQuery, onSelect, onKeyboard, vari
             <path d="m16 16 4.4 4.4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
           </svg>
         )}
-        {/* the query is echoed invisibly so the ghost sits exactly after it */}
+        {/* The query is echoed invisibly so the ghost sits exactly after it,
+            and the suggestion hangs off the end of that echo rather than
+            sharing a line with it — otherwise a centred field centres the pair
+            and the suggestion lands on top of what you typed. */}
         <span className="search-ghost" aria-hidden="true">
-          <i>{query}</i>
-          {completion}
+          <i>
+            {query}
+            <em>{completion}</em>
+          </i>
         </span>
         {/* The board is raised by the tap, not by the focus: the field on the
             plane takes focus the moment the page opens, and nobody asked for a
