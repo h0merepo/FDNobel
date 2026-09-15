@@ -10,7 +10,6 @@ const ui = {
     en: 'Search stories, laureates, milestones…',
     sv: 'Sök berättelser, pristagare, milstolpar…',
   },
-  openFull: { en: 'Open full piece', sv: 'Öppna hela verket' },
   searchAnything: { en: 'Search for anything', sv: 'Sök efter vad som helst' },
   shuffle: { en: 'Shuffle', sv: 'Blanda' },
   jumpForward: { en: 'Jump forward to', sv: 'Hoppa fram till' },

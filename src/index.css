@@ -986,8 +986,8 @@ button {
   animation: panel-in 380ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Pale and not quite opaque, so the circles the box covers still read behind
-   it — a lens held over the world rather than a door shut on it. Everything
+/* Pale, and just short of opaque: enough that the circles behind still register
+   as depth, not so much that they compete with the writing. Everything
    short-form is set in ink on this ground; the scroll pieces keep their own
    dark ground, which is why .piece overrides it. */
 .story-panel {
@@ -997,7 +997,7 @@ button {
   display: flex;
   flex-direction: column;
   color: var(--ink);
-  background: rgba(220, 219, 215, 0.91);
+  background: rgba(220, 219, 215, 0.95);
   backdrop-filter: blur(26px);
   -webkit-backdrop-filter: blur(26px);
   /* Both long-form pieces round their own frame generously and evenly — a
@@ -1220,36 +1220,6 @@ button {
 }
 
 /* The way out to the piece on its own, sitting over the frame's foot. */
-.piece-full {
-  position: absolute;
-  right: 1rem;
-  bottom: 1rem;
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.55rem 1rem;
-  border-radius: 999px;
-  background: rgba(20, 18, 15, 0.86);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--pale);
-  text-decoration: none;
-  transition: background 160ms ease;
-}
-
-.piece-full:hover {
-  background: var(--gold);
-  color: var(--ink);
-}
-
-.piece-full svg {
-  width: 14px;
-  height: 14px;
-}
 
 /* --- prose panel: name, then the writing, then the picture --- */
 
