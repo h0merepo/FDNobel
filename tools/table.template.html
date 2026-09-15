@@ -259,24 +259,32 @@ html, body {
   const VMIN = 10.8
   const vmin = (px) => (px / VMIN).toFixed(3) + 'vmin'
 
-  function makeBand(blur) {
+  function makeBand(blur, fade) {
     const band = document.createElement('div')
     band.className = 'band'
     band.style.filter = 'blur(' + vmin(blur) + ')'
+    band.style.opacity = fade.toFixed(2)
     depth.appendChild(band)
     return band
   }
 
-  // the depths, back to front
+  /* The depths, back to front — and in that order on the page too, so a near
+     circle passes in front of a far one rather than behind it. That crossing
+     is most of what makes the movement read as depth rather than as sliding. */
   for (let i = 0; i < BANDS; i += 1) {
     const off = Math.abs(i - FOCUS)
-    const near = 1 - i / (BANDS - 1)
+    const near = i / (BANDS - 1)
     bands.push({
-      // Kept inside the range the atlas uses for its own field — past about
-      // sixty the circles stop being circles and the whole thing turns to wash.
-      el: makeBand(13 + Math.pow(off, 1.5) * 9),
+      // Blur kept inside the range the atlas uses for its own field — past
+      // about sixty the circles stop being circles and the whole thing turns
+      // to wash. Opacity falls away from the focal plane in both directions:
+      // the front band is large, blurred and painted over everything, and at
+      // full strength it veils the one depth that is actually sharp.
+      el: makeBand(13 + Math.pow(off, 1.5) * 9, 1 - off * 0.13),
       near: near,
-      drift: 5 + near * 26,
+      // How far this depth travels. The spread between the front and the back
+      // is the parallax; the absolute figure is only how alive the table looks.
+      drift: 12 + near * 70,
       phase: r() * Math.PI * 2,
     })
   }
@@ -300,17 +308,25 @@ html, body {
   }
 
   /* ── the drift ────────────────────────────────────────────────────────
-     A table has no cursor to follow, so the plane moves on its own: two
-     slow cycles of different length per band, which never quite repeat
-     together. Bands nearer the front travel further, which is the parallax. */
+     A table has no cursor to follow, so the field moves on its own: two slow
+     cycles of different length per depth, which never quite repeat together,
+     so the table never settles into a loop anyone can catch. Bands nearer the
+     front travel further, which is the parallax.
+
+     About a minute for the sideways cycle and half as fast again for the
+     vertical. The front band peaks around eight pixels a second, which is
+     under the rate at which something reads as moving and over the rate at
+     which it reads as still: look at it and it is not moving, look away and
+     the table has changed. Slower than this — it was six times slower — and
+     there is no movement at all, only a screenshot that will not sit still. */
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches
 
   function frame(t) {
     const s = t / 1000
     for (let i = 0; i < bands.length; i += 1) {
       const b = bands[i]
-      const x = Math.sin(s * 0.043 + b.phase) * b.drift
-      const y = Math.cos(s * 0.031 + b.phase * 1.7) * b.drift * 0.6
+      const x = Math.sin(s * 0.101 + b.phase) * b.drift
+      const y = Math.cos(s * 0.073 + b.phase * 1.7) * b.drift * 0.6
       b.el.style.transform = 'translate3d(' + vmin(x) + ',' + vmin(y) + ',0)'
     }
     requestAnimationFrame(frame)
