@@ -58,35 +58,86 @@ const unround = (doc) => {
   doc.head.appendChild(style)
 }
 
-// Reading position on the left edge: a solid run for what is on screen, dashes
-// for what is still below.
-function ScrollRail({ targetRef, dependency }) {
-  const [{ size, offset }, setState] = useState({ size: 0, offset: 0 })
+// One language for moving through writing, wherever it appears: a dot per
+// section, the one you are in filled. It is the beat rail the scroll sequences
+// use, brought out of the pieces and into the boxes — so the app never shows a
+// browser scrollbar on its own prose.
+function SectionRail({ count, active, onGo, label }) {
+  if (count < 2) return null
+  return (
+    <nav className="section-rail" aria-label={label}>
+      {Array.from({ length: count }, (_, i) => (
+        <button
+          key={i}
+          type="button"
+          aria-current={i === active}
+          aria-label={`${i + 1} / ${count}`}
+          onClick={() => onGo(i)}
+        />
+      ))}
+    </nav>
+  )
+}
 
-  const measure = useCallback(() => {
-    const el = targetRef.current
-    if (!el) return
-    const ratio = el.clientHeight / el.scrollHeight
-    setState({
-      size: Math.min(1, ratio),
-      offset: el.scrollHeight > el.clientHeight ? el.scrollTop / el.scrollHeight : 0,
-    })
-  }, [targetRef])
+// Which section of a scrolling box is being read, and how to get to another.
+// Offsets are measured against the scroller rather than taken from offsetTop,
+// which is relative to the nearest positioned ancestor and not to this box.
+function useSections(scrollerRef, dependency) {
+  const [{ count, active }, setState] = useState({ count: 0, active: 0 })
+
+  const offsets = useCallback(() => {
+    const el = scrollerRef.current
+    if (!el) return []
+    const top = el.getBoundingClientRect().top
+    return [...el.querySelectorAll('[data-section]')].map(
+      (n) => n.getBoundingClientRect().top - top + el.scrollTop,
+    )
+  }, [scrollerRef])
 
   useEffect(() => {
-    const el = targetRef.current
-    if (!el) return
+    const el = scrollerRef.current
+    if (!el) return undefined
+    const measure = () => {
+      // Writing that fits in the box has nothing to move through, and a rail
+      // over it would promise more than is there.
+      if (el.scrollHeight <= el.clientHeight + 4) {
+        setState({ count: 0, active: 0 })
+        return
+      }
+      const list = offsets()
+      // a section becomes the current one as its head crosses the top of the
+      // box — measured from the top rather than from the middle, or the box
+      // opens already marking the second section
+      const mark = el.scrollTop + 28
+      let at = 0
+      list.forEach((y, i) => {
+        if (y <= mark) at = i
+      })
+      // At the foot of the box the last section is the one being read, even
+      // when it is short enough that its head never crossed the line.
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 4) at = list.length - 1
+      setState({ count: list.length, active: at })
+    }
     measure()
     el.addEventListener('scroll', measure, { passive: true })
-    return () => el.removeEventListener('scroll', measure)
-  }, [targetRef, measure, dependency])
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => {
+      el.removeEventListener('scroll', measure)
+      ro.disconnect()
+    }
+  }, [scrollerRef, offsets, dependency])
 
-  if (size >= 1) return null
-  return (
-    <span className="scroll-rail" aria-hidden="true">
-      <i style={{ height: `${size * 100}%`, top: `${offset * 100}%` }} />
-    </span>
+  const go = useCallback(
+    (i) => {
+      const el = scrollerRef.current
+      const y = offsets()[i]
+      if (el && y !== undefined) el.scrollTo({ top: Math.max(0, y - 10), behavior: 'smooth' })
+    },
+    [scrollerRef, offsets],
   )
+
+  return { count, active, go }
 }
 
 // The pale box carries one tinted disc, and the lead of whatever is in the box
@@ -144,11 +195,7 @@ function StoryReader({ story, color }) {
 
   return (
     <>
-      <span className="screen-rail" aria-hidden="true">
-        {screens.map((_, i) => (
-          <i key={i} className={i <= screen ? 'read' : undefined} />
-        ))}
-      </span>
+      <SectionRail count={total} active={screen} onGo={setScreen} label={t('storyScreens')} />
 
       <Disc color={color}>
         <span className="node-name">{screen === 0 ? storyTitle(story) : current.heading}</span>
@@ -161,8 +208,6 @@ function StoryReader({ story, color }) {
         {screen === 0 && <p className="standfirst">{current.heading}</p>}
         <p className={screen === 0 ? 'para-row' : 'standfirst'}>{current.body}</p>
       </div>
-
-      <ScrollRail targetRef={bodyRef} dependency={screen} />
 
       <nav className="reader-nav" aria-label={t('storyScreens')}>
         <button onClick={() => step(-1)} disabled={screen === 0} aria-label={t('previousScreen')}>
@@ -219,6 +264,7 @@ function Piece({ piece }) {
 
 export default function StoryPanel({ selection, onClose }) {
   const bodyRef = useRef(null)
+  const sections = useSections(bodyRef, selection && `${selection.kind}:${selection.id}`)
   const meta = nodeMeta(selection)
   if (!meta) return null
 
@@ -276,7 +322,7 @@ export default function StoryPanel({ selection, onClose }) {
       {/* The name in the disc, then the writing under it. The disc does the
           work the picture used to do, so there is no picture. */}
       <article className="story-panel prose">
-        <ScrollRail targetRef={bodyRef} />
+        <SectionRail count={sections.count} active={sections.active} onGo={sections.go} label={t('storyScreens')} />
 
         <Disc color={meta.color}>
           <span className="node-name">{meta.label}</span>
@@ -284,10 +330,12 @@ export default function StoryPanel({ selection, onClose }) {
         </Disc>
 
         <div className="story-body" ref={bodyRef}>
-          <p className="standfirst">{standfirst}</p>
+          <p className="standfirst" data-section="">
+            {standfirst}
+          </p>
 
           {body.map((paragraph, i) => (
-            <div key={i} className="para-row">
+            <div key={i} className="para-row" data-section="">
               <p>{paragraph}</p>
             </div>
           ))}

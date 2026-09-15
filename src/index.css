@@ -699,10 +699,14 @@ button {
   pointer-events: auto;
 }
 
+/* A list of results has no sections to mark, so it keeps a bar — drawn down to
+   a hairline in the same ink, rather than the browser's slab. */
 .search-results {
   margin-top: 0.6rem;
   max-height: 46vh;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(209, 204, 190, 0.34) transparent;
   display: flex;
   flex-direction: column;
 }
@@ -1134,10 +1138,60 @@ button {
   color: #fff;
 }
 
+/* ---------- moving through writing ----------
+
+   A dot per section, the one being read filled: the beat rail the scroll
+   sequences use, brought into the boxes so the app never shows the browser's
+   own scrollbar on its prose. */
+.section-rail {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-rail button {
+  width: 11px;
+  height: 11px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(43, 39, 36, 0.26);
+  /* scaled rather than resized, so the spacing never shifts */
+  transform: scale(0.62);
+  transition: transform 320ms ease, background 320ms ease;
+}
+
+.section-rail button:hover {
+  transform: scale(0.8);
+  background: rgba(43, 39, 36, 0.5);
+}
+
+.section-rail button[aria-current='true'],
+.section-rail button[aria-current='true']:hover {
+  transform: scale(1);
+  background: var(--ink);
+}
+
+.section-rail button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
 .story-body {
   flex: 1;
   overflow-y: auto;
   padding: 0.4rem 2.1rem 2.6rem;
+  scrollbar-width: none;
+}
+
+.story-body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 .story-body p {
@@ -1232,7 +1286,7 @@ button {
 /* No card under the writing: the box is already the pale surface the card
    used to imitate. */
 .story-panel.prose .story-body {
-  padding: 0 1rem 1.6rem;
+  padding: 0 2.4rem 1.6rem 1rem;
 }
 
 .story-panel.prose .standfirst {
@@ -1348,35 +1402,8 @@ button {
 }
 
 .story-panel.reader .story-body {
-  padding: 0 1rem 4.6rem;
+  padding: 0 2.4rem 4.6rem 1rem;
   text-align: center;
-}
-
-/* Seven marks for seven screens, filling as the reader moves through. Held at
-   the middle of the left edge, where it reads as a measure rather than as
-   something spilled in the corner. */
-.screen-rail {
-  position: absolute;
-  left: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 3;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  pointer-events: none;
-}
-
-.screen-rail i {
-  width: 3px;
-  height: 13px;
-  border-radius: 2px;
-  background: rgba(43, 39, 36, 0.2);
-  transition: background 200ms ease;
-}
-
-.screen-rail i.read {
-  background: var(--ink);
 }
 
 .reader-nav {
