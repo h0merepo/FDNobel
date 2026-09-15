@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { otherLocale, setLocale } from './i18n'
 import Ambient from './components/Ambient'
+import Keyboard from './components/Keyboard'
 import NavDock from './components/NavDock'
 import NodeWeb from './components/NodeWeb'
 import SearchSheet from './components/SearchSheet'
@@ -32,6 +33,10 @@ export default function App() {
   const [trail, setTrail] = useState([])
   const [searchOpen, setSearchOpen] = useState(false)
   const [query, setQuery] = useState('')
+  // The board is raised by a tap on search — the one in the dock or the one on
+  // the plane — and is put away by its own cross, by Enter, or by anything that
+  // ends the search it belongs to.
+  const [keys, setKeys] = useState(false)
 
   const closeFocus = useCallback(() => {
     setSelection(null)
@@ -41,6 +46,7 @@ export default function App() {
   const goHome = useCallback(() => {
     setPage('landing')
     setSearchOpen(false)
+    setKeys(false)
     closeFocus()
   }, [closeFocus])
 
@@ -48,6 +54,7 @@ export default function App() {
     (next) => {
       setSelection(next)
       setSearchOpen(false)
+      setKeys(false)
       // The trail is a path, not a history: stepping back onto a node you have
       // already visited truncates to it rather than appending a duplicate.
       setTrail((prev) => {
@@ -64,18 +71,19 @@ export default function App() {
   useEffect(() => {
     const onKey = (e) => {
       if (e.key !== 'Escape') return
-      if (searchOpen) setSearchOpen(false)
+      if (keys) setKeys(false)
+      else if (searchOpen) setSearchOpen(false)
       else if (selection) closeFocus()
       else if (page !== 'landing') goHome()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [searchOpen, selection, page, goHome, closeFocus])
+  }, [keys, searchOpen, selection, page, goHome, closeFocus])
 
   const focused = Boolean(selection)
 
   return (
-    <div className="app">
+    <div className={`app${keys ? ' keys-open' : ''}`}>
       <div
         className={`page-layer${focused && page !== 'milestones' ? ' behind' : ''}`}
         aria-hidden={focused && page !== 'milestones'}
@@ -89,7 +97,15 @@ export default function App() {
           <Discovery
             selection={selection}
             onSelect={select}
-            search={<SearchSheet variant="hero" query={query} onQuery={setQuery} onSelect={select} />}
+            search={
+              <SearchSheet
+                variant="hero"
+                query={query}
+                onQuery={setQuery}
+                onSelect={select}
+                onKeyboard={() => setKeys(true)}
+              />
+            }
           />
         )}
       </div>
@@ -117,7 +133,14 @@ export default function App() {
           <div className="chrome-bar">
             <NavDock
               searchOpen={searchOpen}
-              onSearch={() => setSearchOpen((o) => !o)}
+              onSearch={() => {
+                // The board goes up with the sheet and down with it. On the
+                // plane there is no sheet — the field is already on the page —
+                // but the tap means the same thing, so the board still rises.
+                const opening = !searchOpen
+                setSearchOpen(opening)
+                setKeys(opening)
+              }}
               onLanguage={() => setLocaleState(otherLocale())}
             />
             <Trail trail={trail} selection={selection} onSelect={select} onHome={goHome} />
@@ -127,7 +150,18 @@ export default function App() {
 
       {searchOpen && page !== 'discovery' && (
         <div className="reach over">
-          <SearchSheet query={query} onQuery={setQuery} onSelect={select} />
+          <SearchSheet
+            query={query}
+            onQuery={setQuery}
+            onSelect={select}
+            onKeyboard={() => setKeys(true)}
+          />
+        </div>
+      )}
+
+      {keys && (
+        <div className="reach over">
+          <Keyboard value={query} onChange={setQuery} onClose={() => setKeys(false)} />
         </div>
       )}
     </div>

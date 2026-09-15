@@ -67,7 +67,7 @@ const RECORDS = () => [
   })),
 ]
 
-export default function SearchSheet({ query, onQuery, onSelect, variant = 'dock' }) {
+export default function SearchSheet({ query, onQuery, onSelect, onKeyboard, variant = 'dock' }) {
   const inputRef = useRef(null)
   const [active, setActive] = useState(0)
 
@@ -114,7 +114,10 @@ export default function SearchSheet({ query, onQuery, onSelect, variant = 'dock'
   }
 
   return (
-    <div className={`search-sheet ${variant}`}>
+    // Namespaced, because the variant name is not the stylesheet's to take:
+    // `dock` is already the pill in the chrome bar, and the sheet was quietly
+    // inheriting its flex row, its stretch and its clipping.
+    <div className={`search-sheet is-${variant}`}>
       <div className="search-field">
         {variant === 'hero' && (
           <svg className="search-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -127,11 +130,15 @@ export default function SearchSheet({ query, onQuery, onSelect, variant = 'dock'
           <i>{query}</i>
           {completion}
         </span>
+        {/* The board is raised by the tap, not by the focus: the field on the
+            plane takes focus the moment the page opens, and nobody asked for a
+            keyboard by walking up to it. */}
         <input
           ref={inputRef}
           value={query}
           onChange={(e) => onQuery(e.target.value)}
           onKeyDown={onKeyDown}
+          onClick={onKeyboard}
           placeholder={t('searchAnything')}
           aria-label={t('search')}
           autoComplete="off"

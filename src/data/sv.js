@@ -15,6 +15,9 @@ const ui = {
   jumpForward: { en: 'Jump forward to', sv: 'Hoppa fram till' },
   jumpBack: { en: 'Jump back to', sv: 'Hoppa tillbaka till' },
   nothingMatches: { en: 'Nothing matches', sv: 'Inget matchar' },
+  backspace: { en: 'Backspace', sv: 'Backsteg' },
+  space: { en: 'Space', sv: 'Mellanslag' },
+  enter: { en: 'Enter', sv: 'Retur' },
   trailLabel: { en: 'Path through the atlas', sv: 'Vägen genom atlasen' },
 
   landingTagline: {
