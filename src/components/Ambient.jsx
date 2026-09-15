@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { ON_SURFACE } from '../data/edition'
 import { makeRng } from '../lib/layout'
 
 // Depth behind the attractor: big out-of-focus circles in the palette. They are
@@ -19,6 +20,11 @@ export default function Ambient({ count = 20, seed = 12 }) {
       blur: 16 + rng() * 26,
     })
   )}, [count, seed])
+
+  // On the table the field belongs to the table: one of these per station would
+  // stop at the station's edge, and four of them would not line up. Refused here
+  // rather than at each call site, so a page added later cannot forget.
+  if (ON_SURFACE) return null
 
   return (
     <div className="ambient" aria-hidden="true">

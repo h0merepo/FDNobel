@@ -75,6 +75,46 @@ body,
   color: var(--on-dark);
 }
 
+/* ---------- on the table ----------
+   Four copies of the atlas laid on one 55-inch surface. Each drops its ground
+   so the table's single field shows through all four and runs unbroken between
+   them. */
+html.on-surface,
+html.on-surface body,
+html.on-surface #root {
+  background: transparent;
+}
+
+/* Where two stations meet, the plane of circles is let go rather than cut off
+   square, so a circle that runs past the station drifts out of the surface
+   instead of being sliced at a line nobody can see. Only the pannable plane
+   is faded: it is the only thing that reaches an edge, and everything else on
+   the page — the dock, the hint, shuffle, the language toggle — stays whole.
+   A station is only ever seamed on two sides. In its own frame, which is
+   turned for the two people on the far side of the table, the seam is always
+   the top edge and one of the other two; the remaining sides are the physical
+   edge of the panel, where there is nothing to hide. Which side is which is
+   set on the root element by the table. */
+html.on-surface {
+  --seam-y: linear-gradient(to bottom, transparent, #000 16%);
+  --seam-x: linear-gradient(#000, #000);
+}
+
+html.on-surface[data-seam~='right'] {
+  --seam-x: linear-gradient(to right, #000 88%, transparent);
+}
+
+html.on-surface[data-seam~='left'] {
+  --seam-x: linear-gradient(to left, #000 88%, transparent);
+}
+
+html.on-surface .canvas {
+  -webkit-mask-image: var(--seam-y), var(--seam-x);
+  -webkit-mask-composite: source-in;
+  mask-image: var(--seam-y), var(--seam-x);
+  mask-composite: intersect;
+}
+
 button {
   font: inherit;
   color: inherit;

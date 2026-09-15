@@ -15,7 +15,9 @@
    ═══════════════════════════════════════════════════════════════════════ */
 
 :root {
-  --table: #2b2825;
+  /* The atlas's own ground. With the stations transparent this is the only
+     ground on the table, so it is that colour exactly and not a shade near it. */
+  --table: #262320;
   --gold: #cea152;
   --pale: #d1ccbe;
   --warm: #b0a8a1;
@@ -47,11 +49,16 @@ html, body {
   overflow: hidden;
 }
 
-/* ── the plane out of reach ──────────────────────────────────────────────
-   Six bands at six depths. Each carries its own blur and its own rate of
-   drift, so the whole thing separates the way a lens separates it: one band
-   near focus, everything in front of and behind it falling away. Nothing
-   here takes a touch — the surface belongs to the four zones. */
+/* ── the field under the whole table ─────────────────────────────────────
+   The atlas's own out-of-focus field, drawn once at the size of the table
+   instead of four times at the size of a station. That is the whole point:
+   four copies of a field cannot line up at the seams between them, and a
+   field that stops at a station's edge draws that edge. This one runs under
+   all four and is the only ground any of them has.
+
+   Six bands at six depths, each with its own blur and its own rate of drift,
+   so the field separates the way a lens separates it. Nothing here takes a
+   touch — the surface belongs to the stations. */
 .depth {
   position: absolute;
   inset: 0;
@@ -84,27 +91,14 @@ html, body {
   transform: translate(-50%, -50%);
 }
 
-/* Fragments of the record: titles, journals, dates. Set small enough to be
-   read as texture from a standing distance and as words from a seated one.
-   Sized against the panel, not in pixels: the table is one physical object
-   whatever the resolution driving it, and 13px on a 1080 panel is 13px on a
-   4K one — a quarter of the size on the same 55 inches. */
-.band .note {
-  position: absolute;
-  width: 14ch;
-  overflow-wrap: anywhere; /* a long German title must not run into its neighbour */
-  transform: translate(-50%, -50%);
-  font-size: 1.2vmin;
-  line-height: 1.35;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgba(209, 204, 190, 0.62);
-}
-
-/* ── the four zones ──────────────────────────────────────────────────────
-   Flush to the table, no frame and no shadow: the atlas's own ground is a
-   shade off the table's, so a zone reads as a window cut in the surface
-   rather than as a panel laid on it. */
+/* ── the four stations ───────────────────────────────────────────────────
+   No ground, no frame, no shadow, and no gap: each station is transparent,
+   so what stands behind all four is the one field. The four together cover
+   the table, which is what lets a station's circles drift out past the area
+   its own controls sit in — there is no edge for them to stop at. Where two
+   stations meet, each has already faded its own field out (see .page-layer
+   in the atlas's stylesheet), so the seam is a soft band of the field rather
+   than a line. */
 .zones {
   position: absolute;
   inset: 0;
@@ -112,16 +106,15 @@ html, body {
 
 .zone {
   position: absolute;
-  width: 41%;
-  height: 38%;
+  width: 50%;
+  height: 50%;
   overflow: hidden;
-  background: #262320;
 }
 
-.zone.left { left: 4.5%; }
-.zone.right { right: 4.5%; }
-.zone.top { top: 3%; }
-.zone.bottom { bottom: 3%; }
+.zone.left { left: 0; }
+.zone.right { right: 0; }
+.zone.top { top: 0; }
+.zone.bottom { bottom: 0; }
 
 /* Two of the four face the other side of the table. */
 .zone.turned { transform: rotate(180deg); }
@@ -182,9 +175,21 @@ html, body {
     setTimeout(function () {
       const doc = frame.contentDocument
       if (!doc) return
+      // How the atlas is told it is on the table and should drop its own
+      // ground. A name survives the write that follows; a variable set on the
+      // window would not, and "am I framed?" would also be true of the atlas
+      // published on its own, which the host frames.
+      frame.contentWindow.name = 'atlas-surface'
       doc.open()
       doc.write(html)
       doc.close()
+      // Which of this station's own sides face the middle of the table. The
+      // top always does — the two far stations are turned, so their frame's
+      // top is the table's centre line just as the near pair's is. The other
+      // is whichever side the neighbour is on, read in the station's own
+      // frame, so it flips for the pair that is turned.
+      doc.documentElement.dataset.seam =
+        'top ' + (frame.closest('.zone').matches('.left:not(.turned), .right.turned') ? 'right' : 'left')
     }, i * 220)
   })
 
@@ -203,13 +208,17 @@ html, body {
     })
   }
 
-  /* ── the plane out of reach ───────────────────────────────────────────
-     One network, not six: every node belongs to the same web, and the lines
-     between them are drawn once on a layer of their own so the connection
-     stays legible. Only the nodes are sorted into depth bands, which is what
-     puts them in and out of focus — the way a lens separates a scene it is
-     still looking at all of. Generated from one seed, so the table comes up
-     the same every time it is switched on. */
+  /* ── the field ────────────────────────────────────────────────────────
+     The atlas's own out-of-focus circles, in its own palette, at its own
+     sizes — but generated once across the whole table instead of once per
+     station. Density is set to match what a single station used to carry, so
+     the surface looks the same as it always did; it is only that it no longer
+     stops at anybody's edge.
+
+     The circles are sorted into depth bands, which is what puts them in and
+     out of focus and what gives each depth its own rate of drift. Generated
+     from one seed, so the table comes up the same every time it is switched
+     on. */
   function rng(seed) {
     let h = 2166136261
     for (let i = 0; i < seed.length; i += 1) {
@@ -223,154 +232,66 @@ html, body {
     }
   }
 
-  const TONES = [
-    '--gold', '--pale', '--warm', '--pink', '--physics',
-    '--chemistry', '--medicine', '--literature', '--peace', '--economics',
-  ]
-
-  /* What the archive holds, in the words it holds it under. */
-  const NOTES = [
-    'Governing the Commons: the Evolution of Institutions for Collective Action',
-    'On a New Kind of Rays — Würzburg, 28 December 1895',
-    'Poverty and Famines: an Essay on Entitlement and Deprivation',
-    'A Programmable Dual-RNA-Guided DNA Endonuclease — Science, 17 August 2012',
-    'Russell–Einstein Manifesto — London, 9 July 1955',
-    'On the Antibacterial Action of Cultures of a Penicillium, 1929',
-    'Über quantentheoretische Umdeutung — Helgoland, June 1925',
-    'Induction of Pluripotent Stem Cells from Mouse Fibroblast Cultures',
-    'Die Waffen nieder! — Vienna, 1889',
-    "Nobel's Will — Paris, 27 November 1895",
-    'Highly Accurate Protein Structure Prediction — CASP14, 2020',
-  ]
+  // the atlas's ambient palette, unchanged
+  const TONES = ['--gold', '--pale', '--warm', '--pink', '--literature', '--medicine', '--peace']
 
   const BANDS = 6
-  const FOCUS = 4 // the depth the lens is held at; the rest falls away from it
-  const NODES = 52
+  const FOCUS = 3 // the depth the lens is held at; the rest falls away from it
+  // A station carried about thirty of these over a quarter of the table, and
+  // the field should read at that density over the whole of it.
+  const CIRCLES = 96
 
   const depth = document.getElementById('depth')
   const r = rng('nobel-atlas-table')
   const bands = []
-  const ns = 'http://www.w3.org/2000/svg'
 
-  /* Everything on the plane is measured against the panel rather than in
-     pixels — see the note on .note. The figures below are read as pixels on a
-     1080-high table and converted, which is the height the composition was
-     drawn at. */
+  /* Everything on the field is measured against the panel rather than in
+     pixels: the table is one physical object whatever resolution is driving
+     it, and 300px on a 1080 panel is 300px on a 4K one — a quarter of the
+     size on the same 55 inches. The figures below are read as pixels on a
+     1080-high table, which is the height the composition was drawn at. */
   const VMIN = 10.8
   const vmin = (px) => (px / VMIN).toFixed(3) + 'vmin'
 
-  function makeBand(blur, fade) {
+  function makeBand(blur) {
     const band = document.createElement('div')
     band.className = 'band'
     band.style.filter = 'blur(' + vmin(blur) + ')'
-    band.style.opacity = fade.toFixed(2)
     depth.appendChild(band)
     return band
   }
 
-  // the bands the nodes fall into, back to front
+  // the depths, back to front
   for (let i = 0; i < BANDS; i += 1) {
     const off = Math.abs(i - FOCUS)
+    const near = 1 - i / (BANDS - 1)
     bands.push({
-      el: makeBand(Math.pow(off, 1.35) * 9 + 1, 0.52 + (1 - off / BANDS) * 0.34),
-      near: 1 - i / (BANDS - 1),
-      drift: 5 + (1 - i / (BANDS - 1)) * 26,
+      // Kept inside the range the atlas uses for its own field — past about
+      // sixty the circles stop being circles and the whole thing turns to wash.
+      el: makeBand(13 + Math.pow(off, 1.5) * 9),
+      near: near,
+      drift: 5 + near * 26,
       phase: r() * Math.PI * 2,
     })
   }
 
-  // the one layer the whole web is drawn on, held near focus so it reads
-  const webBand = { el: makeBand(1.4, 0.82), drift: bands[FOCUS].drift, phase: r() * Math.PI * 2 }
-  bands.push(webBand)
-  const web = document.createElementNS(ns, 'svg')
-  web.setAttribute('preserveAspectRatio', 'none')
-  web.setAttribute('viewBox', '0 0 100 100')
-  webBand.el.appendChild(web)
-
-  // --- the nodes, scattered through the depths -------------------------
-  const nodes = []
-  for (let k = 0; k < NODES; k += 1) {
-    const band = Math.floor(r() * BANDS)
-    const near = bands[band].near
-    const size = (44 + Math.pow(near, 1.7) * 360) * (0.55 + r() * 0.95)
-    const node = { x: 3 + r() * 94, y: 3 + r() * 94, band: band, size: size }
-    nodes.push(node)
-
+  /* Placed across 124% of the table because that is how much of it each band
+     covers — the layers hang past every edge so the drift never pulls one of
+     them off the surface and leaves a bare corner behind it. */
+  for (let k = 0; k < CIRCLES; k += 1) {
+    const band = bands[Math.floor(r() * BANDS)]
     const el = document.createElement('span')
     el.className = 'node'
-    el.style.left = node.x + '%'
-    el.style.top = node.y + '%'
+    el.style.left = r() * 100 + '%'
+    el.style.top = r() * 100 + '%'
+    // Nearer circles read larger, which is the other half of the depth.
+    const size = (150 + r() * 320) * (0.72 + band.near * 0.5)
     el.style.width = vmin(size)
     el.style.height = vmin(size)
     el.style.background = 'var(' + TONES[Math.floor(r() * TONES.length)] + ')'
-    el.style.opacity = (0.3 + r() * 0.32).toFixed(2)
-    bands[band].el.appendChild(el)
+    el.style.opacity = (0.14 + r() * 0.3).toFixed(2)
+    band.el.appendChild(el)
   }
-
-  // --- and the ties between them, on the web's own layer ----------------
-  for (let a = 0; a < nodes.length; a += 1) {
-    const near = nodes
-      .map(function (n, j) { return { n: n, j: j, d: Math.hypot(n.x - nodes[a].x, n.y - nodes[a].y) } })
-      .filter(function (o) { return o.j !== a })
-      .sort(function (p, q) { return p.d - q.d })
-    const reach = a % 4 === 0 ? 3 : 2 // every fourth node keeps a longer tie
-    for (let t = 0; t < reach && t < near.length; t += 1) {
-      if (near[t].d > 46) continue
-      const line = document.createElementNS(ns, 'line')
-      line.setAttribute('x1', nodes[a].x)
-      line.setAttribute('y1', nodes[a].y)
-      line.setAttribute('x2', near[t].n.x)
-      line.setAttribute('y2', near[t].n.y)
-      line.setAttribute('stroke', 'rgba(209,204,190,0.42)')
-      line.setAttribute('vector-effect', 'non-scaling-stroke')
-      line.style.strokeWidth = vmin(1)
-      web.appendChild(line)
-    }
-  }
-
-  /* One fragment held in focus among all the softness: a plate, close
-     enough to see the grain on and still out of reach. */
-  const grain = document.createElementNS(ns, 'svg')
-  grain.setAttribute('viewBox', '0 0 100 100')
-  grain.setAttribute(
-    'style',
-    'position:absolute;left:50%;top:62.1%;width:' + vmin(104) + ';height:' + vmin(104) +
-      ';transform:translate(-50%,-50%);opacity:.5',
-  )
-  grain.innerHTML =
-    '<defs><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="7"/>' +
-    '<feColorMatrix type="saturate" values="0"/></filter>' +
-    '<clipPath id="gclip"><circle cx="50" cy="50" r="50"/></clipPath></defs>' +
-    '<g clip-path="url(#gclip)"><rect width="100" height="100" filter="url(#grain)"/></g>'
-  webBand.el.appendChild(grain)
-
-  /* The record itself, where it can almost be read. The four zones cover most
-     of the table, so the fragments are laid in the cross of bare surface they
-     leave — the wide band between the near and far pairs, the seam down the
-     middle, and the margins. Placed anywhere else they would be true of the
-     plane and invisible on it. Gaps are given in table per cent and mapped onto
-     the layer, which stands 124% of the table and hangs 12% past each edge, so
-     a point at T% of the table sits at (T + 12) / 1.24 of the layer. */
-  const onLayer = (t) => (t + 12) / 1.24 + '%'
-
-  /* Slots rather than loose points: a fragment set down at random lands on
-     the one beside it often enough, and two of these overlapping is not
-     texture, it is a smudge. Eight sit along the band, three down the seam. */
-  const SLOTS = [
-    [10, 50], [21, 48], [32, 51], [43, 49], [58, 50], [69, 48], [80, 51], [91, 49],
-    [50, 16], [50, 33], [50, 78],
-  ]
-
-  NOTES.forEach(function (text, i) {
-    const slot = SLOTS[i % SLOTS.length]
-    const note = document.createElement('p')
-    note.className = 'note'
-    note.textContent = text
-    note.style.left = onLayer(slot[0] + (r() - 0.5) * 3)
-    note.style.top = onLayer(slot[1] + (r() - 0.5) * 3)
-    note.style.opacity = (0.45 + r() * 0.4).toFixed(2)
-    webBand.el.appendChild(note)
-  })
 
   /* ── the drift ────────────────────────────────────────────────────────
      A table has no cursor to follow, so the plane moves on its own: two
