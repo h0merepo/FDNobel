@@ -49,6 +49,9 @@ const lines = (text, measure, size) =>
 
 const LH = 44.2 // body, 34px on 1.3
 
+// What the dot at the end of a piece keeps clear of the last line above it.
+const END_GAP = 20
+
 // --- the generated disc --------------------------------------------------
 // The same construction as the atlas plate: a tilted base wash with four blooms
 // drifting across it, seeded by name so a laureate's discs are always theirs.
@@ -245,18 +248,22 @@ const BLOCK = {
   },
 
   // The citation, centred, and the dot that ends every piece.
+  // The citation is the last thing read, and the dot that ends the piece sits
+  // under it. Where exactly depends on how the line breaks fall, which only the
+  // browser knows — so the dot is placed here from an estimate that reserves
+  // enough column, and moved onto the real last line at runtime.
   close({ text, year, seed }, y, ctx) {
     const tall = lines(text, 824, 34) * LH
     return {
-      h: 1134 + tall + 180,
+      h: 895 + tall + END_GAP + 21 + 150,
       title: `${year} · the prize`,
       focus: y + 900,
       html: `
   <div class="disc" data-depth="76" style="background-image:${disc(seed + ':close', ctx.ground)};
        left:44px; top:${n(y)}px; width:824px; height:824px;"></div>
   <p class="year" data-depth="-30" style="left:40px; top:${n(y + 569)}px;">${year}</p>
-  <p class="body arrive" data-depth="-72" style="left:43px; top:${n(y + 895)}px; width:824px; text-align:center;">${copy(text)}</p>
-  <span class="end-dot arrive" data-depth="-72" style="left:444.5px; top:${n(y + 1134)}px;"></span>`,
+  <p class="body close-copy arrive" data-depth="-72" style="left:43px; top:${n(y + 895)}px; width:824px; text-align:center;">${copy(text)}</p>
+  <span class="end-dot arrive" data-depth="-72" style="left:444.5px; top:${n(y + 895 + tall + END_GAP)}px;"></span>`,
     }
   },
 }
@@ -324,7 +331,9 @@ body {
 .disc, .halo                                  { z-index: 1; }
 .plate, .quote-plate                          { z-index: 3; }
 .ask, .name, .meta, .awards,
-.year, .body, .lede, .quote, .end-dot         { z-index: 4; }
+.year, .body, .lede, .quote                   { z-index: 4; }
+/* under the copy, never over it: the dot is the last mark, not a layer on top */
+.end-dot                                      { z-index: 3; }
 
 .disc {
   position: absolute; border-radius: 50%;
@@ -558,9 +567,21 @@ addEventListener('keydown', function (e) {
   addEventListener(evt, function () { lastInput = performance.now(); }, { passive: true });
 });
 
-addEventListener('resize', setScale);
-addEventListener('load', measure);
+// The dot that ends the piece is set against the real last line of the
+// citation rather than against an estimate of it, so the gap is the same
+// whatever the measure does to the line breaks. Both are laid out in design
+// pixels inside a scaled column, so offsetHeight is already in design units.
+function placeEndDot() {
+  const copy = document.querySelector('.close-copy');
+  const dot = document.querySelector('.end-dot');
+  if (!copy || !dot) return;
+  dot.style.top = (parseFloat(copy.style.top) + copy.offsetHeight + ${END_GAP}) + 'px';
+}
+
+addEventListener('resize', function () { setScale(); placeEndDot(); });
+addEventListener('load', function () { placeEndDot(); measure(); });
 setScale();
+placeEndDot();
 requestAnimationFrame(tick);
 })();
 </script>`
