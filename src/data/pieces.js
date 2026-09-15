@@ -583,6 +583,8 @@ export const PIECES = [
   {
     id: 'goldin',
     name: 'Claudia Goldin',
+    hook: 'The data nobody collected',
+    sub: 'Goldin',
     field: 'economics',
     beats: [
       { block: 'ask', text: 'What if the data<br>was never collected<br>in the first place?', boxed: 'data' },
@@ -618,5 +620,9 @@ const BY_ID = {
 }
 
 // What to call the circle that opens a laureate's piece. A laureate with no
-// piece has no hook, and keeps their name.
-export const hookFor = (id) => BY_ID[id] ?? null
+// piece has no hook and keeps their name — and so does one whose script is
+// missing its hook, rather than resolving to a circle with no name at all.
+export const hookFor = (id) => {
+  const found = BY_ID[id]
+  return found && found.hook && found.sub ? found : null
+}

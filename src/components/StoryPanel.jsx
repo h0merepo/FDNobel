@@ -43,18 +43,27 @@ const framed = (html, design) => {
   return html.includes('</body>') ? html.replace('</body>', `${shim}</body>`) : html + shim
 }
 
-// A piece opened on its own page rounds its own column, and should: there is
-// nothing else on the screen to round it. Inside our box that corner lands a
-// few pixels in from the box's own, and the two read as a mistake, so the inner
-// one is dropped — but only here, at the point of embedding, never in the
-// documents themselves.
+// Two things a piece needs from the box it is shown in, neither of which
+// belongs in the piece itself.
 //
-// Added to the frame's own head afterwards rather than appended to the markup:
-// the tail of the longest of these documents does not survive the write, which
-// is the same reason its scripts never start in here.
-const unround = (doc) => {
+// It rounds its own column, and should: opened on its own page there is nothing
+// else on screen to round it. Inside our box that corner lands a few pixels in
+// from the box's own, and the two read as one mistake.
+//
+// And a frame scrolls, so the browser draws its bar down the inside edge — the
+// dark slab this app stopped showing anywhere else. The piece already carries
+// its own beat rail and its own cue; the bar is the third thing saying so.
+//
+// Added to the frame's own head after the write rather than appended to the
+// markup: the tail of the longest of these documents does not survive the
+// write, which is the same reason its scripts never start in here.
+const dressFrame = (doc) => {
   const style = doc.createElement('style')
-  style.textContent = '.column,.track,.layer{border-radius:0 !important}'
+  style.textContent = [
+    '.column,.track,.layer{border-radius:0 !important}',
+    'html{scrollbar-width:none;-ms-overflow-style:none}',
+    'html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none}',
+  ].join('')
   doc.head.appendChild(style)
 }
 
@@ -243,7 +252,7 @@ function Piece({ piece }) {
     doc.open()
     doc.write(framed(piece.html, piece.fit))
     doc.close()
-    unround(doc)
+    dressFrame(doc)
 
     // A piece that scales itself off a design width is handed that scale
     // directly, so it fits the box it has been given whatever else happens.

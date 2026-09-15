@@ -293,6 +293,11 @@ export function buildPiece(script) {
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; background: var(--page); }
+
+/* The beat rail and the cue are how this is moved through; the browser's bar
+   would be a third thing saying the same, in nobody's language. */
+html { scrollbar-width: none; -ms-overflow-style: none; }
+html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display: none; }
 body {
   color: var(--ink);
   font-family: 'Alfred Sans', system-ui, sans-serif;
