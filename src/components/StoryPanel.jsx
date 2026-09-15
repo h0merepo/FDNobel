@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ctaFor, narrativeFor } from '../data/narrative'
-import { findStory, storyScreens, storyTitle } from '../data/stories'
+import { ALL_STORIES, storyScreens, storyTitle } from '../data/stories'
 import { nodeMeta } from '../lib/relations'
 import { t } from '../i18n'
 import curieHtml from '../embeds/marie-curie.html?raw'
@@ -26,12 +26,47 @@ const SUPPLIED = {
   'person:mandela': { html: mandelaHtml, title: 'Nelson Mandela', scale: 910 },
 }
 
+const PIECE_BY_ID = Object.fromEntries(PIECES.map((script) => [script.id, script]))
+
+/* A story is a laureate's narrative under another name — `helgoland` is
+   Heisenberg's, `mould-juice` is Fleming's — and it was the last thing in the
+   atlas still read as a stack of cards. Where the laureate it belongs to has a
+   piece, the story now opens that: the same account, told as one scroll.
+
+   Where there is none, because the laureate falls outside the edition, one is
+   built from the story's own screens instead: the first line of each screen is
+   the heading it already had, and the blocks alternate so the column does not
+   run down one side. It is a plainer piece than a written script makes, but it
+   is a scroll, and no long narrative is left paged. */
+const fromScreens = (story) => ({
+  id: story.id,
+  name: storyTitle(story),
+  field: 'peace',
+  beats: [
+    { block: 'title', name: storyTitle(story), meta: story.sub },
+    ...storyScreens(story).map((screen, i) => ({
+      block: i === 0 ? 'plate' : i % 2 ? 'note' : 'plate',
+      title: screen.heading,
+      text: screen.body,
+    })),
+  ],
+})
+
+const scriptForStory = (story) =>
+  story.laureates.map((id) => PIECE_BY_ID[id]).find(Boolean) ?? fromScreens(story)
+
 const LONG_FORM = {
   ...Object.fromEntries(
     PIECES.map((script) => [
       `person:${script.id}`,
       { html: buildPiece(script), title: script.name, scale: 910 },
     ]),
+  ),
+  ...Object.fromEntries(
+    ALL_STORIES.map((story) => {
+      const script = scriptForStory(story)
+      return [`story:${story.id}`, { html: buildPiece(script), title: script.name, scale: 910 }]
+    }),
   ),
   // supplied last: a document the client sent is never overwritten by a built one
   ...SUPPLIED,
@@ -165,78 +200,6 @@ const CloseIcon = () => (
   </svg>
 )
 
-const Chevron = ({ back }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-    <path
-      d={back ? 'M15 5 8 12l7 7' : 'M9 5l7 7-7 7'}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-)
-
-// A narrative read as a fixed sequence of screens rather than one long scroll,
-// so each beat of the story lands on its own.
-function StoryReader({ story, color }) {
-  const [screen, setScreen] = useState(0)
-  const bodyRef = useRef(null)
-  const screens = storyScreens(story)
-  const total = screens.length
-  const step = useCallback(
-    (delta) => setScreen((n) => Math.min(total - 1, Math.max(0, n + delta))),
-    [total],
-  )
-
-  useEffect(() => {
-    if (bodyRef.current) bodyRef.current.scrollTop = 0
-  }, [screen])
-
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === 'ArrowRight') step(1)
-      else if (e.key === 'ArrowLeft') step(-1)
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [step])
-
-  const current = screens[screen]
-
-  return (
-    <>
-      <SectionRail count={total} active={screen} onGo={setScreen} label={t('storyScreens')} />
-
-      <Disc color={color}>
-        <span className="node-name">{screen === 0 ? storyTitle(story) : current.heading}</span>
-        <span className="node-sub">
-          {t('storyKicker')} · {screen + 1} {t('of')} {total}
-        </span>
-      </Disc>
-
-      <div className="story-body" ref={bodyRef}>
-        {screen === 0 && <p className="standfirst">{current.heading}</p>}
-        <p className={screen === 0 ? 'para-row' : 'standfirst'}>{current.body}</p>
-      </div>
-
-      <nav className="reader-nav" aria-label={t('storyScreens')}>
-        <button onClick={() => step(-1)} disabled={screen === 0} aria-label={t('previousScreen')}>
-          <Chevron back />
-        </button>
-        <span className="reader-count">
-          {screen + 1} / {total}
-        </span>
-        <button
-          onClick={() => step(1)}
-          disabled={screen === total - 1}
-          aria-label={t('nextScreen')}
-        >
-          <Chevron />
-        </button>
-      </nav>
-    </>
-  )
-}
-
 // Half a megabyte of markup does not survive a srcdoc attribute — the document
 // arrives whole but its scripts never run — so each piece is served to the
 // frame as a real document from a blob instead.
@@ -302,20 +265,6 @@ export default function StoryPanel({ selection, onClose }) {
           <Disc color={meta.color} className="lead">
             {ctaFor(selection.id)}
           </Disc>
-        </article>
-        <button className="close" onClick={onClose} aria-label={t('close')}>
-          <CloseIcon />
-        </button>
-      </div>
-    )
-  }
-
-  if (selection.kind === 'story') {
-    const story = findStory(selection.id)
-    return (
-      <div className="story-holder" key={seed}>
-        <article className="story-panel reader">
-          {story && <StoryReader story={story} color={meta.color} />}
         </article>
         <button className="close" onClick={onClose} aria-label={t('close')}>
           <CloseIcon />

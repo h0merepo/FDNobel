@@ -4,7 +4,7 @@ import { inEdition } from './edition'
 // seven-screen read inside the content panel. `sub` is the name shown under the
 // title on the bubble, matching the way the design labels them.
 
-const ALL_STORIES = [
+export const ALL_STORIES = [
   {
     id: 'helgoland',
     title: 'Seeing the Invisible',

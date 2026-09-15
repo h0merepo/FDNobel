@@ -138,16 +138,22 @@ const BLOCK = {
   },
 
   // Who this is: name, birth and country, the AWARDS chip, the prize line.
+  // The awards line is dropped rather than left empty when a piece has no
+  // prize to name — a story built from its own screens belongs to nobody's
+  // citation — and the block gives back the height it would have taken.
   title({ name, meta, prizes }, y) {
+    const awards = prizes
+      ? `
+  <div class="awards arrive" data-depth="-24" style="left:383.6px; top:${n(y + 230)}px; width:144px;">AWARDS</div>
+  <p class="meta arrive" data-depth="-24" style="left:294.8px; top:${n(y + 282)}px; width:322px;">${copy(prizes)}</p>`
+      : ''
     return {
-      h: 470,
+      h: prizes ? 470 : 330,
       title: name.replace(/<br>/g, ' '),
       focus: y + 200,
       html: `
   <h1 class="name arrive" data-depth="-24" style="left:0; right:0; top:${n(y)}px;">${name}</h1>
-  <p class="meta arrive" data-depth="-24" style="left:0; right:0; top:${n(y + 135)}px;">${copy(meta)}</p>
-  <div class="awards arrive" data-depth="-24" style="left:383.6px; top:${n(y + 230)}px; width:144px;">AWARDS</div>
-  <p class="meta arrive" data-depth="-24" style="left:294.8px; top:${n(y + 282)}px; width:322px;">${copy(prizes)}</p>`,
+  <p class="meta arrive" data-depth="-24" style="left:0; right:0; top:${n(y + 135)}px;">${copy(meta)}</p>${awards}`,
     }
   },
 
