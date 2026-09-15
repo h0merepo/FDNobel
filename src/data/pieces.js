@@ -608,8 +608,8 @@ export const PIECES = [
 // The two supplied documents are not built from scripts, but the circles that
 // open them are named the same way.
 const SUPPLIED_HOOKS = {
-  curie: { hook: 'Hidden in tonnes of rock', sub: 'Curie' },
-  mandela: { hook: 'The freedom he said no to', sub: 'Mandela' },
+  curie: { hook: 'Hidden element', sub: 'Curie' },
+  mandela: { hook: 'The offer he refused', sub: 'Mandela' },
 }
 
 const BY_ID = {
