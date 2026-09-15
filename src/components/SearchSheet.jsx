@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { hookFor } from '../data/pieces'
 import {
   ARTIFACTS,
   LAUREATES,
@@ -33,7 +34,7 @@ const RECORDS = () => [
   ...LAUREATES.map((l) => ({
     kind: 'person',
     id: l.id,
-    label: l.name,
+    label: hookFor(l.id) ? `${hookFor(l.id).hook} · ${l.name}` : l.name,
     title: l.name,
     body: `${countryName(l.country)} ${l.year} ${blurbFor('person', l.id, l.blurb)}`,
     color: kindColor('person', l.id),

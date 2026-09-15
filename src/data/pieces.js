@@ -9,11 +9,16 @@
 // what was said at the time. Where an account is contested the text says so
 // rather than choosing the better story.
 
+// The opening question is also how the node that opens the piece is named —
+// short enough to sit in a circle. The laureate's own name goes under it, the
+// way the stories already carry theirs.
 export const PIECES = [
   // ── Physics ───────────────────────────────────────────────────────────
   {
     id: 'townes',
     name: 'Charles Townes',
+    hook: 'The idea they dismissed',
+    sub: 'Townes',
     field: 'physics',
     beats: [
       { block: 'ask', text: 'Where does an idea go<br>when everyone senior<br>tells you to drop it?', boxed: 'idea' },
@@ -38,6 +43,8 @@ export const PIECES = [
   {
     id: 'rontgen',
     name: 'Wilhelm Röntgen',
+    hook: 'Glowing in a dark room',
+    sub: 'Röntgen',
     field: 'physics',
     beats: [
       { block: 'ask', text: 'The room is dark.<br>Something is glowing<br>anyway.', boxed: 'glowing' },
@@ -61,6 +68,8 @@ export const PIECES = [
   {
     id: 'einstein',
     name: 'Albert Einstein',
+    hook: 'The prize for the other paper',
+    sub: 'Einstein',
     field: 'physics',
     beats: [
       { block: 'ask', text: 'What if the prize<br>is not for the thing<br>you are known for?', boxed: 'prize' },
@@ -84,6 +93,8 @@ export const PIECES = [
   {
     id: 'heisenberg',
     name: 'Werner Heisenberg',
+    hook: 'Built only from the measurable',
+    sub: 'Heisenberg',
     field: 'physics',
     beats: [
       { block: 'ask', text: 'What can you build<br>using only what<br>you can measure?', boxed: 'measure' },
@@ -107,6 +118,8 @@ export const PIECES = [
   {
     id: 'higgs',
     name: 'Peter Higgs',
+    hook: 'Right, forty-eight years later',
+    sub: 'Higgs',
     field: 'physics',
     beats: [
       { block: 'ask', text: 'How long would you wait<br>to be told<br>you were right?', boxed: 'wait' },
@@ -132,6 +145,8 @@ export const PIECES = [
   {
     id: 'mullis',
     name: 'Kary Mullis',
+    hook: 'An idea at midnight',
+    sub: 'Mullis',
     field: 'chemistry',
     beats: [
       { block: 'ask', text: 'What arrives on a<br>mountain road<br>at midnight?', boxed: 'arrives' },
@@ -156,6 +171,8 @@ export const PIECES = [
   {
     id: 'doudna',
     name: 'Jennifer Doudna',
+    hook: 'A tool for everything alive',
+    sub: 'Doudna',
     field: 'chemistry',
     beats: [
       { block: 'ask', text: 'What do you do with a tool<br>that works on<br>everything alive?', boxed: 'everything' },
@@ -179,6 +196,8 @@ export const PIECES = [
   {
     id: 'charpentier',
     name: 'Emmanuelle Charpentier',
+    hook: 'Who could finish it',
+    sub: 'Charpentier',
     field: 'chemistry',
     beats: [
       { block: 'ask', text: 'How do you find the one person<br>who can finish it?', boxed: 'one person' },
@@ -202,6 +221,8 @@ export const PIECES = [
   {
     id: 'haber',
     name: 'Fritz Haber',
+    hook: 'Feeding the world and poisoning it',
+    sub: 'Haber',
     field: 'chemistry',
     beats: [
       { block: 'ask', text: 'Can one man feed the world<br>and poison it?', boxed: 'one man' },
@@ -225,6 +246,8 @@ export const PIECES = [
   {
     id: 'hassabis',
     name: 'Demis Hassabis',
+    hook: 'What the games were training',
+    sub: 'Hassabis',
     field: 'chemistry',
     beats: [
       { block: 'ask', text: 'What is a game<br>actually training<br>you for?', boxed: 'game' },
@@ -250,6 +273,8 @@ export const PIECES = [
   {
     id: 'fleming',
     name: 'Alexander Fleming',
+    hook: 'A spoiled dish, or a discovery',
+    sub: 'Fleming',
     field: 'medicine',
     beats: [
       { block: 'ask', text: 'What is the difference<br>between a spoiled dish<br>and a discovery?', boxed: 'spoiled dish' },
@@ -274,6 +299,8 @@ export const PIECES = [
   {
     id: 'yamanaka',
     name: 'Shinya Yamanaka',
+    hook: 'Persuading a cell to go back',
+    sub: 'Yamanaka',
     field: 'medicine',
     beats: [
       { block: 'ask', text: 'Can a cell<br>be persuaded<br>to go back?', boxed: 'go back' },
@@ -298,6 +325,8 @@ export const PIECES = [
   {
     id: 'katalin',
     name: 'Katalin Karikó',
+    hook: 'Demoted, and kept going',
+    sub: 'Karikó',
     field: 'medicine',
     beats: [
       { block: 'ask', text: 'How many times<br>can you be demoted<br>and keep going?', boxed: 'demoted' },
@@ -324,6 +353,8 @@ export const PIECES = [
   {
     id: 'lagerlof',
     name: 'Selma Lagerlöf',
+    hook: 'What she owed the house',
+    sub: 'Lagerlöf',
     field: 'literature',
     beats: [
       { block: 'ask', text: 'What do you owe<br>the house you<br>grew up in?', boxed: 'owe' },
@@ -347,6 +378,8 @@ export const PIECES = [
   {
     id: 'beckett',
     name: 'Samuel Beckett',
+    hook: 'The material he kept hiding',
+    sub: 'Beckett',
     field: 'literature',
     beats: [
       { block: 'ask', text: 'What if the material<br>was the part<br>you kept hiding?', boxed: 'material' },
@@ -370,6 +403,8 @@ export const PIECES = [
   {
     id: 'morrison',
     name: 'Toni Morrison',
+    hook: 'Who the book is for',
+    sub: 'Morrison',
     field: 'literature',
     beats: [
       { block: 'ask', text: 'Who is the book<br>being written<br>for?', boxed: 'for' },
@@ -393,6 +428,8 @@ export const PIECES = [
   {
     id: 'alexievich',
     name: 'Svetlana Alexievich',
+    hook: 'A book made of voices',
+    sub: 'Alexievich',
     field: 'literature',
     beats: [
       { block: 'ask', text: 'What is a book<br>made of, if not<br>sentences?', boxed: 'made of' },
@@ -418,6 +455,8 @@ export const PIECES = [
   {
     id: 'suttner',
     name: 'Bertha von Suttner',
+    hook: 'Who put peace in the will',
+    sub: 'von Suttner',
     field: 'peace',
     beats: [
       { block: 'ask', text: 'Who put the peace prize<br>in the will?', boxed: 'peace prize' },
@@ -441,6 +480,8 @@ export const PIECES = [
   {
     id: 'rotblat',
     name: 'Joseph Rotblat',
+    hook: 'When the reason was gone',
+    sub: 'Rotblat',
     field: 'peace',
     beats: [
       { block: 'ask', text: 'What do you do<br>when the reason<br>for building it is gone?', boxed: 'reason' },
@@ -465,6 +506,8 @@ export const PIECES = [
   {
     id: 'gbowee',
     name: 'Leymah Gbowee',
+    hook: 'Making armed men sit down',
+    sub: 'Gbowee',
     field: 'peace',
     beats: [
       { block: 'ask', text: 'What does it take<br>to make armed men<br>sit back down?', boxed: 'sit back down' },
@@ -488,6 +531,8 @@ export const PIECES = [
   {
     id: 'yousafzai',
     name: 'Malala Yousafzai',
+    hook: 'A diary under another name',
+    sub: 'Yousafzai',
     field: 'peace',
     beats: [
       { block: 'ask', text: 'What is a diary<br>worth, if you have<br>to write it as<br>someone else?', boxed: 'diary' },
@@ -513,6 +558,8 @@ export const PIECES = [
   {
     id: 'sen',
     name: 'Amartya Sen',
+    hook: 'Famine with enough food',
+    sub: 'Sen',
     field: 'economics',
     beats: [
       { block: 'ask', text: 'Can there be a famine<br>in a year with<br>enough food?', boxed: 'famine' },
@@ -557,3 +604,19 @@ export const PIECES = [
     ],
   },
 ]
+
+// The two supplied documents are not built from scripts, but the circles that
+// open them are named the same way.
+const SUPPLIED_HOOKS = {
+  curie: { hook: 'Hidden in tonnes of rock', sub: 'Curie' },
+  mandela: { hook: 'The freedom he said no to', sub: 'Mandela' },
+}
+
+const BY_ID = {
+  ...SUPPLIED_HOOKS,
+  ...Object.fromEntries(PIECES.map((s) => [s.id, { hook: s.hook, sub: s.sub }])),
+}
+
+// What to call the circle that opens a laureate's piece. A laureate with no
+// piece has no hook, and keeps their name.
+export const hookFor = (id) => BY_ID[id] ?? null

@@ -15,6 +15,7 @@ import {
   themeLabel,
 } from '../data/content'
 import { t } from '../i18n'
+import { hookFor } from '../data/pieces'
 import { STORIES, storyTitle } from '../data/stories'
 import { packCircles } from '../lib/layout'
 
@@ -34,8 +35,10 @@ const ITEMS = () => [
   ...LAUREATES.map((l) => ({
     id: l.id,
     kind: 'person',
-    label: l.name,
-    meta: `${fieldLabel(FIELDS.find((f) => f.id === l.field) ?? { id: l.field, label: l.field }).split(' ')[0]} ${l.year}`,
+    label: hookFor(l.id)?.hook ?? l.name,
+    meta: hookFor(l.id)
+      ? `${hookFor(l.id).sub} · ${l.year}`
+      : `${fieldLabel(FIELDS.find((f) => f.id === l.field) ?? { id: l.field, label: l.field }).split(' ')[0]} ${l.year}`,
     r: 92,
     color: kindColor('person', l.id),
   })),

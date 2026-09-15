@@ -14,17 +14,24 @@ import {
   themeLabel,
 } from '../data/content'
 import { STORIES, findStory, storyTitle } from '../data/stories'
+import { hookFor } from '../data/pieces'
 import { mixFor } from './levels'
 
 const asTheme = (t) => ({ key: `theme:${t.id}`, kind: 'theme', id: t.id, label: themeLabel(t), color: kindColor('theme', t.id) })
-const asPerson = (p) => ({
-  key: `person:${p.id}`,
-  kind: 'person',
-  id: p.id,
-  label: p.name,
-  sub: String(p.year),
-  color: kindColor('person', p.id),
-})
+// A laureate who opens a piece is named by that piece's question, shortened,
+// with their own name underneath — the way the stories are already named.
+// A laureate with no piece is named by their name and their year.
+const asPerson = (p) => {
+  const hook = hookFor(p.id)
+  return {
+    key: `person:${p.id}`,
+    kind: 'person',
+    id: p.id,
+    label: hook ? hook.hook : p.name,
+    sub: hook ? hook.sub : String(p.year),
+    color: kindColor('person', p.id),
+  }
+}
 const asMilestone = (m) => ({
   key: `milestone:${m.id}`,
   kind: 'milestone',
@@ -209,11 +216,12 @@ export function nodeMeta(selection) {
   }
   if (kind === 'person') {
     const p = findLaureate(id)
+    const hook = p && hookFor(p.id)
     return (
       p && {
         kicker: kindLabel('person'),
-        label: p.name,
-        sub: `${p.year} · ${countryName(p.country)}`,
+        label: hook ? hook.hook : p.name,
+        sub: hook ? `${p.name} · ${p.year}` : `${p.year} · ${countryName(p.country)}`,
         blurb: blurbFor('person', id, p.blurb),
         color: kindColor('person', id),
       }
